@@ -1,0 +1,20 @@
+name: chezmoi-validate
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install chezmoi
+        run: brew install chezmoi
+
+      - name: Initialize and apply
+        run: |
+          chezmoi init --source="$GITHUB_WORKSPACE" --no-tty --promptBool=false --promptString=test
+          chezmoi apply --source="$GITHUB_WORKSPACE" --no-tty --force
