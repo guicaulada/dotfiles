@@ -1,0 +1,5 @@
+[".local/bin/gh-tidy"]
+type = "file"
+url = "https://raw.githubusercontent.com/rnorth/gh-tidy-notifications/main/gh-tidy-notifications"
+refreshPeriod = "168h"
+executable = true
