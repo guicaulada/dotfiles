@@ -2,8 +2,8 @@
 theme = One Double Dark
 background = 000000
 
-# Font — JetBrains Mono (built-in with Nerd Font symbols)
-font-family = JetBrains Mono
+# Font — Hack Nerd Font
+font-family = Hack Nerd Font
 font-size = 14
 font-thicken = true
 adjust-cell-height = 1
