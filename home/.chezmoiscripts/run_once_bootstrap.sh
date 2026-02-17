@@ -10,14 +10,6 @@ if ! command -v brew &>/dev/null; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
-# Install Brewfile dependencies
-CHEZMOI_DIR="${HOME}/.local/share/chezmoi"
-BREWFILE="${CHEZMOI_DIR}/Brewfile"
-if [ -f "$BREWFILE" ]; then
-  echo "==> Installing Brewfile dependencies..."
-  brew bundle --file="$BREWFILE"
-fi
-
 # Set up antidote plugins
 if command -v antidote &>/dev/null; then
   echo "==> Bundling antidote plugins..."
@@ -31,6 +23,7 @@ if command -v mise &>/dev/null; then
 fi
 
 # Set up pre-commit hooks in chezmoi repo
+CHEZMOI_DIR="${HOME}/.local/share/chezmoi"
 if [ -f "$CHEZMOI_DIR/.pre-commit-config.yaml" ]; then
   echo "==> Installing pre-commit hooks..."
   cd "$CHEZMOI_DIR"
