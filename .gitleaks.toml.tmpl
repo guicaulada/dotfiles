@@ -1,0 +1,11 @@
+[extend]
+useDefault = true
+{{ if .is_work }}
+[[rules]]
+id = "employer-reference"
+description = "Block employer name references"
+regex = '''(?i)\b{{ .employer }}\b'''
+tags = ["employer"]
+{{ end }}
+[extend.allowlist]
+paths = ['''\.gitleaks\.toml$''']
