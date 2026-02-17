@@ -1,0 +1,9 @@
+{{- if .is_work -}}
+#!/bin/bash
+# gitleaks template hash: {{ include "../.gitleaks.toml.tmpl" | sha256sum }}
+set -euo pipefail
+
+echo "==> Rendering .gitleaks.toml..."
+chezmoi execute-template < "{{ .chezmoi.sourceDir }}/../.gitleaks.toml.tmpl" \
+  > "{{ .chezmoi.sourceDir }}/../.gitleaks.toml"
+{{ end -}}
