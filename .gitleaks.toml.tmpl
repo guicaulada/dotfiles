@@ -1,11 +1,43 @@
 [extend]
 useDefault = true
+
+# Personal information
+[[rules]]
+id = "personal-email"
+description = "Block personal email address"
+regex = '''(?i){{ .email | regexQuoteMeta }}'''
+keywords = [{{ .email | lower | quote }}]
+tags = ["pii", "email"]
+
+[[rules]]
+id = "personal-name"
+description = "Block personal full name"
+regex = '''(?i)\b{{ .name | regexQuoteMeta }}\b'''
+tags = ["pii", "name"]
 {{ if .is_work }}
 [[rules]]
 id = "employer-reference"
 description = "Block employer name references"
-regex = '''(?i)\b{{ .employer }}\b'''
-tags = ["employer"]
+regex = '''(?i)\b{{ .employer | regexQuoteMeta }}\b'''
+keywords = [{{ .employer | lower | quote }}]
+tags = ["pii", "employer"]
+
+[[rules]]
+id = "work-email"
+description = "Block work email address"
+regex = '''(?i){{ .work_email | regexQuoteMeta }}'''
+keywords = [{{ .work_email | lower | quote }}]
+tags = ["pii", "email"]
 {{ end }}
-[extend.allowlist]
+# SSH public keys
+[[rules]]
+id = "ssh-public-key"
+description = "Block SSH public keys"
+regex = '''(?:ssh-(?:rsa|ed25519|dss)|ecdsa-sha2-nistp(?:256|384|521)|sk-(?:ssh-ed25519|ecdsa-sha2-nistp256)@openssh\.com)\s+[A-Za-z0-9+/]{20,}[=]{0,3}'''
+keywords = ["ssh-rsa", "ssh-ed25519", "ssh-dss", "ecdsa-sha2-nistp", "sk-ssh-ed25519", "sk-ecdsa-sha2"]
+tags = ["ssh", "public-key"]
+
+# Global allowlist
+[[allowlists]]
+description = "Gitleaks configuration"
 paths = ['''\.gitleaks\.toml$''']
