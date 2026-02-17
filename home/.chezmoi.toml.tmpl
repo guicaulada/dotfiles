@@ -1,0 +1,13 @@
+{{- $name := promptStringOnce . "name" "Full name" -}}
+{{- $email := promptStringOnce . "email" "Email address" -}}
+{{- $isWork := promptBoolOnce . "is_work" "Is this a work machine" -}}
+{{- $employer := "" -}}
+{{- if $isWork -}}
+{{-   $employer = promptStringOnce . "employer" "Employer name" -}}
+{{- end -}}
+
+[data]
+  name = {{ $name | quote }}
+  email = {{ $email | quote }}
+  is_work = {{ $isWork }}
+  employer = {{ $employer | quote }}
