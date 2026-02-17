@@ -1,0 +1,18 @@
+# Git aliases
+ohmyzsh/ohmyzsh path:plugins/git
+
+# fzf (fuzzy finder)
+junegunn/fzf kind:path path:bin
+junegunn/fzf path:shell
+
+# fzf-tab (after compinit)
+Aloxaf/fzf-tab
+
+# Autosuggestions
+zsh-users/zsh-autosuggestions
+
+# Enhanced completions (optional but recommended)
+zsh-users/zsh-completions
+
+# Fast syntax highlighting (last)
+zdharma-continuum/fast-syntax-highlighting
