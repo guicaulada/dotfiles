@@ -5,14 +5,14 @@ ohmyzsh/ohmyzsh path:plugins/git
 junegunn/fzf kind:path path:bin
 junegunn/fzf path:shell
 
-# fzf-tab (after compinit)
+# Completions (add to fpath before compinit)
+zsh-users/zsh-completions kind:fpath
+
+# fzf-tab (completion widget activates on first Tab, after compinit)
 Aloxaf/fzf-tab
 
 # Autosuggestions
 zsh-users/zsh-autosuggestions
-
-# Enhanced completions (optional but recommended)
-zsh-users/zsh-completions
 
 # Fast syntax highlighting (last)
 zdharma-continuum/fast-syntax-highlighting
