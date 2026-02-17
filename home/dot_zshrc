@@ -18,6 +18,9 @@ eval "$(starship init zsh)"
 # mise (runtime version manager)
 eval "$(mise activate zsh)"
 
+# direnv (per-directory environments)
+eval "$(direnv hook zsh)"
+
 # thefuck (lazy-loaded for faster startup)
 fuck() {
   unfunction fuck
@@ -42,6 +45,10 @@ setopt EXTENDED_GLOB
 
 # Aliases
 alias vim=nvim
+alias cat='bat --paging=never'
+alias ls='eza --icons'
+alias ll='eza -la --icons --git'
+alias lt='eza --tree --icons --level=2'
 
 # Git helpers
 gcnov() {
