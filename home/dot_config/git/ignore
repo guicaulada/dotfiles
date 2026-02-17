@@ -1,0 +1,22 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editors
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+
+# Python
+*.pyc
+__pycache__/
+
+# Environment
+.envrc
+.direnv/
+
+# Claude Code
+**/.claude/settings.local.json
