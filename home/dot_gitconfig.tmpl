@@ -1,7 +1,7 @@
 [user]
 	name = {{ .name }}
 	email = {{ .email }}
-	signingkey = {{ onepasswordRead .onepassword.ssh_key }}
+	signingkey = {{ template "onepasswordRead" .onepassword.ssh_key }}
 
 [gpg]
 	format = ssh
