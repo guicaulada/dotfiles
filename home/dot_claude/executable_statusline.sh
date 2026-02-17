@@ -64,7 +64,7 @@ format_tokens() {
 }
 
 # Git information (with caching for performance)
-cache_file="/tmp/claude_statusline_git_$(echo "$cwd" | md5 2>/dev/null || echo "default")"
+cache_file="/tmp/claude_statusline_git_$(echo "$cwd" | shasum 2>/dev/null | cut -d' ' -f1 || echo "default")"
 cache_ttl=5
 
 get_git_info() {
