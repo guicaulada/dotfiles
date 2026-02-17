@@ -52,10 +52,14 @@ return {
       set_dark_mode = function()
         vim.opt.background = 'dark'
         vim.cmd.colorscheme('onedark')
+        local ok, lualine = pcall(require, 'lualine')
+        if ok then lualine.setup({ options = { theme = 'onedark' } }) end
       end,
       set_light_mode = function()
         vim.opt.background = 'light'
         vim.cmd.colorscheme('catppuccin-latte')
+        local ok, lualine = pcall(require, 'lualine')
+        if ok then lualine.setup({ options = { theme = 'catppuccin' } }) end
       end,
     },
   },

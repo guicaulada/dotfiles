@@ -2,7 +2,7 @@
 return {
   'rmagatti/auto-session',
   lazy = false, -- Load immediately for session restoration
-  priority = 1000, -- Load before oil.nvim to capture argv before oil transforms it
+  priority = 1000, -- Load early to capture argv before other plugins transform it
   init = function()
     -- Disable netrw - we'll handle directories with snacks explorer
     vim.g.loaded_netrw = 1

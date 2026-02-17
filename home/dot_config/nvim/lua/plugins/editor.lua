@@ -172,10 +172,4 @@ return {
     end,
   },
 
-  -- Bracket mappings for quick navigation
-  {
-    'tummetott/unimpaired.nvim',
-    event = 'VeryLazy',
-    opts = {},
-  },
 }
