@@ -46,6 +46,12 @@ keybind = cmd+shift+enter=toggle_split_zoom
 keybind = shift+enter=text:\n
 keybind = cmd+r=prompt_surface_title
 
+# Scrollback
+scrollback-limit = 100000
+
+# Safety
+clipboard-paste-protection = true
+
 # Shell integration
 shell-integration = detect
 shell-integration-features = cursor,sudo,title
