@@ -36,8 +36,3 @@ description = "Block SSH public keys"
 regex = '''(?:ssh-(?:rsa|ed25519|dss)|ecdsa-sha2-nistp(?:256|384|521)|sk-(?:ssh-ed25519|ecdsa-sha2-nistp256)@openssh\.com)\s+[A-Za-z0-9+/]{20,}[=]{0,3}'''
 keywords = ["ssh-rsa", "ssh-ed25519", "ssh-dss", "ecdsa-sha2-nistp", "sk-ssh-ed25519", "sk-ecdsa-sha2"]
 tags = ["ssh", "public-key"]
-
-# Global allowlist
-[[allowlists]]
-description = "Gitleaks configuration"
-paths = ['''\.gitleaks\.toml$''']
