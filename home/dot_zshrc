@@ -11,7 +11,6 @@ export PATH="/opt/homebrew/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/bin
 
 # Set PATH for Go
 export PATH="$PATH:$(go env GOPATH)/bin"
-alias go="$HOME/go/bin/go1.25.1"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
