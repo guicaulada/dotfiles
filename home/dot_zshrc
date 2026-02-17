@@ -1,13 +1,10 @@
-# Docker desktop added completions
-fpath=($HOME/.docker/completions $fpath)
-
 # Antidote plugin manager
 source "$HOMEBREW_PREFIX/opt/antidote/share/antidote/antidote.zsh"
 antidote load
 
 # Completions (after antidote so all plugins' fpath entries are available)
 autoload -Uz compinit
-compinit
+compinit -C
 
 # zoxide (smarter cd)
 eval "$(zoxide init zsh)"
@@ -50,25 +47,10 @@ alias ls='eza --icons'
 alias ll='eza -la --icons --git'
 alias lt='eza --tree --icons --level=2'
 
-# Git helpers
-gcnov() {
-  git commit --no-verify "$@"
-}
-
-gpsu() {
-  git push --set-upstream origin "$(git branch --show-current)" "$@"
-}
-
-grtg() {
-  echo "This will delete and recreate tag '$1', then force-push to origin."
-  read -q "REPLY?Continue? [y/N] " || { echo; return 1; }
-  echo
-  git tag -d "$1"
-  git tag "$1"
-  git push origin -f "$1"
-}
-
-# Ghostty tab title (append to Ghostty's hooks to guarantee running last)
+# Ghostty tab title
+# Patches Ghostty's internal precmd/preexec hooks (_ghostty_precmd, _ghostty_preexec)
+# to append directory-based title updates. Coupled to Ghostty's hook naming convention;
+# if Ghostty changes these function names in a future version, this will silently break.
 _ghostty_title_hook() {
   if (( $+functions[_ghostty_precmd] )); then
     functions[_ghostty_precmd]+='
