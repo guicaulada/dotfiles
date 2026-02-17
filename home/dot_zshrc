@@ -21,7 +21,7 @@ eval "$(mise activate zsh)"
 # thefuck (lazy-loaded for faster startup)
 fuck() {
   unfunction fuck
-  eval $(thefuck --alias)
+  eval "$(thefuck --alias)"
   fuck "$@"
 }
 
@@ -30,6 +30,8 @@ HISTFILE=~/.zsh_history
 HISTSIZE=50000
 SAVEHIST=50000
 setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_FIND_NO_DUPS
+setopt HIST_EXPIRE_DUPS_FIRST
 setopt SHARE_HISTORY
 setopt HIST_REDUCE_BLANKS
 
