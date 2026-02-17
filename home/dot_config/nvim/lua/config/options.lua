@@ -29,6 +29,21 @@ opt.confirm = true
 opt.termguicolors = true
 opt.wrap = false
 
+-- Folds (treesitter-based)
+opt.foldmethod = 'expr'
+opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+opt.foldlevel = 99
+opt.foldlevelstart = 99
+
+-- Better UI characters
+opt.fillchars = {
+  fold = ' ',
+  foldopen = '\u{e5fe}',
+  foldclose = '\u{e5ff}',
+  foldsep = ' ',
+  eob = ' ',
+}
+
 vim.schedule(function()
   opt.clipboard = 'unnamedplus'
 end)

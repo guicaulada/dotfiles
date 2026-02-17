@@ -1,16 +1,5 @@
 return {
   {
-    'mrjones2014/smart-splits.nvim',
-    lazy = false,
-    opts = {},
-    keys = {
-      { '<C-h>', function() require('smart-splits').move_cursor_left() end, desc = 'Focus left window/pane' },
-      { '<C-j>', function() require('smart-splits').move_cursor_down() end, desc = 'Focus lower window/pane' },
-      { '<C-k>', function() require('smart-splits').move_cursor_up() end, desc = 'Focus upper window/pane' },
-      { '<C-l>', function() require('smart-splits').move_cursor_right() end, desc = 'Focus right window/pane' },
-    },
-  },
-  {
     'folke/flash.nvim',
     event = 'VeryLazy',
     opts = {

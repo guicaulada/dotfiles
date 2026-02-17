@@ -3,7 +3,11 @@ local map = vim.keymap.set
 map('n', '<Esc>', '<cmd>nohlsearch<CR>')
 map('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
--- Window navigation handled by smart-splits.nvim (cross-multiplexer)
+-- Window navigation
+map('n', '<C-h>', '<C-w>h', { desc = 'Focus left window' })
+map('n', '<C-j>', '<C-w>j', { desc = 'Focus lower window' })
+map('n', '<C-k>', '<C-w>k', { desc = 'Focus upper window' })
+map('n', '<C-l>', '<C-w>l', { desc = 'Focus right window' })
 
 -- Window management
 map('n', '<leader>wv', '<C-w>v', { desc = 'Split vertical' })
@@ -16,22 +20,15 @@ map('n', '<leader>wo', '<C-w>o', { desc = 'Close other windows' })
 map('n', '<leader>dw', '<C-w>c', { desc = 'Delete window' })
 map('n', '<leader>dW', '<C-w>o', { desc = 'Delete other windows' })
 
--- Diagnostics
-map('n', '<leader>xd', vim.diagnostic.open_float, { desc = 'Show diagnostic' })
-map('n', '<leader>xl', '<cmd>lopen<CR>', { desc = 'Location list' })
-map('n', '<leader>xq', '<cmd>copen<CR>', { desc = 'Quickfix list' })
-map('n', '<leader>xn', vim.diagnostic.goto_next, { desc = 'Next diagnostic' })
-map('n', '<leader>xp', vim.diagnostic.goto_prev, { desc = 'Previous diagnostic' })
-map('n', ']d', vim.diagnostic.goto_next, { desc = 'Next diagnostic' })
-map('n', '[d', vim.diagnostic.goto_prev, { desc = 'Previous diagnostic' })
+-- Diagnostics (panel mappings in trouble.nvim, ]d/[d built-in in 0.11+)
+map('n', '<leader>xn', function() vim.diagnostic.jump({ count = 1 }) end, { desc = 'Next diagnostic' })
+map('n', '<leader>xp', function() vim.diagnostic.jump({ count = -1 }) end, { desc = 'Previous diagnostic' })
 
 -- UI/Toggle options
 map('n', '<leader>uw', '<cmd>set wrap!<CR>', { desc = 'Toggle word wrap' })
 -- <leader>un handled by snacks.nvim (dismiss notifications)
 map('n', '<leader>ur', '<cmd>set relativenumber!<CR>', { desc = 'Toggle relative numbers' })
 map('n', '<leader>us', '<cmd>set spell!<CR>', { desc = 'Toggle spell check' })
-map('n', '<leader>ul', '<cmd>lopen<CR>', { desc = 'Toggle location list' })
-map('n', '<leader>uq', '<cmd>copen<CR>', { desc = 'Toggle quickfix list' })
 
 -- Line movement (Alt+j/k)
 map('n', '<A-j>', '<cmd>m .+1<CR>==', { desc = 'Move line down' })
