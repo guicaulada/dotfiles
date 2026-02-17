@@ -60,3 +60,6 @@ disabled = true
 
 [kubernetes]
 disabled = true
+
+[docker_context]
+disabled = true
