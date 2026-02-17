@@ -1,0 +1,51 @@
+# Theme — One Dark (high contrast) on true black background
+theme = One Double Dark
+background = 000000
+
+# Font — JetBrains Mono (built-in with Nerd Font symbols)
+font-family = JetBrains Mono
+font-size = 14
+font-thicken = true
+adjust-cell-height = 1
+
+# macOS
+macos-titlebar-style = tabs
+macos-option-as-alt = true
+window-colorspace = display-p3
+
+# Window
+window-padding-x = 8
+window-padding-y = 8
+window-save-state = always
+window-vsync = true
+
+# Cursor
+cursor-style = block
+cursor-style-blink = false
+
+# Mouse
+copy-on-select = clipboard
+mouse-hide-while-typing = true
+
+# Splits
+focus-follows-mouse = true
+unfocused-split-opacity = 1
+split-divider-color = 2a2a2a
+keybind = cmd+d=new_split:right
+keybind = cmd+shift+d=new_split:down
+keybind = cmd+shift+left=new_split:left
+keybind = cmd+shift+up=new_split:up
+keybind = cmd+shift+right=new_split:right
+keybind = cmd+shift+down=new_split:down
+keybind = cmd+opt+h=goto_split:left
+keybind = cmd+opt+j=goto_split:bottom
+keybind = cmd+opt+k=goto_split:top
+keybind = cmd+opt+l=goto_split:right
+keybind = cmd+shift+equal=equalize_splits
+keybind = cmd+shift+enter=toggle_split_zoom
+keybind = shift+enter=text:\n
+keybind = cmd+r=prompt_surface_title
+
+# Shell integration
+shell-integration = detect
+shell-integration-features = cursor,sudo,title
