@@ -1,13 +1,13 @@
 # Docker desktop added completions
 fpath=($HOME/.docker/completions $fpath)
 
-# Completions
-autoload -Uz compinit
-compinit
-
 # Antidote plugin manager
 source "$HOMEBREW_PREFIX/opt/antidote/share/antidote/antidote.zsh"
 antidote load
+
+# Completions (after antidote so all plugins' fpath entries are available)
+autoload -Uz compinit
+compinit
 
 # zoxide (smarter cd)
 eval "$(zoxide init zsh)"
@@ -18,22 +18,42 @@ eval "$(starship init zsh)"
 # mise (runtime version manager)
 eval "$(mise activate zsh)"
 
-# thefuck (command correction)
-eval $(thefuck --alias)
+# thefuck (lazy-loaded for faster startup)
+fuck() {
+  unfunction fuck
+  eval $(thefuck --alias)
+  fuck "$@"
+}
+
+# History
+HISTFILE=~/.zsh_history
+HISTSIZE=50000
+SAVEHIST=50000
+setopt HIST_IGNORE_ALL_DUPS
+setopt SHARE_HISTORY
+setopt HIST_REDUCE_BLANKS
+
+# Shell options
+setopt AUTO_CD
+setopt NO_CLOBBER
+setopt EXTENDED_GLOB
 
 # Aliases
 alias vim=nvim
 
 # Git helpers
 gcnov() {
-  git commit --no-verify $@
+  git commit --no-verify "$@"
 }
 
 gpsu() {
-  git push --set-upstream origin $(git branch --show-current) $@
+  git push --set-upstream origin "$(git branch --show-current)" "$@"
 }
 
 grtg() {
+  echo "This will delete and recreate tag '$1', then force-push to origin."
+  read -q "REPLY?Continue? [y/N] " || { echo; return 1; }
+  echo
   git tag -d "$1"
   git tag "$1"
   git push origin -f "$1"
