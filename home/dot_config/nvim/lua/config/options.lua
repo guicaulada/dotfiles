@@ -22,6 +22,7 @@ opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 opt.inccommand = 'split'
 opt.cursorline = true
 opt.scrolloff = 10
+opt.smoothscroll = true
 opt.sidescroll = 1
 opt.sidescrolloff = 10
 opt.confirm = true

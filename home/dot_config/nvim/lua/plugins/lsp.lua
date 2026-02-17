@@ -67,15 +67,7 @@ return {
         -- TypeScript/JavaScript
         ts_ls = {},
         biome = {},
-        -- Rust
-        rust_analyzer = {
-          settings = {
-            ['rust-analyzer'] = {
-              checkOnSave = { command = 'clippy' },
-              cargo = { allFeatures = true },
-            },
-          },
-        },
+        -- Rust: handled by rustaceanvim (rust.lua)
         -- Python
         pyright = {},
         -- Go
@@ -111,7 +103,6 @@ return {
         'lua-language-server',
         'typescript-language-server',
         'biome',
-        'rust-analyzer',
         'pyright',
         'gopls',
         'jsonnet-language-server',
@@ -125,6 +116,9 @@ return {
         'bash-language-server',
         'shfmt',
         'shellcheck',
+        -- Linters
+        'eslint_d',
+        'markdownlint-cli',
         -- Formatters
         'stylua',
         'prettier',
@@ -141,22 +135,20 @@ return {
         vim.lsp.enable(name)
       end
 
-      vim.lsp.config('lua_ls', {
-        on_init = function(client)
-          if client.workspace_folders then
-            local path = client.workspace_folders[1].name
-            if path ~= vim.fn.stdpath('config') and (vim.uv.fs_stat(path .. '/.luarc.json') or vim.uv.fs_stat(path .. '/.luarc.jsonc')) then
-              return
-            end
-          end
-          client.config.settings.Lua = vim.tbl_deep_extend('force', client.config.settings.Lua, {
-            runtime = { version = 'LuaJIT', path = { 'lua/?.lua', 'lua/?/init.lua' } },
-            workspace = { checkThirdParty = false, library = vim.api.nvim_get_runtime_file('', true) },
-          })
-        end,
-        settings = { Lua = {} },
-      })
+      -- lua_ls: workspace config handled by lazydev.nvim
+      vim.lsp.config('lua_ls', { settings = { Lua = {} } })
       vim.lsp.enable('lua_ls')
     end,
+  },
+
+  -- Neovim Lua development (replaces manual lua_ls on_init)
+  {
+    'folke/lazydev.nvim',
+    ft = 'lua',
+    opts = {
+      library = {
+        { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
+      },
+    },
   },
 }
