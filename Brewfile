@@ -23,10 +23,31 @@ brew "mise"
 brew "ripgrep"
 brew "fd"
 
+# Shell utilities
+brew "bat"
+brew "eza"
+brew "tree"
+brew "direnv"
+brew "jq"
+
+# Linting and formatting
+brew "shellcheck"
+brew "shfmt"
+brew "go-jsonnet"
+
+# Cloud and infrastructure
+brew "awscli"
+brew "terraform"
+brew "kubernetes-cli"
+brew "helm"
+brew "k9s"
+
 # Utilities
 brew "chezmoi"
-brew "jq"
+brew "tmux"
 brew "uv"
 
 # Casks
 cask "ghostty"
+cask "1password-cli"
+cask "google-cloud-sdk"
