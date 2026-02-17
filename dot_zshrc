@@ -2,7 +2,7 @@
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # The following lines have been added by Docker Desktop to enable Docker CLI completions.
-fpath=(/Users/guicaulada/.docker/completions $fpath)
+fpath=($HOME/.docker/completions $fpath)
 
 autoload -Uz compinit
 compinit
@@ -15,7 +15,7 @@ export PATH="/opt/homebrew/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/bin
 
 # Set PATH for Go
 export PATH="$PATH:$(go env GOPATH)/bin"
-alias go="/Users/guicaulada/go/bin/go1.25.1"
+alias go="$HOME/go/bin/go1.25.1"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
