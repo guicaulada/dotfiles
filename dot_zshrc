@@ -1,0 +1,53 @@
+# Homebrew environment (sets $HOMEBREW_PREFIX correctly on Intel + Apple Silicon)
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# The following lines have been added by Docker Desktop to enable Docker CLI completions.
+fpath=(/Users/guicaulada/.docker/completions $fpath)
+
+autoload -Uz compinit
+compinit
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+export PATH="/opt/homebrew/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/bin:$PATH"
+
+# Set PATH for Go
+export PATH="$PATH:$(go env GOPATH)/bin"
+alias go="/Users/guicaulada/go/bin/go1.25.1"
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# ── fzf-tab (must be AFTER compinit, BEFORE autosuggestions)
+source "$HOMEBREW_PREFIX/opt/fzf-tab/share/fzf-tab/fzf-tab.zsh"
+
+# ── zoxide (smarter cd)
+eval "$(zoxide init zsh)"
+
+# ── autosuggestions
+source "$HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+
+# ── fast syntax highlighting (put this near the end)
+source "$HOMEBREW_PREFIX/opt/zsh-fast-syntax-highlighting/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
+
+export STARSHIP_CONFIG="$HOME/.config/starship/starship.toml"
+eval "$(starship init zsh)"
+
+eval "$(mise activate zsh)"
+
+eval $(thefuck --alias)
+
+# Tab title — append to Ghostty's hooks to guarantee running last
+_ghostty_title_hook() {
+  if (( $+functions[_ghostty_precmd] )); then
+    functions[_ghostty_precmd]+='
+      builtin print -Pn "\e]0;%1~\a"'
+    functions[_ghostty_preexec]+='
+      builtin print -Pn "\e]0;%1~\a"'
+    print -Pn "\e]0;%1~\a"
+    add-zsh-hook -d precmd _ghostty_title_hook
+  fi
+}
+autoload -Uz add-zsh-hook
+add-zsh-hook precmd _ghostty_title_hook
