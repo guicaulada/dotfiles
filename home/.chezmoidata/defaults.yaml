@@ -1,0 +1,11 @@
+editor: nvim
+
+paths:
+  homebrew:
+    arm64: /opt/homebrew
+    amd64: /usr/local
+  gobin: go/bin
+  gcloud: Caskroom/gcloud-cli/latest/google-cloud-sdk/bin
+
+onepassword:
+  ssh_key: "op://Private/SSH Key/public key"
