@@ -102,8 +102,8 @@ bashToolPatterns:
   - pattern: '\bmkfs\.'
     reason: filesystem format command
 
-  - pattern: '>\s*/dev/[a-z]'
-    reason: redirect to device file
+  - pattern: '>\s*/dev/(?!null)[a-z]'
+    reason: redirect to device file (excluding /dev/null)
 
   - pattern: '\bdd\s+.*of=/dev/'
     reason: dd writing to device
