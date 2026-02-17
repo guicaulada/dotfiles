@@ -1,3 +1,6 @@
+# Deferred compinit (must be first, before any compdef calls)
+mattmc3/ez-compinit
+
 # Git aliases
 ohmyzsh/ohmyzsh path:plugins/git
 
