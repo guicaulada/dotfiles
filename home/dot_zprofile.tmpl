@@ -1,0 +1,31 @@
+# Homebrew (must be first, sets $HOMEBREW_PREFIX for everything else)
+{{- if eq .chezmoi.arch "arm64" }}
+if [[ -f /opt/homebrew/bin/brew ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+{{- else }}
+if [[ -f /usr/local/bin/brew ]]; then
+  eval "$(/usr/local/bin/brew shellenv)"
+fi
+{{- end }}
+
+# XDG base directories
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_STATE_HOME="$HOME/.local/state"
+export XDG_CACHE_HOME="$HOME/.cache"
+
+# Editor
+export EDITOR={{ .editor }}
+export VISUAL={{ .editor }}
+
+# Ripgrep
+export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/config"
+
+# PATH
+export PATH="$HOME/.local/bin:$PATH"
+export PATH="$PATH:$HOME/{{ .paths.gobin }}"
+{{- if eq .chezmoi.os "darwin" }}
+GCS_PATH="{{ index .paths.homebrew .chezmoi.arch }}/{{ .paths.gcloud }}"
+[ -d "$GCS_PATH" ] && export PATH="$GCS_PATH:$PATH"
+{{- end }}
