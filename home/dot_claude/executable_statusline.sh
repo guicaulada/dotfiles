@@ -69,7 +69,7 @@ cache_ttl=5
 
 get_git_info() {
     if [ -f "$cache_file" ]; then
-        cache_age=$(($(date +%s) - $(stat -f %m "$cache_file" 2>/dev/null || echo 0)))
+        cache_age=$(($(date +%s) - $(stat -f %m "$cache_file" 2>/dev/null || stat -c %Y "$cache_file" 2>/dev/null || echo 0)))
         if [ "$cache_age" -lt "$cache_ttl" ]; then
             cat "$cache_file"
             return
