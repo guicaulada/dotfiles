@@ -1,0 +1,238 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
+    "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1"
+  },
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:www.anthropic.com)",
+      "WebFetch(domain:docs.anthropic.com)",
+      "WebFetch(domain:code.claude.com)",
+      "WebFetch(domain:platform.claude.com)",
+      "WebFetch(domain:mikeyobrien.github.io)",
+      "WebFetch(domain:awesomeclaude.ai)",
+      "Bash(gh issue view *)",
+      "Bash(gh issue list *)",
+      "Bash(gh pr view *)",
+      "Bash(gh pr diff *)",
+      "Bash(gh pr checks *)",
+      "Bash(gh pr list *)",
+      "Bash(gh pr create --web *)",
+      "Bash(git add *)",
+      "Bash(git branch *)",
+      "Bash(git checkout *)",
+      "Bash(git commit *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git pull *)",
+      "Bash(git stash *)",
+      "Bash(git status *)",
+      "Bash(ls *)"
+    ],
+    "deny": [
+      "Read(.env)",
+      "Read(.env.*)",
+      "Read(**/.env)",
+      "Read(**/.env.*)",
+      "Read(**/secrets/**)",
+      "Read(**/credentials.json)",
+      "Read(**/*.pem)",
+      "Read(**/*.key)",
+      "Read(~/.ssh/**)",
+      "Read(~/.aws/**)",
+      "Read(~/.config/gcloud/**)",
+      "Bash(rm -rf *)",
+      "Bash(rm -r *)",
+      "Bash(rm --recursive *)",
+      "Bash(sudo *)",
+      "Bash(chmod 777 *)",
+      "Bash(chmod -R 777 *)",
+      "Bash(> /dev/sd*)",
+      "Bash(mkfs *)",
+      "Bash(curl* -d *)",
+      "Bash(curl* --data *)",
+      "Bash(wget* --post-data *)",
+      "Bash(dd if=* of=/dev/* *)",
+      "Bash(find * -delete *)",
+      "Bash(git clean *)",
+      "Bash(git stash clear *)",
+      "Bash(git reflog expire *)",
+      "Bash(git filter-branch *)",
+      "Bash(git gc *--prune=now *)",
+      "Bash(kill -9 -1 *)",
+      "Bash(killall -9 *)",
+      "Bash(pkill -9 *)",
+      "Bash(history -c *)",
+      "Bash(aws s3 rm *--recursive *)",
+      "Bash(aws s3 rb *--force *)",
+      "Bash(aws ec2 terminate-instances *)",
+      "Bash(aws rds delete-db-instance *)",
+      "Bash(aws cloudformation delete-stack *)",
+      "Bash(aws dynamodb delete-table *)",
+      "Bash(aws eks delete-cluster *)",
+      "Bash(aws lambda delete-function *)",
+      "Bash(aws iam delete-role *)",
+      "Bash(aws iam delete-user *)",
+      "Bash(gcloud projects delete *)",
+      "Bash(gcloud compute instances delete *)",
+      "Bash(gcloud sql instances delete *)",
+      "Bash(gcloud container clusters delete *)",
+      "Bash(gcloud storage rm *-r *)",
+      "Bash(gcloud functions delete *)",
+      "Bash(gcloud iam service-accounts delete *)",
+      "Bash(firebase projects:delete *)",
+      "Bash(firebase firestore:delete *--all-collections *)",
+      "Bash(firebase database:remove *)",
+      "Bash(firebase hosting:disable *)",
+      "Bash(firebase functions:delete *)",
+      "Bash(vercel remove *--yes *)",
+      "Bash(vercel projects rm *)",
+      "Bash(vercel env rm *--yes *)",
+      "Bash(netlify sites:delete *)",
+      "Bash(netlify functions:delete *)",
+      "Bash(wrangler delete *)",
+      "Bash(wrangler r2 bucket delete *)",
+      "Bash(wrangler kv:namespace delete *)",
+      "Bash(wrangler d1 delete *)",
+      "Bash(wrangler queues delete *)",
+      "Bash(docker system prune *-a *)",
+      "Bash(docker volume rm *)",
+      "Bash(docker volume prune *)",
+      "Bash(docker rmi *-f *)",
+      "Bash(kubectl delete namespace *)",
+      "Bash(kubectl delete all --all *)",
+      "Bash(kubectl delete *--all --all-namespaces *)",
+      "Bash(helm uninstall *)",
+      "Bash(redis-cli FLUSHALL *)",
+      "Bash(redis-cli FLUSHDB *)",
+      "Bash(dropdb *)",
+      "Bash(mysqladmin drop *)",
+      "Bash(mongosh *dropDatabase *)",
+      "Bash(mongo *dropDatabase *)",
+      "Bash(terraform destroy *)",
+      "Bash(pulumi destroy *)",
+      "Bash(serverless remove *)",
+      "Bash(sls remove *)",
+      "Bash(sam delete *)",
+      "Bash(heroku apps:destroy *)",
+      "Bash(heroku pg:reset *)",
+      "Bash(fly apps destroy *)",
+      "Bash(fly destroy *)",
+      "Bash(doctl compute droplet delete *)",
+      "Bash(doctl databases delete *)",
+      "Bash(supabase db reset *)",
+      "Bash(gh repo delete *)",
+      "Bash(npm unpublish *)",
+      "Bash(*DROP TABLE*)",
+      "Bash(*DROP DATABASE*)",
+      "Bash(*TRUNCATE TABLE*)"
+    ],
+    "ask": [
+      "Bash(git push *)",
+      "Bash(git push --force *)",
+      "Bash(git reset --hard *)"
+    ]
+  },
+  "model": "opus",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '## Git Context'; git rev-parse --abbrev-ref HEAD 2>/dev/null && git log --oneline -5 2>/dev/null && git status --short 2>/dev/null || echo 'Not a git repository'",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run ~/.claude/hooks/damage-control/bash-tool-damage-control.py",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run ~/.claude/hooks/damage-control/edit-tool-damage-control.py",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run ~/.claude/hooks/damage-control/write-tool-damage-control.py",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/bash-logger.sh",
+            "timeout": 5,
+            "async": true
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "auto",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/backup-transcript.sh",
+            "timeout": 10,
+            "async": true
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "permission_prompt|idle_prompt",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "osascript -e 'display notification \"Claude Code needs your attention\" with title \"Claude Code\"'",
+            "timeout": 5,
+            "async": true
+          }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash ~/.claude/statusline.sh",
+    "padding": 0
+  },
+  "enabledPlugins": {
+    "typescript-lsp@claude-plugins-official": true,
+    "gopls-lsp@claude-plugins-official": true
+  },
+  "skipDangerousModePermissionPrompt": true
+}
