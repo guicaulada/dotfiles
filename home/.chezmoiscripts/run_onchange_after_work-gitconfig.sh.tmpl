@@ -1,0 +1,14 @@
+{{- if .is_work -}}
+#!/bin/bash
+# work gitconfig hash: {{ .employer }}:{{ .work_email }}
+set -euo pipefail
+
+mkdir -p "$HOME/Work/{{ .employer }}"
+
+cat > "$HOME/Work/{{ .employer }}/.gitconfig" <<'EOF'
+[user]
+	email = {{ .work_email }}
+EOF
+
+echo "==> Work .gitconfig written to ~/Work/{{ .employer }}/.gitconfig"
+{{ end -}}
