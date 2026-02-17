@@ -1,22 +1,16 @@
-# Completions
+# Docker desktop added completions
 fpath=($HOME/.docker/completions $fpath)
+
+# Completions
 autoload -Uz compinit
 compinit
 
-# fzf (fuzzy finder)
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-# fzf-tab (must be AFTER compinit, BEFORE autosuggestions)
-source "$HOMEBREW_PREFIX/opt/fzf-tab/share/fzf-tab/fzf-tab.zsh"
+# Antidote plugin manager
+source "$HOMEBREW_PREFIX/opt/antidote/share/antidote/antidote.zsh"
+antidote load
 
 # zoxide (smarter cd)
 eval "$(zoxide init zsh)"
-
-# Autosuggestions
-source "$HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
-
-# Fast syntax highlighting (must be near the end of plugin loading)
-source "$HOMEBREW_PREFIX/opt/zsh-fast-syntax-highlighting/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
 
 # Starship (prompt)
 eval "$(starship init zsh)"
