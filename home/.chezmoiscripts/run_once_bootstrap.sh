@@ -15,7 +15,7 @@ CHEZMOI_DIR="${HOME}/.local/share/chezmoi"
 BREWFILE="${CHEZMOI_DIR}/Brewfile"
 if [ -f "$BREWFILE" ]; then
   echo "==> Installing Brewfile dependencies..."
-  brew bundle --file="$BREWFILE" --no-lock
+  brew bundle --file="$BREWFILE"
 fi
 
 # Set up antidote plugins

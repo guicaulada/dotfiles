@@ -50,4 +50,4 @@ brew "uv"
 # Casks
 cask "ghostty"
 cask "1password-cli"
-cask "google-cloud-sdk"
+cask "gcloud-cli"

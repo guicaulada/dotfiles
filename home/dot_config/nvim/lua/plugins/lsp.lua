@@ -118,7 +118,7 @@ return {
         'shellcheck',
         -- Linters
         'eslint_d',
-        'markdownlint-cli',
+        'markdownlint-cli2',
         -- Formatters
         'stylua',
         'prettier',
