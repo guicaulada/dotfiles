@@ -1,38 +1,51 @@
-# Homebrew environment (sets $HOMEBREW_PREFIX correctly on Intel + Apple Silicon)
-eval "$(/opt/homebrew/bin/brew shellenv)"
-
-# The following lines have been added by Docker Desktop to enable Docker CLI completions.
+# Completions
 fpath=($HOME/.docker/completions $fpath)
-
 autoload -Uz compinit
 compinit
 
-export PATH="/opt/homebrew/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/bin:$PATH"
-
-# Set PATH for Go
-export PATH="$PATH:$(go env GOPATH)/bin"
-
+# fzf (fuzzy finder)
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-# ── fzf-tab (must be AFTER compinit, BEFORE autosuggestions)
+# fzf-tab (must be AFTER compinit, BEFORE autosuggestions)
 source "$HOMEBREW_PREFIX/opt/fzf-tab/share/fzf-tab/fzf-tab.zsh"
 
-# ── zoxide (smarter cd)
+# zoxide (smarter cd)
 eval "$(zoxide init zsh)"
 
-# ── autosuggestions
+# Autosuggestions
 source "$HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
 
-# ── fast syntax highlighting (put this near the end)
+# Fast syntax highlighting (must be near the end of plugin loading)
 source "$HOMEBREW_PREFIX/opt/zsh-fast-syntax-highlighting/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
 
+# Starship (prompt)
 eval "$(starship init zsh)"
 
+# mise (runtime version manager)
 eval "$(mise activate zsh)"
 
+# thefuck (command correction)
 eval $(thefuck --alias)
 
-# Tab title — append to Ghostty's hooks to guarantee running last
+# Aliases
+alias vim=nvim
+
+# Git helpers
+gcnov() {
+  git commit --no-verify $@
+}
+
+gpsu() {
+  git push --set-upstream origin $(git branch --show-current) $@
+}
+
+grtg() {
+  git tag -d "$1"
+  git tag "$1"
+  git push origin -f "$1"
+}
+
+# Ghostty tab title (append to Ghostty's hooks to guarantee running last)
 _ghostty_title_hook() {
   if (( $+functions[_ghostty_precmd] )); then
     functions[_ghostty_precmd]+='
