@@ -14,7 +14,19 @@ jobs:
       - name: Install chezmoi
         run: brew install chezmoi
 
+      - name: Seed chezmoi config
+        run: |
+          mkdir -p ~/.config/chezmoi
+          cat > ~/.config/chezmoi/chezmoi.toml << 'EOF'
+          [data]
+            name = "test"
+            email = "test@example.com"
+            is_work = false
+            employer = ""
+            work_email = ""
+          EOF
+
       - name: Initialize and apply
         run: |
-          chezmoi init --source="$GITHUB_WORKSPACE" --no-tty --promptBool=false --promptString=test
+          chezmoi init --source="$GITHUB_WORKSPACE" --no-tty
           chezmoi apply --source="$GITHUB_WORKSPACE" --no-tty --force
