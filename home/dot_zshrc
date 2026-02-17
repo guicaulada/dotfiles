@@ -2,10 +2,6 @@
 source "$HOMEBREW_PREFIX/opt/antidote/share/antidote/antidote.zsh"
 antidote load
 
-# Completions (after antidote so all plugins' fpath entries are available)
-autoload -Uz compinit
-compinit -C
-
 # zoxide (smarter cd)
 eval "$(zoxide init zsh)"
 
