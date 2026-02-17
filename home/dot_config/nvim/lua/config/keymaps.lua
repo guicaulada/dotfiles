@@ -10,7 +10,7 @@ map('n', '<leader>wv', '<C-w>v', { desc = 'Split vertical' })
 map('n', '<leader>ws', '<C-w>s', { desc = 'Split horizontal' })
 map('n', '<leader>wc', '<C-w>c', { desc = 'Close window' })
 map('n', '<leader>wo', '<C-w>o', { desc = 'Close other windows' })
-map('n', '<leader>w=', '<C-w>=', { desc = 'Balance windows' })
+-- <leader>w= handled by windows.nvim (WindowsEqualize)
 
 -- Delete operations
 map('n', '<leader>dw', '<C-w>c', { desc = 'Delete window' })
@@ -27,7 +27,8 @@ map('n', '[d', vim.diagnostic.goto_prev, { desc = 'Previous diagnostic' })
 
 -- UI/Toggle options
 map('n', '<leader>uw', '<cmd>set wrap!<CR>', { desc = 'Toggle word wrap' })
-map('n', '<leader>un', '<cmd>set relativenumber!<CR>', { desc = 'Toggle relative numbers' })
+-- <leader>un handled by snacks.nvim (dismiss notifications)
+map('n', '<leader>ur', '<cmd>set relativenumber!<CR>', { desc = 'Toggle relative numbers' })
 map('n', '<leader>us', '<cmd>set spell!<CR>', { desc = 'Toggle spell check' })
 map('n', '<leader>ul', '<cmd>lopen<CR>', { desc = 'Toggle location list' })
 map('n', '<leader>uq', '<cmd>copen<CR>', { desc = 'Toggle quickfix list' })
