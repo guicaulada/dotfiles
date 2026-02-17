@@ -1,0 +1,15 @@
+--smart-case
+--hidden
+--glob=!.git/
+--glob=!node_modules/
+--glob=!.venv/
+--glob=!venv/
+--glob=!target/
+--glob=!dist/
+--glob=!build/
+--glob=!__pycache__/
+--glob=!.next/
+--glob=!*.min.js
+--glob=!*.min.css
+--max-columns=200
+--max-columns-preview
