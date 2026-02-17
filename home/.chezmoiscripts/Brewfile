@@ -1,0 +1,32 @@
+# Shell essentials
+brew "antidote"
+brew "starship"
+brew "zoxide"
+brew "thefuck"
+brew "fzf"
+
+# Editor
+brew "neovim"
+
+# Git
+brew "git-lfs"
+brew "gh"
+brew "lazygit"
+brew "git-delta"
+brew "pre-commit"
+brew "gitleaks"
+
+# Runtime management
+brew "mise"
+
+# Search
+brew "ripgrep"
+brew "fd"
+
+# Utilities
+brew "chezmoi"
+brew "jq"
+brew "uv"
+
+# Casks
+cask "ghostty"
