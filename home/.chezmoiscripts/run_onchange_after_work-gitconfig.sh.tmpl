@@ -1,14 +1,14 @@
 {{- if .is_work -}}
 #!/bin/bash
-# work gitconfig hash: {{ .employer }}:{{ .work_email }}
+# work gitconfig hash: {{ .company }}:{{ .work_email }}
 set -euo pipefail
 
-mkdir -p "$HOME/Work/{{ .employer }}"
+mkdir -p "$HOME/Work/{{ .company }}"
 
-cat > "$HOME/Work/{{ .employer }}/.gitconfig" <<'EOF'
+cat > "$HOME/Work/{{ .company }}/.gitconfig" <<'EOF'
 [user]
 	email = {{ .work_email }}
 EOF
 
-echo "==> Work .gitconfig written to ~/Work/{{ .employer }}/.gitconfig"
+echo "==> Work .gitconfig written to ~/Work/{{ .company }}/.gitconfig"
 {{ end -}}

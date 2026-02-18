@@ -55,6 +55,6 @@
 	required = true
 {{- if .is_work }}
 
-[includeIf "gitdir:~/Work/{{ .employer }}/"]
-	path = ~/Work/{{ .employer }}/.gitconfig
+[includeIf "gitdir:~/Work/{{ .company }}/"]
+	path = ~/Work/{{ .company }}/.gitconfig
 {{- end }}
