@@ -1,0 +1,8 @@
+#!/bin/bash
+# plugins hash: {{ include "dot_zsh_plugins.txt" | sha256sum }}
+set -euo pipefail
+
+if command -v antidote &>/dev/null; then
+  echo "==> Plugins changed, bundling antidote plugins..."
+  antidote bundle <"${HOME}/.zsh_plugins.txt" >"${HOME}/.zsh_plugins.zsh"
+fi

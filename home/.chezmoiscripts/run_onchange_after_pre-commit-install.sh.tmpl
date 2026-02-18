@@ -1,0 +1,10 @@
+#!/bin/bash
+# pre-commit config hash: {{ include "../.pre-commit-config.yaml" | sha256sum }}
+set -euo pipefail
+
+CHEZMOI_DIR="${HOME}/.local/share/chezmoi"
+if [ -f "$CHEZMOI_DIR/.pre-commit-config.yaml" ] && command -v pre-commit &>/dev/null; then
+  echo "==> Pre-commit config changed, installing hooks..."
+  cd "$CHEZMOI_DIR"
+  pre-commit install
+fi
