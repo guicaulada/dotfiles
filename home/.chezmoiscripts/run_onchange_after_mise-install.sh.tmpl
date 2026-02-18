@@ -1,0 +1,8 @@
+#!/bin/bash
+# mise config hash: {{ include "dot_config/mise/config.toml" | sha256sum }}
+set -euo pipefail
+
+if command -v mise &>/dev/null; then
+  echo "==> Mise config changed, installing runtimes..."
+  mise install --yes
+fi
