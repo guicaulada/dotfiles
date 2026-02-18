@@ -6,10 +6,6 @@
   ],
   "schedule": ["before 9am on monday"],
   "minimumReleaseAge": "7 days",
-  "autodiscover": true,
-  "onboarding": false,
-  "requireConfig": "optional",
-  "platformCommit": "enabled",
   "pre-commit": {
     "enabled": true
   },
