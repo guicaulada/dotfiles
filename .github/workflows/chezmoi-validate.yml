@@ -14,6 +14,8 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
 
       - name: Install chezmoi
         run: brew install chezmoi
@@ -26,7 +28,7 @@ jobs:
             name = "test"
             email = "test@example.com"
             is_work = false
-            employer = ""
+            company = ""
             work_email = ""
           EOF
 

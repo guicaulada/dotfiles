@@ -16,11 +16,11 @@ regex = '''(?i)\b{{ .name | regexQuoteMeta }}\b'''
 tags = ["pii", "name"]
 {{ if .is_work }}
 [[rules]]
-id = "employer-reference"
-description = "Block employer name references"
-regex = '''(?i)\b{{ .employer | regexQuoteMeta }}\b'''
-keywords = [{{ .employer | lower | quote }}]
-tags = ["pii", "employer"]
+id = "company-reference"
+description = "Block company name references"
+regex = '''(?i)\b{{ .company | regexQuoteMeta }}\b'''
+keywords = [{{ .company | lower | quote }}]
+tags = ["pii", "company"]
 
 [[rules]]
 id = "work-email"
