@@ -12,7 +12,9 @@
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": ["home/\\.chezmoiexternal\\.toml$"],
+      "managerFilePatterns": [
+        "/home/\\.chezmoiexternal\\.toml$/"
+      ],
       "matchStrings": [
         "url\\s*=\\s*\"https://raw\\.githubusercontent\\.com/(?<depName>[^/]+/[^/]+)/(?<currentDigest>[a-f0-9]{40})/[^\"]+\"\\s*#\\s*(?<currentValue>\\S+)"
       ],
