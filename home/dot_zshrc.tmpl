@@ -36,6 +36,10 @@ setopt AUTO_CD
 setopt NO_CLOBBER
 setopt EXTENDED_GLOB
 
+# Use emacs key bindings for shell line editing
+# Prevents EDITOR={{ .editor }} from enabling vi mode
+bindkey -e
+
 # Aliases
 alias vim=nvim
 alias cat='bat --paging=never'
