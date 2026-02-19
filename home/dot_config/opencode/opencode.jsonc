@@ -1,0 +1,227 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  // Model
+  "model": "anthropic/claude-opus-4-6",
+  "small_model": "anthropic/claude-haiku-4-5",
+  "enabled_providers": ["anthropic"],
+
+  // General
+  "autoupdate": true,
+  "share": "manual",
+
+  // Permissions
+  // Last matching rule wins. Use "*" as catch-all first, specific rules after.
+  "permission": {
+
+    // Deny reading and searching sensitive files (secrets, keys, credentials)
+    "read": {
+      "*": "allow",
+      "*.env": "deny",
+      "*.env.*": "deny",
+      "*.env.example": "allow",
+      "**/secrets/**": "deny",
+      "**/credentials.json": "deny",
+      "**/*.pem": "deny",
+      "**/*.key": "deny",
+      "**/*.tfstate": "deny",
+      "**/*.tfvars": "deny",
+      "**/.git-credentials": "deny",
+      "~/.ssh/**": "deny",
+      "~/.aws/**": "deny",
+      "~/.config/gcloud/**": "deny",
+      "~/.netrc": "deny",
+      "~/.docker/config.json": "deny",
+      "~/.kube/config": "deny",
+      "~/.config/gh/hosts.yml": "deny",
+      "~/.gnupg/**": "deny"
+    },
+    "grep": {
+      "*": "allow",
+      "*.env": "deny",
+      "*.env.*": "deny",
+      "**/secrets/**": "deny",
+      "**/credentials.json": "deny",
+      "**/*.pem": "deny",
+      "**/*.key": "deny",
+      "**/*.tfstate": "deny",
+      "**/*.tfvars": "deny",
+      "**/.git-credentials": "deny",
+      "~/.ssh/**": "deny",
+      "~/.aws/**": "deny",
+      "~/.config/gcloud/**": "deny",
+      "~/.netrc": "deny",
+      "~/.docker/config.json": "deny",
+      "~/.kube/config": "deny",
+      "~/.config/gh/hosts.yml": "deny",
+      "~/.gnupg/**": "deny"
+    },
+
+    // Other tools — allow without prompting
+    "edit": "allow",
+    "glob": "allow",
+    "list": "allow",
+    "webfetch": "allow",
+    "websearch": "allow",
+    "skill": "allow",
+    "todowrite": "allow",
+    "todoread": "allow",
+    "question": "allow",
+
+    // Bash — ask by default, allow read-only and safe commands
+    "bash": {
+      "*": "ask",
+
+      // Block writes to device files (except /dev/null)
+      "*>/dev/*": "deny",
+      "*> /dev/*": "deny",
+      "*>>/dev/*": "deny",
+      "*>> /dev/*": "deny",
+      "*2>/dev/*": "deny",
+      "*2> /dev/*": "deny",
+      "*2>>/dev/*": "deny",
+      "*2>> /dev/*": "deny",
+      "*&>/dev/*": "deny",
+      "*&> /dev/*": "deny",
+      "*>/dev/null*": "allow",
+      "*> /dev/null*": "allow",
+      "*>>/dev/null*": "allow",
+      "*>> /dev/null*": "allow",
+      "*2>/dev/null*": "allow",
+      "*2> /dev/null*": "allow",
+      "*2>>/dev/null*": "allow",
+      "*2>> /dev/null*": "allow",
+      "*&>/dev/null*": "allow",
+      "*&> /dev/null*": "allow",
+
+      // Filesystem inspection (read-only)
+      "ls *": "allow",
+      "wc *": "allow",
+      "file *": "allow",
+      "stat *": "allow",
+      "diff *": "allow",
+      "tree *": "allow",
+      "pwd *": "allow",
+      "pwd": "allow",
+      "whoami *": "allow",
+      "whoami": "allow",
+      "hostname *": "allow",
+      "hostname": "allow",
+      "date *": "allow",
+      "date": "allow",
+      "uname *": "allow",
+      "uname": "allow",
+      "which *": "allow",
+      "command -v *": "allow",
+      "man *": "allow",
+      "jq *": "allow",
+      "yq *": "allow",
+
+      // Git
+      "git add *": "allow",
+      "git branch *": "allow",
+      "git checkout *": "allow",
+      "git commit *": "allow",
+      "git diff *": "allow",
+      "git diff": "allow",
+      "git log *": "allow",
+      "git log": "allow",
+      "git pull *": "allow",
+      "git stash *": "allow",
+      "git status *": "allow",
+      "git status": "allow",
+      "git remote *": "allow",
+      "git rev-parse *": "allow",
+      "git config *": "allow",
+
+      // GitHub CLI
+      "gh issue view *": "allow",
+      "gh issue list *": "allow",
+      "gh pr view *": "allow",
+      "gh pr diff *": "allow",
+      "gh pr checks *": "allow",
+      "gh pr list *": "allow",
+      "gh pr create *": "allow",
+      "gh repo view *": "allow",
+      "gh repo clone *": "allow",
+      "gh run list *": "allow",
+      "gh run view *": "allow",
+      "gh release list *": "allow",
+      "gh release view *": "allow",
+      "gh search *": "allow",
+      "gh api *": "allow",
+
+      // Cloud providers (read-only)
+      "aws * describe-* *": "allow",
+      "aws * list-* *": "allow",
+      "aws * get-* *": "allow",
+      "aws s3 ls *": "allow",
+      "aws sts get-caller-identity *": "allow",
+      "gcloud * list *": "allow",
+      "gcloud * describe *": "allow",
+      "gcloud config list *": "allow",
+      "gcloud info *": "allow",
+      "gcloud auth list *": "allow",
+      "az * list *": "allow",
+      "az * show *": "allow",
+      "az account show *": "allow",
+      "az version *": "allow",
+
+      // Docker (read-only)
+      "docker ps *": "allow",
+      "docker images *": "allow",
+      "docker logs *": "allow",
+      "docker inspect *": "allow",
+      "docker stats *": "allow",
+      "docker top *": "allow",
+      "docker port *": "allow",
+      "docker network ls *": "allow",
+      "docker network inspect *": "allow",
+      "docker volume ls *": "allow",
+      "docker volume inspect *": "allow",
+      "docker compose ps *": "allow",
+      "docker compose logs *": "allow",
+      "docker info *": "allow",
+      "docker info": "allow",
+      "docker version *": "allow",
+      "docker version": "allow",
+
+      // Kubernetes (read-only)
+      "kubectl get *": "allow",
+      "kubectl describe *": "allow",
+      "kubectl logs *": "allow",
+      "kubectl top *": "allow",
+      "kubectl cluster-info *": "allow",
+      "kubectl config view *": "allow",
+      "kubectl config get-* *": "allow",
+      "kubectl api-resources *": "allow",
+      "kubectl api-versions *": "allow",
+      "kubectl explain *": "allow",
+      "kubectl version *": "allow",
+
+      // Terraform (read-only)
+      "terraform show *": "allow",
+      "terraform plan *": "allow",
+      "terraform state list *": "allow",
+      "terraform state show *": "allow",
+      "terraform output *": "allow",
+      "terraform validate *": "allow",
+      "terraform version *": "allow",
+      "terraform providers *": "allow",
+
+      // Text search and output (read-only)
+      "grep *": "allow",
+      "rg *": "allow",
+      "find *": "allow",
+      "cat *": "allow",
+      "head *": "allow",
+      "tail *": "allow",
+      "echo *": "allow"
+    }
+  },
+
+  // Include rule files as additional instructions
+  "instructions": [
+    "~/.config/opencode/rules/*.md"
+  ]
+}
