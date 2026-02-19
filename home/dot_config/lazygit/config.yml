@@ -12,18 +12,15 @@ gui:
       - "#3b4048"
     selectedLineBgColor:
       - "#2c313a"
-
 git:
-  paging:
-    colorArg: always
-    pager: delta --dark --paging=never
+  pagers:
+    - colorArg: always
+      pager: delta --dark --paging=never
   autoFetch: true
   autoRefresh: true
   branchLogCmd: git log --graph --color=always --abbrev-commit --decorate --date=relative --pretty=medium {{branchName}} --
-
 os:
   editPreset: nvim
-
 keybinding:
   universal:
     quit: q
