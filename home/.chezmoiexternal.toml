@@ -4,26 +4,3 @@ url = "https://raw.githubusercontent.com/rnorth/gh-tidy-notifications/ad1c2d3e2d
 refreshPeriod = "168h"
 executable = true
 
-[".claude/hooks/damage-control/bash-tool-damage-control.py"]
-type = "file"
-url = "https://raw.githubusercontent.com/disler/claude-code-damage-control/f4792c4350f894991292dcfd3f62319abf36360e/.claude/skills/damage-control/hooks/damage-control-python/bash-tool-damage-control.py" # main
-refreshPeriod = "168h"
-executable = true
-
-[".claude/hooks/damage-control/edit-tool-damage-control.py"]
-type = "file"
-url = "https://raw.githubusercontent.com/disler/claude-code-damage-control/f4792c4350f894991292dcfd3f62319abf36360e/.claude/skills/damage-control/hooks/damage-control-python/edit-tool-damage-control.py" # main
-refreshPeriod = "168h"
-executable = true
-
-[".claude/hooks/damage-control/test-damage-control.py"]
-type = "file"
-url = "https://raw.githubusercontent.com/disler/claude-code-damage-control/f4792c4350f894991292dcfd3f62319abf36360e/.claude/skills/damage-control/hooks/damage-control-python/test-damage-control.py" # main
-refreshPeriod = "168h"
-executable = true
-
-[".claude/hooks/damage-control/write-tool-damage-control.py"]
-type = "file"
-url = "https://raw.githubusercontent.com/disler/claude-code-damage-control/f4792c4350f894991292dcfd3f62319abf36360e/.claude/skills/damage-control/hooks/damage-control-python/write-tool-damage-control.py" # main
-refreshPeriod = "168h"
-executable = true
