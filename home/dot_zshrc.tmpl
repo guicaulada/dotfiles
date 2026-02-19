@@ -40,6 +40,11 @@ setopt EXTENDED_GLOB
 # Prevents EDITOR={{ .editor }} from enabling vi mode
 bindkey -e
 
+# Prevent Starship's zle-keymap-select wrapper from recursing
+# In emacs mode we never switch keymaps, so the vi-mode tracking is unnecessary
+function zle-keymap-select { zle reset-prompt }
+zle -N zle-keymap-select
+
 # Aliases
 alias vim=nvim
 alias cat='bat --paging=never'
