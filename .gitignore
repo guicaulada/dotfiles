@@ -1,3 +1,92 @@
-.gitleaks.toml
+# Dependencies
+node_modules/
+vendor/
+bower_components/
+.bundle/
+__pycache__/
+*.pyc
+.venv/
+venv/
+.eggs/
+*.egg-info
+
+# Build outputs
+dist/
+build/
+out/
+target/
+*.o
+*.so
+*.dylib
+
+# Package manager files
+package-lock.json
+npm-shrinkwrap.json
+yarn.lock
+pnpm-lock.yaml
+shrinkwrap.yaml
+bun.lock
+bun.lockb
+Gemfile.lock
+composer.lock
+Cargo.lock
+go.sum
+poetry.lock
+Pipfile.lock
+uv.lock
+lazy-lock.json
+flake.lock
+Podfile.lock
+pubspec.lock
+mix.lock
+
+# IDE / Editor
 .claude/
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# OS files
+.DS_Store
+Thumbs.db
+.Spotlight-V100
+.Trashes
+
+# Caches
+.cache/
+.npm/
+.yarn/
+.pnpm-store/
+.gradle/
+.m2/
+.cargo/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment / secrets
+.env
+.env.local
+.env.*.local
 chezmoi.toml
+.gitleaks.toml
+
+# Misc
+.terraform/
+.terraform.lock.hcl
+.tflint.d/
+.vagrant/
+*.tfstate
+*.tfstate.backup
+.coverage
+htmlcov/
+.tox/
+.nox/
