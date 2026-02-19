@@ -126,6 +126,8 @@
       "git diff": "allow",
       "git log *": "allow",
       "git log": "allow",
+      "git ls-files *": "allow",
+      "git ls-files": "allow",
       "git pull *": "allow",
       "git stash *": "allow",
       "git status *": "allow",

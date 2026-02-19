@@ -37,6 +37,7 @@
       "Bash(git commit *)",
       "Bash(git diff *)",
       "Bash(git log *)",
+      "Bash(git ls-files *)",
       "Bash(git pull *)",
       "Bash(git stash *)",
       "Bash(git status *)",
