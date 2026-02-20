@@ -20,22 +20,36 @@ For PRs with multiple commits of different types, use a descriptive summary that
 Run these commands in parallel:
 
 ```bash
-git remote show origin
+git remote
 git branch --show-current
-git rev-parse --abbrev-ref HEAD@{upstream} 2>/dev/null || echo "no upstream"
-git log --oneline $(git rev-parse --abbrev-ref origin/HEAD 2>/dev/null || echo origin/main)..HEAD
-git diff $(git rev-parse --abbrev-ref origin/HEAD 2>/dev/null || echo origin/main) --stat
+git rev-parse --abbrev-ref --symbolic-full-name HEAD@{upstream} 2>/dev/null || echo "no upstream"
+git for-each-ref --format='%(refname:short)' refs/remotes/*/HEAD
+git branch --list main master
 ```
 
-Identify the default branch, current branch, and whether the branch tracks a remote.
+Resolve `BASE_BRANCH` using this priority:
+
+1. HEAD branch of the upstream remote (if `HEAD@{upstream}` exists)
+2. HEAD branch of `origin` (if available)
+3. Local `main`
+4. Local `master`
+5. Ask the user when no reliable base is available
+
+Resolve `BASE_REMOTE` using this priority:
+
+1. Upstream remote from `HEAD@{upstream}`
+2. `origin` if available
+3. Ask the user when no remote is available
+
+Identify `BASE_BRANCH`, `BASE_REMOTE`, current branch, and whether the branch tracks a remote.
 
 ### Step 2: Analyze Branch Changes
 
-Review the full commit history and diff against the default branch:
+Review the full commit history and diff against `BASE_BRANCH`:
 
 ```bash
-git log --format="%h %s%n%b" DEFAULT_BRANCH..HEAD
-git diff DEFAULT_BRANCH
+git log --format="%h %s%n%b" BASE_BRANCH..HEAD
+git diff BASE_BRANCH
 ```
 
 Understand the overall purpose: is this a feature, bugfix, refactor, docs update, or chore?
@@ -77,7 +91,7 @@ Adapt the template to the PR's complexity — small PRs need less detail, large 
 Push the branch if it has no upstream:
 
 ```bash
-git push -u origin BRANCH_NAME
+git push -u BASE_REMOTE BRANCH_NAME
 ```
 
 Create the PR:
@@ -98,6 +112,8 @@ Return the PR URL to the user.
 
 - If `git push` fails, check for upstream conflicts and advise rebasing.
 - If `gh pr create` fails because a PR already exists, show the existing PR URL.
-- If there are no commits ahead of the default branch, inform the user and stop.
+- If there are no commits ahead of `BASE_BRANCH`, inform the user and stop.
+- If `BASE_BRANCH` cannot be determined from repo state, ask the user for the base branch explicitly before generating the PR.
+- If `BASE_REMOTE` cannot be determined from repo state, ask the user which remote to push to.
 
 $ARGUMENTS

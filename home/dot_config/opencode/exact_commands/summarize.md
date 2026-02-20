@@ -4,7 +4,7 @@ agent: plan
 subtask: true
 ---
 
-Transform text into an exhaustive, structured bullet-point summary that captures every detail for studying and test preparation. This is a restructuring tool — every fact, detail, example, and nuance from the source material appears in the output. Nothing is omitted.
+Transform text into an exhaustive, structured bullet-point summary for studying and test preparation. This is a restructuring tool: preserve source details, examples, and nuance without adding opinion.
 
 ## Workflow
 
@@ -18,7 +18,21 @@ Determine the source material from the user's input:
 
 If the input is ambiguous, ask the user to clarify the source.
 
-### Step 2: Analyze and Categorize
+### Step 2: Validate Access and Coverage Strategy
+
+Before analysis, verify the source can be read fully:
+
+- If a file cannot be read, report the path error and ask for a corrected path
+- If URL fetch fails or times out, report the failure and ask for a new URL or pasted text
+- If the source is too large for one pass, split it into ordered chunks and process all chunks before final output
+
+When chunking is used, keep a coverage log with:
+
+- Chunk count and ordering
+- Any skipped or unreadable sections
+- Confirmation that final output merges all successfully processed chunks
+
+### Step 3: Analyze and Categorize
 
 Read through the entire source material. Classify every piece of information into one of these categories:
 
@@ -32,7 +46,7 @@ Read through the entire source material. Classify every piece of information int
 | **Exceptions & Edge Cases** | Special cases, caveats, "except when" rules |
 | **Summary Points** | Main conclusions, key takeaways, thesis statements |
 
-### Step 3: Produce Summary
+### Step 4: Produce Summary
 
 Output the summary using this format:
 
@@ -67,10 +81,16 @@ Output the summary using this format:
 
 Before returning the summary, verify:
 
-- Every fact from the source material appears in the output
+- Every fact from the successfully processed source content appears in the output
 - No interpretation or opinion is added — only restructuring
 - Definitions are complete, not abbreviated
 - Relationships preserve the directionality from the source (cause → effect, not just "related")
 - Categories with no content are omitted (do not include empty sections)
+- If chunking was required, include a brief coverage note describing what was processed
+
+## Error Handling
+
+- If the source is missing, unreadable, or unsupported, stop and request a valid source.
+- If only partial content is available after retries, clearly label the output as partial and list missing sections.
 
 $ARGUMENTS
