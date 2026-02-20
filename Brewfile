@@ -7,7 +7,6 @@ brew "fzf"
 
 # Editor
 brew "neovim"
-brew "anomalyco/tap/opencode"
 
 # Git
 brew "git-lfs"
@@ -52,4 +51,5 @@ brew "uv"
 # Casks
 cask "ghostty"
 cask "1password-cli"
+cask "claude-code"
 cask "gcloud-cli"
