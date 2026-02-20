@@ -31,6 +31,7 @@ brew "direnv"
 brew "jq"
 
 # Linting and formatting
+brew "actionlint"
 brew "shellcheck"
 brew "shfmt"
 brew "go-jsonnet"
