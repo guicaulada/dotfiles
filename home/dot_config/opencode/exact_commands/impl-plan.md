@@ -124,4 +124,11 @@ Produce the final implementation plan:
 - **Parallel tracks:** {N independent streams}
 ```
 
+## Error Handling
+
+- If requirements are ambiguous, ask focused clarification questions before creating tasks.
+- If repository context cannot be inspected, label architecture assumptions explicitly and continue with best-effort planning.
+- If dependencies between tasks are uncertain, mark them as tentative and call out validation steps.
+- If requested scope is too broad for one plan, split into phased plans and identify a first shippable increment.
+
 $ARGUMENTS

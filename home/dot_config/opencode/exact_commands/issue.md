@@ -105,11 +105,22 @@ Show the complete issue (title, body, labels) to the user for review. Wait for c
 
 ### Step 6: Create Issue
 
+If one or more labels are selected:
+
 ```bash
 gh issue create --title "TITLE" --body "$(cat <<'EOF'
 ...
 EOF
 )" --label "label1,label2"
+```
+
+If no labels are selected, omit `--label` entirely:
+
+```bash
+gh issue create --title "TITLE" --body "$(cat <<'EOF'
+...
+EOF
+)"
 ```
 
 ### Step 7: Return Result

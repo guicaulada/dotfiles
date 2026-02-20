@@ -14,7 +14,9 @@ The commit format, types, and rules are already defined in the project's git-con
 Run these commands in parallel to understand the current state:
 
 ```bash
-git remote show origin
+git remote
+git rev-parse --abbrev-ref --symbolic-full-name HEAD@{upstream} 2>/dev/null || echo "no upstream"
+git for-each-ref --format='%(refname:short)' refs/remotes/*/HEAD
 git status
 git log --oneline -10
 git branch --show-current
@@ -22,15 +24,23 @@ git diff --stat
 git diff --staged --stat
 ```
 
-Identify the default branch from the remote output (typically `main`).
+Resolve a base branch using this priority:
+
+1. HEAD branch of the upstream remote (if `HEAD@{upstream}` exists)
+2. HEAD branch of `origin` (if available)
+3. Local `main` branch
+4. Local `master` branch
+5. Ask the user if none of the above are available
+
+Use this resolved value as `BASE_BRANCH`.
 
 ### Step 2: Analyze Changes
 
-Compare the current branch against the default branch:
+Compare the current branch against `BASE_BRANCH`:
 
 ```bash
-git log --oneline DEFAULT_BRANCH..HEAD
-git diff DEFAULT_BRANCH --stat
+git log --oneline BASE_BRANCH..HEAD
+git diff BASE_BRANCH --stat
 git diff --stat
 git diff --staged --stat
 ```
@@ -94,5 +104,6 @@ When the user asks for help writing a commit, walk through each part step-by-ste
 - If `git commit` fails due to a pre-commit hook, read the hook output, explain the issue, and help the user fix it. Create a new commit after fixing — do not amend.
 - If there are no changes to commit, inform the user and stop.
 - If the working tree has both staged and unstaged changes, ask the user which to include.
+- If no remote exists, continue with a local-base comparison (`main`/`master`) and do not fail.
 
 $ARGUMENTS

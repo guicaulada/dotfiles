@@ -98,4 +98,11 @@ Produce the final design document using this structure:
 {Participants: list of reviewers}
 ```
 
+## Error Handling
+
+- If requirements are missing, ask targeted follow-up questions before drafting proposals.
+- If constraints conflict, surface the conflict explicitly and provide at least two resolution options.
+- If codebase context is unavailable, state the limitation and proceed with assumption-based proposals labeled as assumptions.
+- If the user asks to skip checkpoint review, provide a concise checkpoint summary first and request explicit confirmation.
+
 $ARGUMENTS
