@@ -7,6 +7,7 @@ brew "fzf"
 
 # Editor
 brew "neovim"
+brew "anomalyco/tap/opencode"
 
 # Git
 brew "git-lfs"
