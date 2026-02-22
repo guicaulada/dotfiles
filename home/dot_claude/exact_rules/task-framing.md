@@ -33,3 +33,4 @@ What is explicitly out of scope? Stating what to avoid prevents scope creep and 
 - Ask clarifying questions early rather than making assumptions
 - Document the framing in the PR description or issue for future reference
 - Revisit the framing if scope changes during implementation
+- If the current approach hits unexpected friction, stop and re-plan rather than pushing through

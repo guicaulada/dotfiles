@@ -2,6 +2,10 @@
 
 Quality gates catch problems at different stages, from quick sanity checks to thorough release validation. Each gate adds confidence before moving forward.
 
+## Autonomous Fixes
+
+When given a bug report with sufficient context (logs, errors, failing tests), fix it autonomously without asking for step-by-step guidance.
+
 ## Vibe Check (During Development)
 
 Quick validation that the change is on the right track:
