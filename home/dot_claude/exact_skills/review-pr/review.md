@@ -254,6 +254,20 @@ Status: [STATE] | CI: [CHECKS_STATUS]
 
 </output>
 
+<rules>
+- Run gh commands in parallel where possible to minimize latency
+- Reference specific file:line for every finding
+- Be constructive — acknowledge good patterns alongside areas for improvement
+- Focus on logic and correctness over style preferences
+- Provide concrete suggestions, not just criticism
+- Ask questions when intent is unclear
+- Consider broader context and constraints the author may be working under
+- Use HEREDOC when posting review body to preserve formatting
+- Never post a review to GitHub without explicit user confirmation
+- Always clone to a unique `/tmp/pr-review-XXXXXX` directory for codebase analysis
+- Clean up temp directories after analysis completes
+</rules>
+
 <examples>
 
 <example>
@@ -329,17 +343,3 @@ Solid fix for a real user-facing issue. The race condition suggestion is worth a
 </example>
 
 </examples>
-
-<rules>
-- Run gh commands in parallel where possible to minimize latency
-- Reference specific file:line for every finding
-- Be constructive — acknowledge good patterns alongside areas for improvement
-- Focus on logic and correctness over style preferences
-- Provide concrete suggestions, not just criticism
-- Ask questions when intent is unclear
-- Consider broader context and constraints the author may be working under
-- Use HEREDOC when posting review body to preserve formatting
-- Never post a review to GitHub without explicit user confirmation
-- Always clone to a unique `/tmp/pr-review-XXXXXX` directory for codebase analysis
-- Clean up temp directories after analysis completes
-</rules>

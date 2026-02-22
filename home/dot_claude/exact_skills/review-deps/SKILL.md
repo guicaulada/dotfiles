@@ -1,7 +1,7 @@
 ---
 name: review-deps
-description: Review dependency bump PRs with focus on compatibility and security issues. Use when user mentions review deps, review dependencies, dependency review, check deps, dependency prs, dep bumps, review deps prs, batch dep review.
-allowed-tools: Read, Bash(gh *), Bash(git *), Bash(mktemp *), Bash(rm -rf /tmp/deps-review-*), Grep, Task, WebSearch
+description: Reviews dependency bump PRs with focus on compatibility and security issues. Use when user mentions review deps, review dependencies, dependency review, check deps, dependency prs, dep bumps, review deps prs, batch dep review.
+allowed-tools: Read, Bash(gh *), Bash(mktemp *), Bash(rm -rf /tmp/deps-review-*), Grep, Task, WebSearch
 disable-model-invocation: true
 argument-hint: [pr-number or url...]
 ---
@@ -33,10 +33,10 @@ Review automated dependency bump pull requests with focus on compatibility and s
 
 Trigger: "review deps", "review dependencies", "dependency review", "check deps", "dependency prs", "dep bumps"
 
-Read and follow `skills/review-deps/review.md`.
+Read and follow [review.md](review.md).
 
 ### Batch Review Dependency PRs
 
 Trigger: "review deps prs", "batch dep review", "review dependency prs", "review all dep prs"
 
-Read and follow `skills/review-deps/batch.md`.
+Read and follow [batch.md](batch.md).

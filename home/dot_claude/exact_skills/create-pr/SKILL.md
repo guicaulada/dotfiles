@@ -1,11 +1,12 @@
 ---
 name: create-pr
-description: Create pull requests with auto-generated titles and descriptions. Use when user mentions create pr, open pr, make pr, pull request, pr create, submit pr, open pull request, send pr, or push pr.
+description: Creates pull requests with auto-generated titles and descriptions by analyzing branch commits and discovering related issues. Use when user mentions create pr, open pr, make pr, pull request, pr create, submit pr, open pull request, send pr, or push pr.
 allowed-tools: Read, Bash(git *), Bash(gh *)
 disable-model-invocation: true
+argument-hint: [branch-name]
 ---
 
-# Create PR Skill
+# Create PR
 
 Create well-formatted pull requests by analyzing branch commits, discovering related issues and PRs, and generating titles and descriptions. Opens PR in browser for human review.
 
@@ -30,4 +31,4 @@ For PRs with multiple commits of different types, use a descriptive summary that
 
 Trigger: "create pr", "open pr", "make pr", "pull request", "pr create", "submit pr"
 
-Read and follow `skills/create-pr/create.md`.
+Read and follow [create.md](create.md).

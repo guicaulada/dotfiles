@@ -1,5 +1,5 @@
 ---
-description: Guide user through PDD process to create a structured design document
+description: Guides user through PDD process to create a structured design document
 ---
 
 <purpose>
@@ -329,6 +329,47 @@ Add a notification panel within the dashboard with a bell icon and unread count.
 **Recommended approach:** Proposal 1 - Browser push notifications address the core
 problem of missed alerts even when the dashboard is not in focus.
 ```
+
+</example>
+
+<example>
+
+**Input**: "I want to explore options for migrating our monolith to microservices" (user chooses to start with research)
+
+**Step 1-2 output** (after capturing idea and setting up directory):
+
+I've saved your idea and created the project structure at `.design-docs/monolith-migration/`.
+
+Before we dive into refining the requirements, how would you like to start?
+- **Requirements clarification** — I'll ask you questions one at a time to flesh out the details
+- **Preliminary research** — I can investigate migration patterns, service boundaries, or your existing architecture first
+- **Provide additional context** — Share more details about the monolith or constraints before we begin
+
+**Step 5 output** (after user chose preliminary research):
+
+I've documented my findings in `.design-docs/monolith-migration/research/`:
+
+- `migration-patterns.md` — Strangler Fig, Branch by Abstraction, and parallel-run patterns with comparison table
+- `service-boundaries.md` — Domain analysis of your codebase identifying candidate service boundaries
+
+Key findings:
+- The authentication module has the cleanest boundaries and fewest cross-dependencies — strongest candidate for first extraction
+- The reporting module shares database tables with three other modules — high coupling makes it a poor early candidate
+
+Want me to investigate any other topics, or are we ready to move to requirements clarification?
+
+**Step 6 output** (iteration checkpoint after research + clarification):
+
+Here's where we stand:
+
+**Requirements gathered:** Target architecture (event-driven), performance SLAs (p99 < 200ms), team capacity (2 engineers, 3 months), data consistency model (eventual OK for reporting, strong for auth)
+
+**Research completed:** Migration patterns, service boundary analysis, team case studies
+
+Ready to proceed? Options:
+- **Proceed to design** — requirements and research are sufficient
+- **Return to clarification** — new questions emerged from research
+- **More research** — additional topics need investigation
 
 </example>
 

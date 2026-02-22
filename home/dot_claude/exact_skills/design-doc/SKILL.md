@@ -1,7 +1,8 @@
 ---
 name: design-doc
-description: Create design documents using Prompt-Driven Development to refine ideas into structured proposals. Use when user mentions design doc, design document, RFC, technical proposal, architecture proposal, write a proposal, or PDD.
+description: Creates design documents using Prompt-Driven Development to refine ideas into structured proposals. Use when user mentions design doc, design document, RFC, technical proposal, architecture proposal, write a proposal, or PDD.
 allowed-tools: Read, Write, Bash(mkdir *), Glob, Grep, WebSearch
+argument-hint: [topic or rough idea]
 ---
 
 # Design Doc Skill
@@ -29,4 +30,4 @@ The skill follows the Prompt-Driven Development methodology — iterative refine
 
 Trigger: "design doc", "design document", "RFC", "technical proposal", "architecture proposal", "write a proposal", "PDD"
 
-Read and follow `skills/design-doc/create.md`.
+Read and follow `create.md`.
