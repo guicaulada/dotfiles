@@ -1,109 +1,58 @@
 ---
 name: create-skill
-description: Create new Claude Code skills or review existing ones following Anthropic's best practices for skill structure and prompt engineering. Use when user mentions create skill, new skill, write skill, build skill, make skill, skill template, review skill, audit skill, improve skill, or skill best practices.
+description: Creates new Claude Code skills or reviews existing ones against Anthropic's best practices for structure, conciseness, and prompt engineering. Use when user mentions create skill, new skill, write skill, build skill, make skill, skill template, review skill, audit skill, improve skill, or skill best practices.
 allowed-tools: Read, Write, Edit, Glob, Grep
 argument-hint: [create|review] [skill-name]
 ---
 
 # Create Skill
 
-Create new Claude Code skills or review existing ones. Every skill produced or reviewed is evaluated against Anthropic's documented best practices for skill structure, prompt engineering, and content quality.
+Create new Claude Code skills or review existing ones. Every skill produced or reviewed follows Anthropic's documented best practices.
 
-## Skill Anatomy
+## Core Principles
 
-A skill is a directory under `.claude/skills/` containing a `SKILL.md` entry point and optional supporting files.
+Apply these when authoring or reviewing skills:
 
-### Directory Layout
+1. **Conciseness** — The context window is a public good. Only include information Claude does not already know. Challenge every paragraph: "Does this justify its token cost?"
+2. **Progressive disclosure** — SKILL.md provides the overview and pointers. Detailed content goes in separate files loaded on demand. Keep references one level deep from SKILL.md.
+3. **Degrees of freedom** — Match instruction specificity to task fragility. Destructive or irreversible operations get exact scripts (low freedom). Creative or exploratory tasks get general guidance (high freedom).
+4. **Third-person descriptions** — Write the `description` field as "Processes files..." not "Process files" or "I process files." Third person is critical for reliable skill discovery.
+
+## Frontmatter Reference
+
+| Field | Constraints | Notes |
+|-------|------------|-------|
+| `name` | Kebab-case, max 64 chars, no `anthropic`/`claude` | Becomes the `/name` command. Consider gerund form (e.g., `reviewing-code`) |
+| `description` | Max 1024 chars, third person, non-empty | Include what it does + when to use it with trigger terms |
+| `allowed-tools` | Comma-separated | Scope Bash: `Bash(git *)` not `Bash` |
+| `disable-model-invocation` | Boolean | `true` for side effects on shared state (git push, API calls, deployments) |
+| `user-invocable` | Boolean | `false` only for pure background knowledge |
+| `argument-hint` | String | Autocomplete hint shown in UI: `[issue-number]` |
+| `context` | `fork` | Run in an isolated subagent |
+| `agent` | String | Subagent type when `context: fork`: `Explore`, `Plan`, `general-purpose` |
+| `model` | `opus`, `sonnet`, `haiku` | Model override |
+
+## File Organization
 
 ```
-{skill-name}/
-├── SKILL.md           # Entry point: frontmatter + reference content + workflow index
-├── {workflow}.md       # One file per workflow (create, review, batch, etc.)
-└── {supporting}.md     # Optional: SOPs, templates, detailed references
+{name}/
+├── SKILL.md           # Overview + frontmatter + workflow index (under 500 lines)
+├── {workflow}.md       # One file per workflow, named after action verb
+└── {reference}.md      # Optional detailed reference (loaded on demand)
 ```
 
-### SKILL.md Frontmatter
-
-| Field | Type | Required | Purpose |
-|-------|------|----------|---------|
-| `name` | string | Recommended | Kebab-case identifier, max 64 chars. Defaults to directory name. |
-| `description` | string | Recommended | What the skill does + trigger phrases. Claude uses this to decide when to auto-load. |
-| `allowed-tools` | string | No | Comma-separated tools permitted without user confirmation. Scope Bash with patterns: `Bash(git *)`. |
-| `disable-model-invocation` | boolean | No | Set `true` to prevent auto-loading. User must invoke with `/name`. Use for side-effect operations. |
-| `user-invocable` | boolean | No | Set `false` to hide from `/` menu. Use for background knowledge skills. |
-| `argument-hint` | string | No | Autocomplete hint: `[issue-number]`, `[file] [format]`. |
-| `context` | string | No | Set `fork` to run in an isolated subagent. |
-| `agent` | string | No | Subagent type when `context: fork`: `Explore`, `Plan`, `general-purpose`. |
-| `model` | string | No | Model override: `opus`, `sonnet`, `haiku`. |
-
-### SKILL.md Content Sections
-
-After frontmatter, the SKILL.md contains:
-
-1. **Heading and overview** — One paragraph explaining the skill's purpose
-2. **Reference tables** — Quick-reference for formats, severity levels, types, or conventions the skill uses
-3. **Methodology notes** — Brief description of the approach (link to SOP files for details)
-4. **Workflows section** — Index of available workflows with trigger phrases and file references
-
-### Workflow File Structure
-
-Each workflow file uses XML tags to separate concerns:
-
-| Tag | Purpose |
-|-----|---------|
-| `<purpose>` | What this workflow accomplishes and why |
-| `<process>` | Numbered steps with clear decision points |
-| `<output>` | Exact format of the expected output |
-| `<rules>` | Constraints and quality requirements |
-| `<examples>` | Concrete input/output pairs demonstrating expected behavior |
-
-## Prompt Engineering Principles
-
-Apply these when writing skill content:
-
-1. **Be explicit** — State what to do, not what to avoid. "Write prose paragraphs" instead of "Don't use bullet points."
-2. **Provide context** — Explain why a behavior matters. Claude generalizes from explanations better than from bare rules.
-3. **Use XML tags consistently** — Same tag names throughout. Tags separate structure from content and make prompts parseable.
-4. **Include examples** — 1-3 diverse, relevant examples demonstrating expected output. Wrap in `<example>` tags inside `<examples>`.
-5. **Front-load critical information** — Most important instructions first. Steps in logical order.
-6. **Be specific about format** — Show the exact output structure with placeholders. Use templates with `[PLACEHOLDER]` notation.
-7. **One responsibility per step** — Each numbered step does one thing. Complex steps get sub-steps.
-8. **Specify decision points** — Where the process branches, state conditions and outcomes clearly.
-9. **Ground in evidence** — Reference specific files, lines, or data rather than making assumptions.
-10. **Keep scope tight** — Each skill does one thing well. Split broad skills into focused ones.
-
-## Quality Checklist
-
-| Category | Criterion |
-|----------|-----------|
-| **Frontmatter** | `name` is kebab-case, under 64 chars |
-| | `description` includes purpose + trigger phrases |
-| | `allowed-tools` is minimal and scoped (e.g., `Bash(git *)` not `Bash`) |
-| | `disable-model-invocation` is `true` for operations that affect shared state (git push, API calls, external services). Local file writes with user confirmation gates may omit this. |
-| **Structure** | SKILL.md stays under 500 lines; detailed content in supporting files |
-| | Each workflow is a separate file with XML-tagged sections |
-| | `<purpose>`, `<process>`, `<output>`, and `<rules>` tags are present in workflows |
-| **Content** | Instructions use imperative mood and active voice |
-| | Steps are numbered and sequential |
-| | Decision points have explicit conditions and outcomes |
-| | Output format uses a template with `[PLACEHOLDER]` notation |
-| | At least one example demonstrates expected behavior |
-| **Prompt Quality** | Instructions say what to do, not what to avoid |
-| | Context explains why, not just what |
-| | XML tags are used consistently |
-| | Sections are consistent with each other |
-| | Emphasis is reserved for genuinely critical items |
+Keep references one level deep from SKILL.md. Name files descriptively (`form_validation.md` not `doc2.md`). Use forward slashes in all paths.
 
 ## Workflows
 
 ### Create Skill
 
-Trigger: "create skill", "new skill", "write skill", "build skill", "make skill", "skill template"
+Trigger: "create skill", "new skill", "write skill", "build skill", "make skill"
 
-Read and follow `skills/create-skill/create.md`.
+Read and follow [create.md](create.md).
 
 ### Review Skill
 
 Trigger: "review skill", "audit skill", "improve skill", "skill best practices", "check skill"
 
-Read and follow `skills/create-skill/review.md`.
+Read and follow [review.md](review.md).

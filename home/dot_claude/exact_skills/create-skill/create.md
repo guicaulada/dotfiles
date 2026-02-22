@@ -1,227 +1,222 @@
 ---
-description: Guide user through creating a new Claude Code skill following best practices
+description: Guides creation of a new Claude Code skill following Anthropic's best practices
 ---
 
 <purpose>
-Create a new Claude Code skill from a user's description. Walk through requirements gathering, metadata design, file structure planning, and content generation. Produce skill files that follow Anthropic's best practices for skill structure and prompt engineering.
+Create a new Claude Code skill from a user's description. Gather requirements, design metadata and structure, generate concise skill files, and validate against best practices. Produce skills that follow Anthropic's guidelines for conciseness, progressive disclosure, and prompt engineering.
 </purpose>
 
 <process>
 
-## Step 1: Understand the Skill's Purpose
+## Checklist
 
-Gather the essential information about what the skill should do. Ask the user with AskUserQuestion for any details not already provided:
+Copy and track progress:
 
-- **What does the skill do?** — The core capability in one sentence
-- **When should it activate?** — Trigger phrases and scenarios
-- **What tools does it need?** — Read, Write, Edit, Bash, Glob, Grep, WebFetch, WebSearch, Task, Skill
-- **Does it have side effects?** — Operations that change external state (git push, API calls, file writes)
-- **How many distinct workflows?** — Different modes of operation (e.g., create vs. review, single vs. batch)
+```
+Skill Creation:
+- [ ] Step 1: Gather requirements
+- [ ] Step 2: Design metadata
+- [ ] Step 3: Plan file structure
+- [ ] Step 4: Write SKILL.md
+- [ ] Step 5: Write workflow files
+- [ ] Step 6: Validate and iterate
+```
 
-If the user provides a rough description, extract as much as possible before asking clarifying questions. Ask only for what cannot be inferred.
+## Step 1: Gather Requirements
 
-## Step 2: Determine Metadata
+Determine from the user's input:
 
-Based on the gathered information, determine the frontmatter fields:
+- **Core capability** — What the skill does in one sentence
+- **Trigger scenarios** — When it should activate and common phrases users would say
+- **Required tools** — Which tools it needs (Read, Write, Edit, Bash, Glob, Grep, WebFetch, WebSearch, Task, Skill)
+- **Side effects** — Operations that change shared state (git push, API calls, deployments)
+- **Task fragility** — How destructive or irreversible are the operations? This determines the degree of freedom in instructions
+- **Workflow count** — Distinct modes of operation (e.g., create vs. review, single vs. batch)
 
-**`name`**: Derive from the skill's purpose. Use kebab-case, keep it short and memorable. The name becomes the slash command (`/name`), so it should be easy to type and recall.
+Extract as much as possible from the user's description before asking clarifying questions. Ask only for what cannot be inferred.
 
-**`description`**: Write a single sentence describing what the skill does, followed by trigger phrases. Format: "[What it does]. Use when user mentions [trigger1], [trigger2], [trigger3]..."
+## Step 2: Design Metadata
 
-Trigger phrases should include:
-- The primary action verb (e.g., "review pr")
-- Common synonyms (e.g., "code review", "check pr")
-- Related phrases users might say naturally (e.g., "look at this pr")
+**`name`**: Kebab-case, max 64 chars. This becomes the `/name` command — keep it short and memorable. Consider gerund form (e.g., `reviewing-code`). Must not contain `anthropic` or `claude`.
 
-**`allowed-tools`**: Include only the tools the skill genuinely needs. Scope Bash commands with glob patterns when possible:
-- `Bash(git *)` instead of `Bash` for git operations
-- `Bash(gh *)` instead of `Bash` for GitHub CLI operations
+**`description`**: Write in third person, max 1024 chars. Format: "[What it does]. Use when [trigger terms]."
+
+- Third person: "Generates changelogs..." not "Generate changelogs"
+- Include the primary action and common synonyms as trigger terms
+- Example: "Generates changelogs from git history. Use when user mentions changelog, release notes, or version history."
+
+**`allowed-tools`**: Include only the tools the skill genuinely needs. Scope Bash commands with glob patterns:
+
+- `Bash(git *)` for git operations
+- `Bash(gh *)` for GitHub CLI
 - `Bash(npm *)`, `Bash(python *)` for specific runtimes
 
-**`disable-model-invocation`**: Set to `true` if the skill affects shared state (git push, API calls, external services). Local file writes with user confirmation gates may keep `false` (default). Read-only or advisory skills keep `false`.
+**`disable-model-invocation`**: Set `true` for skills that affect shared state (git push, API calls, deployments, external services). Read-only and advisory skills keep the default (`false`).
 
-**`user-invocable`**: Set to `false` only for pure background knowledge skills with no actionable workflow. Default `true` for most skills.
+Present proposed metadata to the user for confirmation before proceeding.
 
-Present the proposed metadata to the user for confirmation before proceeding.
+## Step 3: Plan File Structure
 
-## Step 3: Design File Structure
+**Simple skill (everything fits under 200 lines):**
 
-Plan the skill's file layout based on the number of workflows and supporting content needed.
-
-**Single-workflow skill:**
 ```
 {name}/
-├── SKILL.md        # Frontmatter + reference content + single workflow
+└── SKILL.md
 ```
 
-Only use this for very simple skills where everything fits in SKILL.md under 200 lines.
+**Standard skill (preferred for non-trivial skills):**
 
-**Multi-workflow skill (preferred for non-trivial skills):**
 ```
 {name}/
-├── SKILL.md        # Frontmatter + reference content + workflow index
-├── {workflow-1}.md  # First workflow
-├── {workflow-2}.md  # Second workflow
-└── {supporting}.md  # Optional: SOP, templates, detailed reference
+├── SKILL.md          # Overview + workflow index
+├── {workflow}.md      # One per workflow
+└── {reference}.md     # Optional detailed reference
 ```
 
-Name workflow files after their action verb: `create.md`, `review.md`, `batch.md`, `amend.md`.
+Name workflow files after their action verb: `create.md`, `review.md`, `analyze.md`. Use forward slashes in all paths.
 
-Present the proposed structure to the user.
+Present proposed structure to the user.
 
 ## Step 4: Write SKILL.md
 
-Generate the SKILL.md with these sections in order:
+Structure in this order:
 
-**1. Frontmatter block** — YAML between `---` delimiters with the metadata from Step 2.
+1. **Frontmatter** — YAML with metadata from Step 2
+2. **Heading and overview** — One paragraph on purpose
+3. **Reference content** (if shared across workflows) — Tables and concise lists for conventions, formats, or types that workflows share
+4. **Workflow index** — For each workflow:
 
-**2. Heading and overview** — `# {Skill Name}` followed by one paragraph explaining the skill's purpose and value.
-
-**3. Reference tables** (if applicable) — Quick-reference material the skill needs across workflows: format specifications, severity levels, type definitions, conventions. Use markdown tables for scannability.
-
-**4. Methodology notes** (if applicable) — Brief description of the approach or process the skill follows. Link to supporting SOP files for details.
-
-**5. Workflows section** — For each workflow:
 ```markdown
-### {Workflow Name}
+### [Workflow Name]
 
-Trigger: "{trigger phrase 1}", "{trigger phrase 2}"
+Trigger: "[phrase 1]", "[phrase 2]"
 
-Read and follow `skills/{skill-name}/{workflow}.md`.
+Read and follow [{workflow}.md]({workflow}.md).
 ```
 
-Apply these content guidelines:
-- Keep SKILL.md under 500 lines. Move detailed content to supporting files.
-- Use tables and bullet points for reference material — they scan faster than prose.
-- Write in imperative mood: "Create a commit" not "Creates a commit."
-- Include only information that applies across all workflows. Workflow-specific content goes in the workflow files.
+**Conciseness check**: For every paragraph, ask "Does Claude already know this?" Remove explanations of general concepts (what markdown is, how XML tags work, general programming advice). Include only information specific to this skill's domain.
+
+Keep SKILL.md under 500 lines. Move detailed content to supporting files.
 
 ## Step 5: Write Workflow Files
 
-For each workflow file, generate content using this structure:
+Each workflow file uses this structure:
 
 **Frontmatter:**
+
 ```yaml
 ---
-description: {One-line description of what this workflow does}
+description: [One-line description of what this workflow does]
 ---
 ```
 
-**`<purpose>` tag:**
-One paragraph explaining what the workflow accomplishes and why it exists. Be specific about inputs and outputs.
+**`<purpose>`** — One paragraph: what the workflow accomplishes, its inputs, and its outputs.
 
-**`<process>` tag:**
-Numbered steps using `## Step N: {Action}` headings. For each step:
-- State what to do clearly in imperative mood
-- Include specific commands, tool calls, or actions
+**`<process>`** — Numbered steps with `## Step N: [Action]` headings.
+
+- Include a copyable checklist at the top for multi-step workflows
+- Use imperative mood and positive framing (state what to do)
 - Mark parallel operations: "Run in parallel:"
-- Include decision points with explicit conditions: "If X, do Y. Otherwise, do Z."
-- Use AskUserQuestion for user decisions, with specific options
+- State decision points explicitly: "If [condition], [action]. Otherwise, [alternative]."
+- Include feedback loops for quality-critical operations: validate, fix, re-validate until clean
 - Keep each step focused on one action
 
-**`<output>` tag:**
-A template showing the exact output format with `[PLACEHOLDER]` notation. Use markdown code blocks for structured output. Show separate templates for different output variants (e.g., single vs. multiple results).
+**`<output>`** — Template with `[PLACEHOLDER]` notation showing exact output format. Show separate templates for different output variants if applicable.
 
-**`<rules>` tag:**
-Bullet list of constraints and quality requirements. Each rule should be:
-- Actionable (can be checked: pass/fail)
-- Specific (no vague guidance like "be careful")
-- Positive (state what to do, not what to avoid)
+**`<rules>`** — Bullet list of constraints. Each rule is actionable (pass/fail checkable), specific (no vague guidance), and stated positively (what to do).
 
-**`<examples>` tag (when applicable):**
-Wrap in `<examples>` containing one or more `<example>` blocks. Each example shows:
-- **Input**: What the user provides
-- **Output**: What the skill produces
+**`<examples>`** — One or more `<example>` blocks with input/output pairs. Cover the standard case and at least one edge case or variant.
 
-Include diverse examples covering:
-- The standard case
-- An edge case or variant
-- A minimal input case
+**Calibrate degrees of freedom**: Match instruction specificity to task fragility.
 
-Apply these prompt engineering principles:
-- Be explicit — if a behavior matters, state it directly
-- Provide context — explain why a rule exists when the reason is not obvious
-- Front-load important information — critical instructions before supporting details
-- Use consistent terminology — same terms for the same concepts throughout
-- Specify format precisely — templates with placeholders, not vague descriptions
+- Destructive or irreversible operations (deployments, data mutations, external API calls) → exact commands, strict sequence, low freedom
+- Creative or exploratory operations (code review, analysis, brainstorming) → general guidance, high freedom
+- Most operations fall in between → preferred patterns with noted alternatives
 
-## Step 6: Validate Against Quality Checklist
+## Step 6: Validate and Iterate
 
-Before presenting the skill to the user, verify it against the quality checklist defined in the SKILL.md reference. Check every criterion and fix any failures.
+Validate the complete skill against this checklist:
 
-Key validation points:
-- Frontmatter has `name`, `description` with trigger phrases, and scoped `allowed-tools`
-- SKILL.md is under 500 lines with detailed content in supporting files
-- Every workflow has `<purpose>`, `<process>`, `<output>`, and `<rules>` tags
-- Steps are numbered and sequential with clear decision points
-- Output format uses templates with `[PLACEHOLDER]` notation
-- At least one example demonstrates expected behavior (for non-trivial workflows)
-- Instructions use imperative mood and say what to do (positive framing)
-- XML tags are consistent throughout
+```
+Quality Check:
+- [ ] Description is third person, specific, includes trigger terms, under 1024 chars
+- [ ] Name is kebab-case, under 64 chars, no "anthropic"/"claude"
+- [ ] SKILL.md body under 500 lines
+- [ ] Every paragraph justifies its token cost (no information Claude already knows)
+- [ ] References one level deep from SKILL.md (no chaining)
+- [ ] File paths use forward slashes only
+- [ ] Each workflow has <purpose>, <process>, <output>, <rules>
+- [ ] At least one <example> per workflow with structured output
+- [ ] Steps are numbered with explicit decision points
+- [ ] Output format uses [PLACEHOLDER] templates
+- [ ] Feedback loops present for quality-critical operations
+- [ ] Instructions use imperative mood, positive framing
+- [ ] allowed-tools scoped to minimum required, Bash uses glob patterns
+- [ ] disable-model-invocation set for shared-state side effects
+- [ ] Terminology consistent throughout (one term per concept)
+- [ ] Degrees of freedom match task fragility
+- [ ] No time-sensitive content (specific versions, dates, URLs that may change)
+```
 
-## Step 7: Present and Iterate
+Fix any failures. After fixing, re-run the full checklist. Repeat until all criteria pass.
 
-Present the complete skill to the user:
-1. Show the file structure
-2. Show each file's content
-3. Highlight any design decisions made and the reasoning behind them
+Present the complete skill to the user with:
 
-Ask the user with AskUserQuestion:
-- "How would you like to proceed?"
-- Options: "Save skill files", "Revise content", "Change structure"
+1. File structure
+2. Each file's content
+3. Key design decisions and rationale
 
-If the user requests revisions, apply changes and re-validate against the checklist before presenting again.
+Ask the user: "How would you like to proceed?" with options: "Save skill files", "Revise content", "Change structure".
+
+If revisions are requested, apply changes and re-validate before presenting again.
 
 </process>
 
 <output>
 
-After generating the skill files, present a summary:
-
 ```
-## Skill Created: {name}
+## Skill Created: [NAME]
 
-**Location:** .claude/skills/{name}/
-**Invocation:** /{name} [arguments]
-**Auto-trigger:** {yes/no}
+**Location:** .claude/skills/[NAME]/
+**Invocation:** /[NAME] [ARGUMENTS]
+**Auto-trigger:** [yes/no]
 
 ### Files
 | File | Purpose | Lines |
 |------|---------|-------|
-| SKILL.md | {purpose} | {N} |
-| {workflow}.md | {purpose} | {N} |
-| ... | ... | ... |
+| SKILL.md | [PURPOSE] | [N] |
+| [WORKFLOW].md | [PURPOSE] | [N] |
 
 ### Workflows
 | Workflow | Trigger | File |
 |----------|---------|------|
-| {name} | "{trigger phrases}" | {file}.md |
-| ... | ... | ... |
-
-### Tools
-{allowed-tools value}
+| [NAME] | "[PHRASES]" | [FILE].md |
 
 ### Metadata
-- Model invocation: {enabled/disabled}
-- User invocable: {yes/no}
-- Context: {main/fork}
+- Tools: [ALLOWED-TOOLS]
+- Model invocation: [enabled/disabled]
+- User invocable: [yes/no]
 ```
 
 </output>
 
 <rules>
-- Ask the user for confirmation before writing any files
-- Present proposed metadata and structure for review before generating content
-- Scope `allowed-tools` to the minimum required; prefer `Bash(pattern *)` over bare `Bash`
-- Set `disable-model-invocation: true` for skills that affect shared state (git push, API calls, external services)
-- Keep SKILL.md under 500 lines; delegate detailed content to supporting files
-- Every workflow file includes `<purpose>`, `<process>`, `<output>`, and `<rules>` XML tags
-- Use consistent XML tag names across all workflow files
-- Write instructions in imperative mood with positive framing
-- Include at least one example in workflows that produce structured output
+- Confirm metadata and file structure with the user before generating content
+- Write descriptions in third person ("Generates..." not "Generate..." or "I generate...")
+- Scope allowed-tools to the minimum required; use `Bash(pattern *)` over bare `Bash`
+- Set `disable-model-invocation: true` for skills affecting shared state
+- Keep SKILL.md under 500 lines; move detailed content to supporting files
+- Include `<purpose>`, `<process>`, `<output>`, and `<rules>` in every workflow file
+- Include at least one `<example>` per workflow with structured output
+- Apply conciseness: remove information Claude already knows; include only domain-specific context
+- Match degrees of freedom to task fragility
+- Keep file references one level deep from SKILL.md
+- Use forward slashes in all file paths
+- Avoid time-sensitive content (specific versions, dates, URLs that may change)
+- Use `$ARGUMENTS` for dynamic skill arguments
+- Name workflow files after their action verb
+- Use consistent terminology throughout (one term per concept)
 - Validate against the full quality checklist before presenting to the user
-- Use `$ARGUMENTS` for dynamic skill arguments, not hardcoded values
-- Name workflow files after their action verb (create, review, batch, amend)
 </rules>
 
 <examples>
@@ -241,27 +236,24 @@ After generating the skill files, present a summary:
 ### Files
 | File | Purpose | Lines |
 |------|---------|-------|
-| SKILL.md | Entry point with format reference and workflow index | 45 |
-| create.md | Generate changelog from git history | 95 |
+| SKILL.md | Entry point with format reference and workflow index | 40 |
+| generate.md | Generates changelog from git history | 80 |
 
 ### Workflows
 | Workflow | Trigger | File |
 |----------|---------|------|
-| Create Changelog | "changelog", "generate changelog", "release notes" | create.md |
-
-### Tools
-Read, Bash(git *)
+| Generate | "changelog", "release notes", "version history" | generate.md |
 
 ### Metadata
-- Model invocation: disabled (writes files)
+- Tools: Read, Bash(git *)
+- Model invocation: disabled (pushes tags and writes release files)
 - User invocable: yes
-- Context: main
 
 </example>
 
 <example>
 
-**Input**: "Create a skill for our team's API design conventions — it should auto-load when someone is working on endpoints"
+**Input**: "Create a skill for our team's API design conventions that auto-loads when working on endpoints"
 
 **Output**:
 
@@ -274,20 +266,17 @@ Read, Bash(git *)
 ### Files
 | File | Purpose | Lines |
 |------|---------|-------|
-| SKILL.md | API conventions with naming, error format, and auth patterns | 120 |
+| SKILL.md | API naming, error format, and auth patterns | 90 |
 
 ### Workflows
 | Workflow | Trigger | File |
 |----------|---------|------|
-| (reference only) | Auto-loads when designing APIs or writing endpoint handlers | — |
-
-### Tools
-Read
+| (reference only) | Auto-loads for API and endpoint design | — |
 
 ### Metadata
-- Model invocation: enabled (reference content)
+- Tools: Read
+- Model invocation: enabled (reference content only, no side effects)
 - User invocable: yes
-- Context: main
 
 </example>
 
