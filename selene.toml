@@ -1,0 +1,6 @@
+std = "lua51+vim"
+
+[rules]
+mixed_table = "allow"
+multiple_statements = "allow"
+bad_string_escape = "allow"

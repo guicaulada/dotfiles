@@ -32,8 +32,11 @@ brew "jq"
 
 # Linting and formatting
 brew "actionlint"
+brew "markdownlint-cli2"
+brew "selene"
 brew "shellcheck"
 brew "shfmt"
+brew "stylua"
 brew "go-jsonnet"
 
 # Cloud and infrastructure
