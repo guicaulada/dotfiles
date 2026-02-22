@@ -142,6 +142,12 @@ For each bullet point:
 - Some cells lack mitochondria (red blood cells) → rely solely on glycolysis
 - Cancer cells often use glycolysis even with oxygen present (Warburg effect)
 
+**Summary Points:**
+- Cellular respiration converts glucose to ATP through three sequential stages
+- Glycolysis is anaerobic; Krebs cycle and ETC require oxygen
+- Most ATP (34-36 of 36-38 total) is produced by the electron transport chain
+- Disruption at any stage (e.g., lack of oxygen) forces cells to rely on less efficient anaerobic pathways
+
 </example>
 
 </examples>

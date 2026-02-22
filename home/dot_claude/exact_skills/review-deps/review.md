@@ -57,14 +57,7 @@ gh pr checks [PR_NUMBER] [-R REPO] 2>/dev/null || echo "No checks configured"
 
 From the PR title, body, and diff:
 
-**4a. Identify the package manager and ecosystem:**
-- npm/yarn/pnpm (JavaScript): `package.json`, lock files
-- pip/poetry (Python): `requirements.txt`, `pyproject.toml`
-- go modules: `go.mod`, `go.sum`
-- cargo (Rust): `Cargo.toml`, `Cargo.lock`
-- maven/gradle (Java): `pom.xml`, `build.gradle`
-- bundler (Ruby): `Gemfile`, `Gemfile.lock`
-- composer (PHP): `composer.json`, `composer.lock`
+**4a. Identify the package manager and ecosystem** from the changed files in the diff.
 
 **4b. Parse version changes from the diff:**
 For each dependency being updated, extract:

@@ -1,5 +1,5 @@
 ---
-description: Guide user through PDD process to create a task-based implementation plan
+description: Guides user through PDD process to create a task-based implementation plan
 ---
 
 <purpose>
@@ -7,6 +7,22 @@ Transform a rough idea into a structured, task-based implementation plan using P
 </purpose>
 
 <process>
+
+## Checklist
+
+Copy and track progress:
+
+```
+Review Progress:
+- [ ] Step 1: Capture idea
+- [ ] Step 2: Set up directory
+- [ ] Step 3: Initial process planning
+- [ ] Step 4: Requirements clarification
+- [ ] Step 5: Research
+- [ ] Step 6: Iteration checkpoint
+- [ ] Step 7: Generate implementation plan
+- [ ] Step 8: Refine
+```
 
 ## Step 1: Capture Idea
 
@@ -397,6 +413,114 @@ response with Retry-After header.
 - [ ] Task 1: Token Bucket Core Library
 - [ ] Task 2: Redis Storage Adapter
 - [ ] Task 3: Express Middleware Integration
+```
+
+</example>
+
+<example>
+
+**Input**: "/impl-plan @docs/design/notification-system.md" (design doc as input)
+
+**Step 1-2 output** (after capturing idea and setting up directory):
+
+I've read your design document and saved it to `.impl-plans/notification-system/rough-idea.md`.
+
+The design doc covers a notification system with email, push, and in-app channels. Before we plan the implementation, how would you like to start?
+- **Requirements clarification** — I'll ask questions one at a time to fill in implementation details the design doc doesn't cover
+- **Preliminary research** — I can investigate notification libraries, queue systems, or your existing infrastructure first
+- **Provide additional context** — Share more about current systems or constraints
+
+**Step 7 output** (implementation plan excerpt):
+
+```markdown
+# Implementation Plan: Multi-Channel Notification System
+
+## Overview
+
+Implement a notification system supporting email, push, and in-app channels
+based on the approved design document. Uses an event-driven architecture
+with a message queue for reliable delivery and per-channel adapters.
+
+## Requirements Summary
+
+### Functional Requirements
+- Send notifications via email, push, and in-app channels
+- Support user notification preferences (opt-in/out per channel)
+- Retry failed deliveries with exponential backoff
+
+### Non-Functional Requirements
+- Process notifications within 30 seconds of trigger event
+- Handle 1000 notifications/minute at peak
+
+### Constraints
+- Use existing RabbitMQ infrastructure for message queuing
+- Email via SendGrid API (already configured)
+
+### Out of Scope
+- SMS channel (future phase)
+- Notification templates editor UI
+
+## Task Breakdown
+
+### Task 1: Notification Event Schema and Queue Setup
+
+**Objective:** Define the notification event schema and configure
+RabbitMQ queues for routing notifications to channel processors.
+
+**Details:**
+- Define TypeScript interfaces for notification events
+- Create RabbitMQ exchange with routing keys per channel
+- Set up dead-letter queue for failed deliveries
+
+**Acceptance Criteria:**
+- [ ] Notification event schema validates required fields
+- [ ] Messages route to correct channel queue based on routing key
+- [ ] Failed messages land in dead-letter queue after max retries
+
+**Demo:** Publish a test notification event, show it routed to the
+correct channel queue. Publish a malformed event, show it rejected.
+
+**Depends on:** None
+
+---
+
+### Task 2: In-App Notification Channel
+
+**Objective:** Implement the in-app channel as the first adapter,
+establishing the adapter pattern for other channels.
+
+**Details:**
+- Create channel adapter interface that all channels implement
+- Implement in-app adapter storing notifications in the database
+- Add REST endpoint for fetching user notifications
+
+**Acceptance Criteria:**
+- [ ] In-app adapter implements the channel adapter interface
+- [ ] Notifications persisted to database with read/unread status
+- [ ] GET endpoint returns paginated notifications for a user
+
+**Demo:** Trigger a notification, fetch it via the API, mark as read.
+
+**Depends on:** Task 1
+
+## Dependency Map
+
+| Task | Depends On | Blocks |
+|------|-----------|--------|
+| 1 | — | 2 |
+| 2 | 1 | — |
+
+## Risk Register
+
+| Risk | Likelihood | Impact | Mitigation |
+|------|-----------|--------|------------|
+| RabbitMQ message ordering not guaranteed | Medium | Medium | Design consumers to be idempotent; use message timestamps |
+| SendGrid rate limits during peak | Low | High | Implement send queue with rate limiting; monitor quota usage |
+
+## Progress Checklist
+
+- [ ] Task 1: Notification Event Schema and Queue Setup
+- [ ] Task 2: In-App Notification Channel
 ```
 
 </example>

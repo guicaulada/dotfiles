@@ -274,4 +274,56 @@ Spawning 3 parallel review agents...
 
 </example>
 
+<example>
+
+**Input**: `/review-pr acme/api#150 acme/api#153`
+
+**Step 3 output**:
+
+Reviewing 2 PRs:
+- acme/api#150
+- acme/api#153
+
+Spawning 2 parallel review agents...
+
+**Step 6 output** (aggregated report):
+
+## PR Review Summary
+
+**Reviewed:** 2 PRs
+**Source:** provided
+**Date:** 2026-02-22
+
+### Overview
+
+| PR | Repository | Title | Verdict | Blocking | Risk |
+|----|------------|-------|---------|----------|------|
+| [#150](https://github.com/acme/api/pull/150) | acme/api | feat(billing): add invoice PDF generation | Comment | 0 | medium |
+| [#153](https://github.com/acme/api/pull/153) | acme/api | fix(rate-limit): reset counters at window boundary | Approve | 0 | low |
+
+### Summary by Verdict
+
+- **Approve:** 1 PR ready to merge
+- **Comment:** 1 PR needs discussion
+- **Request Changes:** 0 PRs need work
+
+### Attention Required
+
+#### PRs Needing Changes
+
+No PRs require changes.
+
+#### High Risk PRs
+
+No high-risk PRs.
+
+### Quick Takes
+
+| PR | Recommendation |
+|----|----------------|
+| [#150](https://github.com/acme/api/pull/150) | Good implementation, needs clarification on memory usage for large invoices |
+| [#153](https://github.com/acme/api/pull/153) | Clean fix with good test coverage, ready to merge |
+
+</example>
+
 </examples>

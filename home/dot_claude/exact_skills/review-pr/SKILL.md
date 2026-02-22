@@ -1,6 +1,6 @@
 ---
 name: review-pr
-description: Review pull requests with detailed code analysis and feedback. Use when user mentions review pr, pr review, review pull request, check pr, analyze pr, code review, review prs, batch review.
+description: Reviews pull requests with detailed code analysis and feedback. Use when user mentions review pr, pr review, review pull request, check pr, analyze pr, code review, review prs, batch review.
 allowed-tools: Read, Bash(gh *), Bash(git *), Bash(mktemp *), Bash(rm -rf /tmp/pr-review-*), Grep, Glob, Task
 disable-model-invocation: true
 argument-hint: [pr-number or url...]
@@ -33,10 +33,10 @@ Review pull requests with comprehensive code analysis. Fetches PR details, analy
 
 Trigger: "review pr", "pr review", "review pull request", "check pr", "analyze pr", "code review"
 
-Read and follow `skills/review-pr/review.md`.
+Read and follow [review.md](review.md).
 
 ### Batch Review PRs
 
 Trigger: "review prs", "batch review", "review multiple prs", "review all prs"
 
-Read and follow `skills/review-pr/batch.md`.
+Read and follow [batch.md](batch.md).

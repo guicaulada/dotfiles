@@ -8,6 +8,27 @@ Analyze all commits on the current branch not on the default branch. Discover re
 
 <process>
 
+## Checklist
+
+Copy and track progress:
+
+```
+Create PR Progress:
+- [ ] Step 1: Gather repository context
+- [ ] Step 2: Validate branch state
+- [ ] Step 3: Analyze branch commits
+- [ ] Step 4: Analyze full diff
+- [ ] Step 5: Discover related issues
+- [ ] Step 6: Discover related PRs
+- [ ] Step 7: Check for uncommitted changes
+- [ ] Step 8: Generate PR title
+- [ ] Step 9: Generate PR body
+- [ ] Step 10: Present PR preview
+- [ ] Step 11: Handle edits (if requested)
+- [ ] Step 12: Push branch if needed
+- [ ] Step 13: Create PR
+```
+
 ## Step 1: Gather Repository Context
 
 Run in parallel:
@@ -75,7 +96,11 @@ gh pr list --search "linked:issue:[ISSUE_NUMBER]" --state all --limit 5 --json n
 **6b. Find PRs that modified the same files:**
 ```bash
 git diff [DEFAULT_BRANCH]...HEAD --name-only
-gh pr list --state merged --limit 10 --json number,title,files,mergedAt
+gh pr list --state merged --limit 10 --json number,title,mergedAt
+```
+For relevant PRs, fetch file details individually:
+```bash
+gh pr view [NUMBER] --json files
 ```
 Filter to PRs that touched the same significant files (not config/tests).
 

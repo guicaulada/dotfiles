@@ -1,6 +1,7 @@
 ---
 name: impl-plan
-description: Create task-based implementation plans using Prompt-Driven Development to refine ideas into actionable step-by-step plans. Use when user mentions implementation plan, impl plan, create plan, build plan, development plan, breakdown tasks, task plan, sprint plan, or plan implementation.
+description: Creates task-based implementation plans using Prompt-Driven Development to refine ideas into actionable step-by-step plans. Use when user mentions implementation plan, impl plan, create plan, build plan, development plan, breakdown tasks, task plan, sprint plan, or plan implementation.
+argument-hint: [idea or file path]
 allowed-tools: Read, Write, Bash(mkdir *), Glob, Grep, WebSearch, WebFetch
 ---
 
@@ -29,4 +30,4 @@ The skill follows the Prompt-Driven Development methodology — iterative refine
 
 Trigger: "impl plan", "implementation plan", "create plan", "build plan", "development plan", "breakdown tasks", "task plan", "sprint plan", "plan implementation"
 
-Read and follow `skills/impl-plan/create.md`.
+Read and follow [create.md](create.md).
