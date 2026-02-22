@@ -53,13 +53,17 @@ return {
         vim.opt.background = 'dark'
         vim.cmd.colorscheme('onedark')
         local ok, lualine = pcall(require, 'lualine')
-        if ok then lualine.setup({ options = { theme = 'onedark' } }) end
+        if ok then
+          lualine.setup({ options = { theme = 'onedark' } })
+        end
       end,
       set_light_mode = function()
         vim.opt.background = 'light'
         vim.cmd.colorscheme('catppuccin-latte')
         local ok, lualine = pcall(require, 'lualine')
-        if ok then lualine.setup({ options = { theme = 'catppuccin' } }) end
+        if ok then
+          lualine.setup({ options = { theme = 'catppuccin' } })
+        end
       end,
     },
   },
@@ -258,7 +262,12 @@ return {
             { icon = ' ', key = 'n', desc = 'New File', action = ':ene | startinsert' },
             { icon = ' ', key = 'g', desc = 'Find Text', action = ':lua Snacks.picker.grep()' },
             { icon = ' ', key = 'r', desc = 'Recent Files', action = ':lua Snacks.picker.recent()' },
-            { icon = ' ', key = 'c', desc = 'Config', action = ':lua Snacks.picker.files({ cwd = vim.fn.stdpath("config") })' },
+            {
+              icon = ' ',
+              key = 'c',
+              desc = 'Config',
+              action = ':lua Snacks.picker.files({ cwd = vim.fn.stdpath("config") })',
+            },
             { icon = ' ', key = 's', desc = 'Restore Session', action = ':AutoSession restore' },
             { icon = '󰒲 ', key = 'l', desc = 'Lazy', action = ':Lazy' },
             { icon = ' ', key = 'q', desc = 'Quit', action = ':qa' },
@@ -299,66 +308,368 @@ return {
     },
     keys = {
       -- Find group (picker/telescope replacement)
-      { '<leader>ff', function() Snacks.picker.files() end, desc = 'Find files' },
-      { '<leader>fg', function() Snacks.picker.grep() end, desc = 'Find grep' },
-      { '<leader>fw', function() Snacks.picker.grep_word() end, desc = 'Find word', mode = { 'n', 'v' } },
-      { '<leader>fh', function() Snacks.picker.help() end, desc = 'Find help' },
-      { '<leader>fk', function() Snacks.picker.keymaps() end, desc = 'Find keymaps' },
-      { '<leader>fp', function() Snacks.picker() end, desc = 'Find picker' },
-      { '<leader>fd', function() Snacks.picker.diagnostics() end, desc = 'Find diagnostics' },
-      { '<leader>fr', function() Snacks.picker.resume() end, desc = 'Find resume' },
-      { '<leader>f.', function() Snacks.picker.recent() end, desc = 'Find recent files' },
-      { '<leader>fc', function() Snacks.picker.commands() end, desc = 'Find commands' },
-      { '<leader>fb', function() Snacks.picker.buffers() end, desc = 'Find buffers' },
-      { '<leader><leader>', function() Snacks.picker.buffers() end, desc = 'Find buffers' },
-      { '<leader>/', function() Snacks.picker.lines() end, desc = 'Fuzzily search in buffer' },
-      { '<leader>f/', function() Snacks.picker.grep_buffers() end, desc = 'Find in open files' },
-      { '<leader>fn', function() Snacks.picker.files({ cwd = vim.fn.stdpath('config') }) end, desc = 'Find neovim files' },
-      { '<leader>ft', function() Snacks.picker.todo_comments() end, desc = 'Find TODOs' },
+      {
+        '<leader>ff',
+        function()
+          Snacks.picker.files()
+        end,
+        desc = 'Find files',
+      },
+      {
+        '<leader>fg',
+        function()
+          Snacks.picker.grep()
+        end,
+        desc = 'Find grep',
+      },
+      {
+        '<leader>fw',
+        function()
+          Snacks.picker.grep_word()
+        end,
+        desc = 'Find word',
+        mode = { 'n', 'v' },
+      },
+      {
+        '<leader>fh',
+        function()
+          Snacks.picker.help()
+        end,
+        desc = 'Find help',
+      },
+      {
+        '<leader>fk',
+        function()
+          Snacks.picker.keymaps()
+        end,
+        desc = 'Find keymaps',
+      },
+      {
+        '<leader>fp',
+        function()
+          Snacks.picker()
+        end,
+        desc = 'Find picker',
+      },
+      {
+        '<leader>fd',
+        function()
+          Snacks.picker.diagnostics()
+        end,
+        desc = 'Find diagnostics',
+      },
+      {
+        '<leader>fr',
+        function()
+          Snacks.picker.resume()
+        end,
+        desc = 'Find resume',
+      },
+      {
+        '<leader>f.',
+        function()
+          Snacks.picker.recent()
+        end,
+        desc = 'Find recent files',
+      },
+      {
+        '<leader>fc',
+        function()
+          Snacks.picker.commands()
+        end,
+        desc = 'Find commands',
+      },
+      {
+        '<leader>fb',
+        function()
+          Snacks.picker.buffers()
+        end,
+        desc = 'Find buffers',
+      },
+      {
+        '<leader><leader>',
+        function()
+          Snacks.picker.buffers()
+        end,
+        desc = 'Find buffers',
+      },
+      {
+        '<leader>/',
+        function()
+          Snacks.picker.lines()
+        end,
+        desc = 'Fuzzily search in buffer',
+      },
+      {
+        '<leader>f/',
+        function()
+          Snacks.picker.grep_buffers()
+        end,
+        desc = 'Find in open files',
+      },
+      {
+        '<leader>fn',
+        function()
+          Snacks.picker.files({ cwd = vim.fn.stdpath('config') })
+        end,
+        desc = 'Find neovim files',
+      },
+      {
+        '<leader>ft',
+        function()
+          Snacks.picker.todo_comments()
+        end,
+        desc = 'Find TODOs',
+      },
       -- Git pickers
-      { '<leader>gc', function() Snacks.picker.git_log() end, desc = 'Git commits' },
-      { '<leader>gs', function() Snacks.picker.git_status() end, desc = 'Git status' },
-      { '<leader>gb', function() Snacks.picker.git_branches() end, desc = 'Git branches' },
+      {
+        '<leader>gc',
+        function()
+          Snacks.picker.git_log()
+        end,
+        desc = 'Git commits',
+      },
+      {
+        '<leader>gs',
+        function()
+          Snacks.picker.git_status()
+        end,
+        desc = 'Git status',
+      },
+      {
+        '<leader>gb',
+        function()
+          Snacks.picker.git_branches()
+        end,
+        desc = 'Git branches',
+      },
       -- LSP pickers
-      { 'grr', function() Snacks.picker.lsp_references() end, desc = 'LSP references' },
-      { 'gri', function() Snacks.picker.lsp_implementations() end, desc = 'LSP implementations' },
-      { 'grd', function() Snacks.picker.lsp_definitions() end, desc = 'LSP definitions' },
-      { 'grt', function() Snacks.picker.lsp_type_definitions() end, desc = 'LSP type definitions' },
-      { 'gO', function() Snacks.picker.lsp_symbols() end, desc = 'LSP document symbols' },
-      { 'gW', function() Snacks.picker.lsp_workspace_symbols() end, desc = 'LSP workspace symbols' },
+      {
+        'grr',
+        function()
+          Snacks.picker.lsp_references()
+        end,
+        desc = 'LSP references',
+      },
+      {
+        'gri',
+        function()
+          Snacks.picker.lsp_implementations()
+        end,
+        desc = 'LSP implementations',
+      },
+      {
+        'grd',
+        function()
+          Snacks.picker.lsp_definitions()
+        end,
+        desc = 'LSP definitions',
+      },
+      {
+        'grt',
+        function()
+          Snacks.picker.lsp_type_definitions()
+        end,
+        desc = 'LSP type definitions',
+      },
+      {
+        'gO',
+        function()
+          Snacks.picker.lsp_symbols()
+        end,
+        desc = 'LSP document symbols',
+      },
+      {
+        'gW',
+        function()
+          Snacks.picker.lsp_workspace_symbols()
+        end,
+        desc = 'LSP workspace symbols',
+      },
       -- Explorer (oil replacement)
-      { '<leader>e', function() Snacks.explorer() end, desc = 'File explorer' },
-      { '<leader>E', function() Snacks.explorer.open({ win = { style = 'float' } }) end, desc = 'File explorer (float)' },
-      { '-', function() Snacks.explorer() end, desc = 'File explorer' },
+      {
+        '<leader>e',
+        function()
+          Snacks.explorer()
+        end,
+        desc = 'File explorer',
+      },
+      {
+        '<leader>E',
+        function()
+          Snacks.explorer.open({ win = { style = 'float' } })
+        end,
+        desc = 'File explorer (float)',
+      },
+      {
+        '-',
+        function()
+          Snacks.explorer()
+        end,
+        desc = 'File explorer',
+      },
       -- UI/Toggles
-      { '<leader>un', function() Snacks.notifier.hide() end, desc = 'Dismiss notifications' },
-      { '<leader>uN', function() Snacks.notifier.show_history() end, desc = 'Notification history' },
-      { '<leader>uz', function() Snacks.zen() end, desc = 'Toggle zen mode' },
-      { '<leader>ud', function() Snacks.dim() end, desc = 'Toggle dim mode' },
+      {
+        '<leader>un',
+        function()
+          Snacks.notifier.hide()
+        end,
+        desc = 'Dismiss notifications',
+      },
+      {
+        '<leader>uN',
+        function()
+          Snacks.notifier.show_history()
+        end,
+        desc = 'Notification history',
+      },
+      {
+        '<leader>uz',
+        function()
+          Snacks.zen()
+        end,
+        desc = 'Toggle zen mode',
+      },
+      {
+        '<leader>ud',
+        function()
+          Snacks.dim()
+        end,
+        desc = 'Toggle dim mode',
+      },
       -- Delete group
-      { '<leader>db', function() Snacks.bufdelete() end, desc = 'Delete buffer' },
-      { '<leader>dB', function() Snacks.bufdelete.other() end, desc = 'Delete other buffers' },
-      { '<leader>-', function() Snacks.bufdelete() end, desc = 'Delete current buffer' },
+      {
+        '<leader>db',
+        function()
+          Snacks.bufdelete()
+        end,
+        desc = 'Delete buffer',
+      },
+      {
+        '<leader>dB',
+        function()
+          Snacks.bufdelete.other()
+        end,
+        desc = 'Delete other buffers',
+      },
+      {
+        '<leader>-',
+        function()
+          Snacks.bufdelete()
+        end,
+        desc = 'Delete current buffer',
+      },
       -- Open group
-      { '<leader>og', function() Snacks.lazygit() end, desc = 'Open Lazygit' },
-      { '<leader>ol', function() Snacks.lazygit.log() end, desc = 'Open Lazygit log' },
-      { '<leader>ot', function() Snacks.terminal() end, desc = 'Open terminal' },
-      { '<leader>oe', function() Snacks.explorer() end, desc = 'Open explorer' },
-      { '<leader>oE', function() Snacks.explorer.open({ win = { style = 'float' } }) end, desc = 'Open explorer (float)' },
-      { '<leader>os', function() Snacks.scratch() end, desc = 'Open scratch buffer' },
-      { '<leader>oS', function() Snacks.scratch.select() end, desc = 'Open scratch picker' },
+      {
+        '<leader>og',
+        function()
+          Snacks.lazygit()
+        end,
+        desc = 'Open Lazygit',
+      },
+      {
+        '<leader>ol',
+        function()
+          Snacks.lazygit.log()
+        end,
+        desc = 'Open Lazygit log',
+      },
+      {
+        '<leader>ot',
+        function()
+          Snacks.terminal()
+        end,
+        desc = 'Open terminal',
+      },
+      {
+        '<leader>oe',
+        function()
+          Snacks.explorer()
+        end,
+        desc = 'Open explorer',
+      },
+      {
+        '<leader>oE',
+        function()
+          Snacks.explorer.open({ win = { style = 'float' } })
+        end,
+        desc = 'Open explorer (float)',
+      },
+      {
+        '<leader>os',
+        function()
+          Snacks.scratch()
+        end,
+        desc = 'Open scratch buffer',
+      },
+      {
+        '<leader>oS',
+        function()
+          Snacks.scratch.select()
+        end,
+        desc = 'Open scratch picker',
+      },
       -- Git (keep some in git group too)
-      { '<leader>gB', function() Snacks.gitbrowse() end, desc = 'Browse in browser' },
-      { '<leader>gL', function() Snacks.git.blame_line() end, desc = 'Git blame line' },
+      {
+        '<leader>gB',
+        function()
+          Snacks.gitbrowse()
+        end,
+        desc = 'Browse in browser',
+      },
+      {
+        '<leader>gL',
+        function()
+          Snacks.git.blame_line()
+        end,
+        desc = 'Git blame line',
+      },
       -- Terminal
-      { '<C-/>', function() Snacks.terminal() end, desc = 'Toggle terminal', mode = { 'n', 't' } },
+      {
+        '<C-/>',
+        function()
+          Snacks.terminal()
+        end,
+        desc = 'Toggle terminal',
+        mode = { 'n', 't' },
+      },
       -- LSP words navigation
-      { ']r', function() Snacks.words.jump(vim.v.count1) end, desc = 'Next reference' },
-      { '[r', function() Snacks.words.jump(-vim.v.count1) end, desc = 'Prev reference' },
+      {
+        ']r',
+        function()
+          Snacks.words.jump(vim.v.count1)
+        end,
+        desc = 'Next reference',
+      },
+      {
+        '[r',
+        function()
+          Snacks.words.jump(-vim.v.count1)
+        end,
+        desc = 'Prev reference',
+      },
       -- Profile group
-      { '<leader>ps', function() Snacks.debug.stats() end, desc = 'Profile stats' },
-      { '<leader>pp', function() Snacks.profiler.toggle() end, desc = 'Toggle profiler' },
-      { '<leader>ph', function() Snacks.profiler.highlight() end, desc = 'Profiler highlight' },
+      {
+        '<leader>ps',
+        function()
+          Snacks.debug.stats()
+        end,
+        desc = 'Profile stats',
+      },
+      {
+        '<leader>pp',
+        function()
+          Snacks.profiler.toggle()
+        end,
+        desc = 'Toggle profiler',
+      },
+      {
+        '<leader>ph',
+        function()
+          Snacks.profiler.highlight()
+        end,
+        desc = 'Profiler highlight',
+      },
       -- Buffer operations (keep some in buffer group)
       { '<leader>bp', '<cmd>BufferLinePick<cr>', desc = 'Pick buffer' },
     },

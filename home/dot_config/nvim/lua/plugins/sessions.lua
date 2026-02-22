@@ -97,9 +97,12 @@ return {
                 local name = vim.api.nvim_buf_get_name(buf)
                 local ft = vim.bo[buf].filetype
                 -- Clean up any stray explorer or directory buffers
-                if ft == 'snacks_explorer' or name:match('snacks_explorer') or name:match('explorer://') then
-                  vim.api.nvim_buf_delete(buf, { force = true })
-                elseif vim.fn.isdirectory(name) == 1 then
+                if
+                  ft == 'snacks_explorer'
+                  or name:match('snacks_explorer')
+                  or name:match('explorer://')
+                  or vim.fn.isdirectory(name) == 1
+                then
                   vim.api.nvim_buf_delete(buf, { force = true })
                 end
               end

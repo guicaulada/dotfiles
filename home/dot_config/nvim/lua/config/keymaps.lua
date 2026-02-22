@@ -21,8 +21,12 @@ map('n', '<leader>dw', '<C-w>c', { desc = 'Delete window' })
 map('n', '<leader>dW', '<C-w>o', { desc = 'Delete other windows' })
 
 -- Diagnostics (panel mappings in trouble.nvim, ]d/[d built-in in 0.11+)
-map('n', '<leader>xn', function() vim.diagnostic.jump({ count = 1 }) end, { desc = 'Next diagnostic' })
-map('n', '<leader>xp', function() vim.diagnostic.jump({ count = -1 }) end, { desc = 'Previous diagnostic' })
+map('n', '<leader>xn', function()
+  vim.diagnostic.jump({ count = 1 })
+end, { desc = 'Next diagnostic' })
+map('n', '<leader>xp', function()
+  vim.diagnostic.jump({ count = -1 })
+end, { desc = 'Previous diagnostic' })
 
 -- UI/Toggle options
 map('n', '<leader>uw', '<cmd>set wrap!<CR>', { desc = 'Toggle word wrap' })
