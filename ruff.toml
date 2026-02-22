@@ -1,0 +1,29 @@
+target-version = "py38"
+line-length = 88
+
+[lint]
+select = [
+  "E",    # pycodestyle errors
+  "F",    # pyflakes
+  "I",    # isort
+  "B",    # flake8-bugbear
+  "UP",   # pyupgrade
+  "C4",   # flake8-comprehensions
+  "FA",   # future-annotations
+  "ISC",  # implicit-str-concat
+  "RET",  # flake8-return
+  "SIM",  # flake8-simplify
+  "TID",  # flake8-tidy-imports
+  "TC",   # flake8-type-checking
+  "PTH",  # flake8-use-pathlib
+]
+
+[lint.per-file-ignores]
+"test_*.py" = [
+  "E501",  # line too long (test descriptions)
+]
+
+[format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"

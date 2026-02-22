@@ -30,3 +30,24 @@ jobs:
         run: |
           bash <(curl -sSL https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
           ./actionlint
+
+      - name: Run ruff
+        run: |
+          pip install ruff
+          ruff check .
+          ruff format --check .
+
+      - name: Run selene
+        run: |
+          curl -sSL https://github.com/Kampfkarren/selene/releases/download/0.30.0/selene-light-0.30.0-linux-amd64.zip -o selene.zip
+          unzip selene.zip
+          ./selene .
+
+      - name: Run stylua
+        run: |
+          curl -sSL https://github.com/JohnnyMorganz/StyLua/releases/download/v2.3.1/stylua-linux-x86_64.zip -o stylua.zip
+          unzip stylua.zip
+          ./stylua --check .
+
+      - name: Run markdownlint
+        run: npx markdownlint-cli2
