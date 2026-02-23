@@ -12,6 +12,7 @@ runs:
         curl -sSL "https://github.com/Kampfkarren/selene/releases/download/${VERSION}/selene-light-${VERSION}-linux.zip" -o selene.zip
         unzip -o selene.zip -d selene-bin
         mv selene-bin/selene /usr/local/bin/selene
+        chmod +x /usr/local/bin/selene
         rm -rf selene.zip selene-bin
       shell: bash
       env:
