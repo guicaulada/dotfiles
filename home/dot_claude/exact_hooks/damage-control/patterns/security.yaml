@@ -3,14 +3,32 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   # CREDENTIAL MANAGER COMMANDS (ALL ACCESS DENIED)
   # ---------------------------------------------------------------------------
-  - pattern: '\bpass\s+(show|ls|list|find|grep|insert|edit|generate|rm|mv|cp|git|init|delete|remove|otp|close|open|tomb)\b'
+  # Catch-all patterns: any subcommand to a credential manager is blocked.
+  # This avoids maintaining long subcommand lists that inevitably go stale.
+
+  - pattern: '\bpass\s+\S+'
     reason: pass (password-store) - credential manager access denied
 
-  - pattern: '\bop\s+(item|vault|document|account|group|user|connect|events-api|whoami|signin|signout|read|inject|run)\b'
+  - pattern: '\bgopass\s+\S+'
+    reason: gopass (password-store alternative) - credential manager access denied
+
+  - pattern: '\bop\s+\S+'
     reason: 1Password CLI (op) - credential manager access denied
 
-  - pattern: '\bvault\s+(read|write|delete|destroy|list|login|token|kv|secrets|auth|operator|lease|unwrap|audit|status|seal|unseal)\b'
+  - pattern: '\bvault\s+\S+'
     reason: HashiCorp Vault - credential manager access denied
+
+  - pattern: '\bbw\s+\S+'
+    reason: Bitwarden CLI (bw) - credential manager access denied
+
+  - pattern: '\blpass\s+\S+'
+    reason: LastPass CLI (lpass) - credential manager access denied
+
+  - pattern: '\brbw\s+\S+'
+    reason: Bitwarden CLI unofficial (rbw) - credential manager access denied
+
+  - pattern: '\bdoppler\s+\S+'
+    reason: Doppler (doppler) - secret manager access denied
 
   - pattern: '\bsecurity\s+(find-generic-password|find-internet-password|dump-keychain|show-keychain-info|find-certificate|find-identity)\b'
     reason: macOS Keychain read - credential manager access denied

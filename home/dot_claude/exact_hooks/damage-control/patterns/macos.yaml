@@ -9,11 +9,8 @@ bashToolPatterns:
   - pattern: '\bdefaults\s+delete\b'
     reason: defaults delete (removes macOS preferences)
 
-  - pattern: '\bsecurity\s+delete-keychain\b'
-    reason: security delete-keychain (deletes macOS keychain)
-
-  - pattern: '\bsecurity\s+delete-(generic|internet)-password\b'
-    reason: security delete password (deletes macOS keychain entry)
+  - pattern: '\bsecurity\s+delete-(keychain|generic-password|internet-password)\b'
+    reason: security delete (deletes macOS keychain or keychain entry)
 
   - pattern: '\bgpg\s+--delete-(key|secret-key|secret-and-public-key)\b'
     reason: gpg key deletion
@@ -25,7 +22,7 @@ bashToolPatterns:
     reason: diskutil APFS volume deletion
 
   # ---------------------------------------------------------------------------
-  # macOS-SPECIFIC
+  # macOS SYSTEM SECURITY
   # ---------------------------------------------------------------------------
   - pattern: '\bcsrutil\b'
     reason: csrutil (System Integrity Protection control)
@@ -39,8 +36,20 @@ bashToolPatterns:
   - pattern: '\bxattr\s+-d\b.*com\.apple\.quarantine'
     reason: xattr removes quarantine (bypasses Gatekeeper)
 
+  - pattern: '\bnvram\b'
+    reason: nvram (modifies firmware variables - can brick system)
+
+  - pattern: '\bbless\b'
+    reason: bless (changes boot volume - can make system unbootable)
+
+  - pattern: '\bfdesetup\s+(destroy|remove|disable)\b'
+    reason: fdesetup destroy/remove/disable (disables FileVault encryption)
+
+  - pattern: '\bkextunload\b'
+    reason: kextunload (unloads kernel extension - can crash system)
+
   # ---------------------------------------------------------------------------
-  # macOS-SPECIFIC REQUIRING CONFIRMATION (ask: true)
+  # macOS REQUIRING CONFIRMATION (ask: true)
   # ---------------------------------------------------------------------------
   - pattern: '\bdefaults\s+write\b'
     reason: Modifies macOS preferences
@@ -66,8 +75,28 @@ bashToolPatterns:
     reason: Mounts/unmounts macOS disk
     ask: true
 
+  - pattern: '\bsystemsetup\b'
+    reason: Modifies macOS system settings (timezone, sleep, remote login)
+    ask: true
+
+  - pattern: '\bsoftwareupdate\s+(-i|--install)\b'
+    reason: Installs macOS system updates
+    ask: true
+
+  - pattern: '\binstaller\s+-pkg\b'
+    reason: Installs macOS .pkg package
+    ask: true
+
+  - pattern: '\bkextload\b'
+    reason: Loads kernel extension (arbitrary code in kernel space)
+    ask: true
+
+  - pattern: '\bmdutil\s+(-i\s+off|-E|-d)\b'
+    reason: Disables or erases Spotlight index
+    ask: true
+
   # ---------------------------------------------------------------------------
-  # macOS - ADDITIONAL PACKAGE MANAGERS
+  # macOS PACKAGE MANAGERS
   # ---------------------------------------------------------------------------
   - pattern: '\bport\s+(uninstall|deactivate)\b'
     reason: port uninstall/deactivate (removes MacPorts package)

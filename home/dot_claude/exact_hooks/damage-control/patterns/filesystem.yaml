@@ -1,16 +1,13 @@
 # Filesystem security patterns (rm, find, shred, rsync, truncate, permissions, archive extraction)
 bashToolPatterns:
   # ---------------------------------------------------------------------------
-  # DESTRUCTIVE FILE OPERATIONS
+  # DESTRUCTIVE FILE OPERATIONS (block)
   # ---------------------------------------------------------------------------
   - pattern: '\brm\s+(-\S+\s+)*-[rRf]'
     reason: rm with recursive or force flags
 
-  - pattern: '\brm\s+--recursive'
-    reason: rm with --recursive flag
-
-  - pattern: '\brm\s+--force'
-    reason: rm with --force flag
+  - pattern: '\brm\s+--(recursive|force)'
+    reason: rm with --recursive or --force flag
 
   - pattern: '\bsudo\s+rm\b'
     reason: sudo rm
@@ -27,59 +24,47 @@ bashToolPatterns:
   - pattern: '\bfind\s+.*-exec\s+(/usr/bin/|/bin/)?rm\b'
     reason: find with -exec rm (bypasses rm protections)
 
+  - pattern: '\bfind\s+.*-exec\s+(shred|sfill|srm|nwipe|wipe)\b'
+    reason: find with -exec to secure-delete files
+
   - pattern: '\bxargs\s+.*\brm\b'
     reason: xargs piped to rm (bypasses rm protections)
 
   - pattern: '\brsync\s+.*--delete\b'
     reason: rsync --delete (deletes files at destination not in source)
 
-  - pattern: '\b(/usr)?/bin/rm\s+'
+  - pattern: '(^|[\s;|&])(/usr)?/bin/rm\s+'
     reason: absolute path rm (bypasses alias/function protection)
 
-  - pattern: '\btruncate\s+(-s\s+0|-s0)\b'
+  - pattern: '\btruncate\s+(-s\s*0|-s0)\b'
     reason: truncate -s 0 (empties file content without deleting)
 
-  - pattern: '\bsfill\b'
-    reason: sfill (secure-delete tool, wipes free space - unrecoverable)
-
-  - pattern: '\bsrm\b'
-    reason: srm (secure-delete, unrecoverable file removal)
-
-  - pattern: '\bnwipe\b'
-    reason: nwipe (disk wipe utility - unrecoverable)
-
-  - pattern: '\bwipe\b'
-    reason: wipe (secure file deletion - unrecoverable)
-
-  - pattern: '\bfind\s+.*-exec\s+(shred|wipe|srm)\b'
-    reason: find with -exec to secure-delete files
+  - pattern: '\b(sfill|srm|nwipe|wipe)\b'
+    reason: secure-delete tool (unrecoverable file/disk destruction)
 
   # ---------------------------------------------------------------------------
-  # PERMISSION CHANGES
+  # PERMISSION CHANGES (block)
   # ---------------------------------------------------------------------------
   - pattern: '\bchmod\s+(-[^\s]+\s+)*0?777\b'
     reason: chmod 777 (world writable)
 
-  - pattern: '\bchmod\s+-[Rr].*0?777'
-    reason: recursive chmod 777
+  - pattern: '\bchmod\s+(-[^\s]+\s+)*(a\+rwx|ugo\+rwx|\+rwx)\b'
+    reason: chmod world writable (symbolic equivalent of 777)
 
   - pattern: '\bchown\s+-[Rr].*\broot\b'
     reason: recursive chown to root
 
-  - pattern: '\bchmod\s+(-[^\s]+\s+)*(a\+rwx|ugo\+rwx|\+rwx)\b'
-    reason: chmod world writable (symbolic equivalent of 777)
-
   # ---------------------------------------------------------------------------
-  # ARCHIVE EXTRACTION - DESTRUCTIVE
+  # ARCHIVE EXTRACTION - DESTRUCTIVE (block)
   # ---------------------------------------------------------------------------
   - pattern: '\btar\s+.*--overwrite\b'
     reason: tar --overwrite (silently overwrites existing files during extraction)
 
-  - pattern: '\btar\s+.*(x|--extract).*-C\s+/\b'
+  - pattern: '\btar\s+.*(x|--extract).*-C\s+/(\s|$)'
     reason: tar extracting to filesystem root (can overwrite system files)
 
   # ---------------------------------------------------------------------------
-  # ARCHIVE / COMPRESSION REQUIRING CONFIRMATION (ask: true)
+  # ARCHIVE / COMPRESSION REQUIRING CONFIRMATION (ask)
   # ---------------------------------------------------------------------------
   - pattern: '\bunzip\s+.*-o\b'
     reason: unzip -o (overwrites files without prompting)

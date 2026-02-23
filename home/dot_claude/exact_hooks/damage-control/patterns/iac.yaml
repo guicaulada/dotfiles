@@ -3,73 +3,48 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   # INFRASTRUCTURE AS CODE DESTRUCTIVE OPERATIONS
   # ---------------------------------------------------------------------------
-  - pattern: '\bterraform\s+destroy\b'
-    reason: terraform destroy (destroys all infrastructure)
-
-  - pattern: '\bpulumi\s+destroy\b'
-    reason: pulumi destroy (destroys all resources)
-
-  - pattern: '\bserverless\s+remove\b'
-    reason: serverless remove (removes stack)
-
-  - pattern: '\bsls\s+remove\b'
-    reason: sls remove (removes stack)
-
-  - pattern: '\bsam\s+delete\b'
-    reason: sam delete (deletes SAM application)
-
-  - pattern: '\bterraform\s+state\s+rm\b'
-    reason: terraform state rm (removes resource from state, causes drift)
-
-  - pattern: '\bterraform\s+force-unlock\b'
-    reason: terraform force-unlock (can cause state corruption)
-
-  - pattern: '\bcdk\s+destroy\b'
-    reason: cdk destroy (AWS CDK, destroys infrastructure)
-
-  - pattern: '\bcdktf\s+destroy\b'
-    reason: cdktf destroy (CDK for Terraform, destroys infrastructure)
-
-  - pattern: '\bterraform\s+workspace\s+delete\b'
-    reason: terraform workspace delete (destroys workspace and state)
-
-  - pattern: '\bterragrunt\s+destroy\b'
-    reason: terragrunt destroy (destroys infrastructure)
+  - pattern: '\b(terraform|tofu|terragrunt)\s+destroy\b'
+    reason: terraform/tofu/terragrunt destroy (destroys all infrastructure)
 
   - pattern: '\bterragrunt\s+run-all\s+destroy\b'
     reason: terragrunt run-all destroy (destroys ALL infrastructure across modules)
 
+  - pattern: '\bpulumi\s+destroy\b'
+    reason: pulumi destroy (destroys all resources)
+
+  - pattern: '\b(serverless|sls)\s+remove\b'
+    reason: serverless/sls remove (removes stack)
+
+  - pattern: '\bsam\s+delete\b'
+    reason: sam delete (deletes SAM application)
+
+  - pattern: '\b(terraform|tofu)\s+state\s+rm\b'
+    reason: terraform/tofu state rm (removes resource from state, causes drift)
+
+  - pattern: '\b(terraform|tofu)\s+force-unlock\b'
+    reason: terraform/tofu force-unlock (can cause state corruption)
+
+  - pattern: '\b(cdk|cdktf)\s+destroy\b'
+    reason: cdk/cdktf destroy (destroys infrastructure)
+
+  - pattern: '\bterraform\s+workspace\s+delete\b'
+    reason: terraform workspace delete (destroys workspace and state)
+
   - pattern: '\bpulumi\s+stack\s+rm\b'
     reason: pulumi stack rm (destroys stack and state)
 
-  - pattern: '\bterraform\s+state\s+(push|replace-provider)\b'
-    reason: terraform state push/replace (overwrites state file)
-
-  # ---------------------------------------------------------------------------
-  # OPENTOFU (Terraform fork)
-  # ---------------------------------------------------------------------------
-  - pattern: '\btofu\s+destroy\b'
-    reason: tofu destroy (destroys all infrastructure)
-
-  - pattern: '\btofu\s+state\s+rm\b'
-    reason: tofu state rm (removes resource from state)
-
-  - pattern: '\btofu\s+force-unlock\b'
-    reason: tofu force-unlock (can cause state corruption)
-
-  - pattern: '\btofu\s+apply\b'
-    reason: Applies OpenTofu infrastructure changes
-    ask: true
+  - pattern: '\b(terraform|tofu)\s+state\s+(push|replace-provider)\b'
+    reason: terraform/tofu state push/replace-provider (overwrites state file)
 
   # ---------------------------------------------------------------------------
   # IAC OPERATIONS REQUIRING CONFIRMATION (ask: true)
   # ---------------------------------------------------------------------------
-  - pattern: '\bterraform\s+apply\b'
-    reason: Applies Terraform infrastructure changes
+  - pattern: '\b(terraform|tofu)\s+apply\b'
+    reason: Applies Terraform/OpenTofu infrastructure changes
     ask: true
 
-  - pattern: '\bterraform\s+(import|state\s+mv)\b'
-    reason: Modifies Terraform state
+  - pattern: '\b(terraform|tofu)\s+(import|state\s+mv)\b'
+    reason: Modifies Terraform/OpenTofu state
     ask: true
 
   - pattern: '\bpulumi\s+up\b'
@@ -84,12 +59,8 @@ bashToolPatterns:
     reason: Creates or selects Pulumi stack
     ask: true
 
-  - pattern: '\bcdk\s+deploy\b'
-    reason: Deploys AWS CDK infrastructure
-    ask: true
-
-  - pattern: '\bcdktf\s+deploy\b'
-    reason: Deploys CDK for Terraform infrastructure
+  - pattern: '\b(cdk|cdktf)\s+deploy\b'
+    reason: Deploys CDK/CDKTF infrastructure
     ask: true
 
   - pattern: '\b(terraform|tofu)\s+refresh\b'

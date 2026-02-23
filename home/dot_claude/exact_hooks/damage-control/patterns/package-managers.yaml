@@ -16,7 +16,7 @@ bashToolPatterns:
     reason: cargo yank (yanks crate from crates.io)
 
   # ---------------------------------------------------------------------------
-  # PACKAGE MANAGERS - SYSTEM LEVEL (DESTRUCTIVE)
+  # SYSTEM PACKAGE MANAGERS - REMOVAL (DESTRUCTIVE)
   # ---------------------------------------------------------------------------
   - pattern: '\bsudo\s+(apt|apt-get)\s+(remove|purge|autoremove)\b'
     reason: apt package removal (system-level)
@@ -27,14 +27,17 @@ bashToolPatterns:
   - pattern: '\bsudo\s+pacman\s+-R'
     reason: pacman package removal (system-level)
 
-  - pattern: '\bsudo\s+(zypper)\s+(remove|rm)\b'
+  - pattern: '\bsudo\s+zypper\s+(remove|rm)\b'
     reason: zypper package removal (system-level)
 
   - pattern: '\bsudo\s+apk\s+del\b'
     reason: apk package removal (system-level)
 
+  - pattern: '\b(snap\s+(remove|uninstall)|flatpak\s+uninstall)\b'
+    reason: snap/flatpak package removal
+
   # ---------------------------------------------------------------------------
-  # PACKAGE MANAGERS - SYSTEM LEVEL REQUIRING CONFIRMATION (ask: true)
+  # SYSTEM PACKAGE MANAGERS - INSTALLATION (ask: true)
   # ---------------------------------------------------------------------------
   - pattern: '\bsudo\s+(apt|apt-get)\s+install\b'
     reason: apt package installation (system-level)
@@ -48,12 +51,19 @@ bashToolPatterns:
     reason: pacman package installation (system-level)
     ask: true
 
-  - pattern: '\bsudo\s+(zypper)\s+(install|in)\b'
+  - pattern: '\bsudo\s+zypper\s+(install|in)\b'
     reason: zypper package installation (system-level)
     ask: true
 
   - pattern: '\bsudo\s+apk\s+add\b'
     reason: apk package installation (system-level)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # HOMEBREW
+  # ---------------------------------------------------------------------------
+  - pattern: '\bbrew\s+(uninstall|remove)\b'
+    reason: Uninstalls Homebrew package
     ask: true
 
   - pattern: '\bbrew\s+install\s+.*--force'
@@ -68,35 +78,15 @@ bashToolPatterns:
     reason: Homebrew cask install (macOS application)
     ask: true
 
+  - pattern: '\bbrew\s+(cleanup|autoremove)\b'
+    reason: brew cleanup/autoremove (removes old versions or unused dependencies)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # PIP / GEM
+  # ---------------------------------------------------------------------------
   - pattern: '\bpip3?\s+install\b'
     reason: pip install (arbitrary code execution from PyPI)
-    ask: true
-
-  - pattern: '\bcargo\s+install\b'
-    reason: cargo install (compiles and installs Rust binary)
-    ask: true
-
-  - pattern: '\bgo\s+install\b'
-    reason: go install (downloads and installs Go binary)
-    ask: true
-
-  - pattern: '\bnix-env\s+(-\S+\s+)*-e\b'
-    reason: nix-env package removal
-    ask: true
-
-  - pattern: '\bnix\s+profile\s+(remove|install)\b'
-    reason: Nix profile modification
-    ask: true
-
-  # ---------------------------------------------------------------------------
-  # PACKAGE MANAGER OPERATIONS REQUIRING CONFIRMATION (ask: true)
-  # ---------------------------------------------------------------------------
-  - pattern: '\bnpm\s+publish\b'
-    reason: Publishes package to npm registry
-    ask: true
-
-  - pattern: '\bbrew\s+(uninstall|remove)\b'
-    reason: Uninstalls Homebrew package
     ask: true
 
   - pattern: '\bpip\s+uninstall\b'
@@ -108,24 +98,43 @@ bashToolPatterns:
     ask: true
 
   # ---------------------------------------------------------------------------
-  # NPM / YARN / PNPM DANGEROUS OPERATIONS (ask: true)
+  # CARGO / GO
   # ---------------------------------------------------------------------------
-  - pattern: '\bnpx\s+'
-    reason: npx downloads and executes arbitrary packages
+  - pattern: '\bcargo\s+install\b'
+    reason: cargo install (compiles and installs Rust binary)
     ask: true
 
-  - pattern: '\bbunx\s+'
-    reason: bunx downloads and executes arbitrary packages
+  - pattern: '\bgo\s+install\b'
+    reason: go install (downloads and installs Go binary)
     ask: true
 
-  - pattern: '\byarn\s+dlx\b'
-    reason: yarn dlx downloads and executes arbitrary packages
+  # ---------------------------------------------------------------------------
+  # NIX ECOSYSTEM
+  # ---------------------------------------------------------------------------
+  - pattern: '\b(nix-collect-garbage|nix-store\s+--delete|nix\s+store\s+(gc|delete))\b'
+    reason: Nix garbage collection / store deletion (removes Nix store paths)
+
+  - pattern: '\b(nix-env\s+(\S+\s+)*-e|nix\s+profile\s+(remove|install))\b'
+    reason: Nix profile modification (install/remove packages)
     ask: true
 
-  - pattern: '\bpnpm\s+dlx\b'
-    reason: pnpm dlx downloads and executes arbitrary packages
+  # ---------------------------------------------------------------------------
+  # PACKAGE REGISTRY PUBLISHING (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bnpm\s+publish\b'
+    reason: Publishes package to npm registry
     ask: true
 
+  # ---------------------------------------------------------------------------
+  # NPM / YARN / PNPM / BUN - REMOTE EXECUTION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\b(npx|bunx|yarn\s+dlx|pnpm\s+dlx)\b'
+    reason: Downloads and executes arbitrary packages
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # NPM / YARN / PNPM - GLOBAL INSTALLS (ask: true)
+  # ---------------------------------------------------------------------------
   - pattern: '\bnpm\s+(install|i)\s+(-\S+\s+)*-g\b'
     reason: npm global install (modifies system-wide packages)
     ask: true
@@ -138,42 +147,15 @@ bashToolPatterns:
     reason: pnpm global install (modifies system-wide packages)
     ask: true
 
-  - pattern: '\bnpm\s+link\b'
-    reason: npm link (creates global symlink)
-    ask: true
-
-  - pattern: '\byarn\s+link\b'
-    reason: yarn link (creates global symlink)
+  # ---------------------------------------------------------------------------
+  # NPM / YARN - LINKING (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\b(npm|yarn)\s+link\b'
+    reason: npm/yarn link (creates global symlink)
     ask: true
 
   # ---------------------------------------------------------------------------
-  # SYSTEM PACKAGE MANAGERS - ADDITIONAL
-  # ---------------------------------------------------------------------------
-  - pattern: '\bsnap\s+(remove|uninstall)\b'
-    reason: snap remove (removes snap package)
-
-  - pattern: '\bflatpak\s+uninstall\b'
-    reason: flatpak uninstall (removes Flatpak application)
-
-  - pattern: '\bnix-collect-garbage\b'
-    reason: nix-collect-garbage (removes unused Nix store paths)
-
-  - pattern: '\bnix-store\s+--delete\b'
-    reason: nix-store --delete (deletes Nix store path)
-
-  - pattern: '\bnix\s+store\s+gc\b'
-    reason: nix store gc (Nix garbage collection)
-
-  - pattern: '\bbrew\s+cleanup\b'
-    reason: brew cleanup (removes old Homebrew versions and cache)
-    ask: true
-
-  - pattern: '\bbrew\s+autoremove\b'
-    reason: brew autoremove (removes unused Homebrew dependencies)
-    ask: true
-
-  # ---------------------------------------------------------------------------
-  # LANGUAGE-AGNOSTIC VERSION MANAGERS
+  # VERSION MANAGERS (asdf / mise / proto)
   # ---------------------------------------------------------------------------
   - pattern: '\basdf\s+uninstall\b'
     reason: asdf uninstall (removes language/tool version)

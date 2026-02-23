@@ -24,7 +24,7 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   # NODE.JS - EXPANDED ONE-LINER PATTERNS
   # ---------------------------------------------------------------------------
-  - pattern: '\bnode\s+-e\s+.*\b(fs\.rm|fs\.rmdir|fs\.unlink|fs\.rmSync|fs\.rmdirSync|fs\.unlinkSync)\b'
+  - pattern: '\bnode\s+-e\s+.*\.(rm|rmdir|unlink|rmSync|rmdirSync|unlinkSync)\b'
     reason: Node.js one-liner with filesystem deletion
 
   - pattern: '\bnode\s+-e\s+.*\b(child_process|exec|execSync|spawn|spawnSync)\b'
@@ -33,23 +33,14 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   # NODE.JS - VERSION MANAGERS
   # ---------------------------------------------------------------------------
-  - pattern: '\bnvm\s+uninstall\b'
-    reason: nvm uninstall (removes Node.js version)
-
-  - pattern: '\bfnm\s+uninstall\b'
-    reason: fnm uninstall (removes Node.js version)
-
-  - pattern: '\bvolta\s+uninstall\b'
-    reason: volta uninstall (removes tool from Volta)
+  - pattern: '\b(nvm|fnm|volta)\s+uninstall\b'
+    reason: Node.js version manager uninstall (removes Node.js version or tool)
 
   # ---------------------------------------------------------------------------
   # NODE.JS - CACHE AND CLEANUP
   # ---------------------------------------------------------------------------
-  - pattern: '\bnpm\s+cache\s+clean\b'
-    reason: npm cache clean (destroys package cache)
-
-  - pattern: '\byarn\s+cache\s+clean\b'
-    reason: yarn cache clean (destroys Yarn package cache)
+  - pattern: '\b(npm|yarn)\s+cache\s+clean\b'
+    reason: npm/yarn cache clean (destroys package cache)
 
   - pattern: '\bpnpm\s+store\s+prune\b'
     reason: pnpm store prune (removes unreferenced packages from store)

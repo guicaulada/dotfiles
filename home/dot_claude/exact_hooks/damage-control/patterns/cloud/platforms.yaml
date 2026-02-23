@@ -70,16 +70,10 @@ bashToolPatterns:
     reason: heroku addons:destroy (destroys add-on/database)
 
   # ---------------------------------------------------------------------------
-  # FLY.IO DESTRUCTIVE OPERATIONS
+  # FLY.IO DESTRUCTIVE OPERATIONS (consolidated fly + flyctl)
   # ---------------------------------------------------------------------------
-  - pattern: '\bfly\s+apps\s+destroy\b'
-    reason: fly apps destroy (Fly.io)
-
-  - pattern: '\bfly\s+destroy\b'
-    reason: fly destroy (Fly.io)
-
-  - pattern: '\bflyctl\s+(apps\s+destroy|destroy)\b'
-    reason: flyctl destroy (Fly.io)
+  - pattern: '\b(fly|flyctl)\s+(apps\s+)?destroy\b'
+    reason: Fly.io app destroy
 
   # ---------------------------------------------------------------------------
   # RAILWAY CLI
@@ -108,7 +102,7 @@ bashToolPatterns:
   - pattern: '\bsupabase\s+db\s+reset\b'
     reason: supabase db reset
 
-  - pattern: '\bsupabase\s+(projects\s+delete|functions\s+delete)\b'
+  - pattern: '\bsupabase\s+(projects|functions)\s+delete\b'
     reason: supabase delete (destroys Supabase resources)
 
   # ---------------------------------------------------------------------------
@@ -126,7 +120,7 @@ bashToolPatterns:
     reason: Deploys to Firebase
     ask: true
 
-  - pattern: '\bfly\s+deploy\b'
+  - pattern: '\b(fly|flyctl)\s+deploy\b'
     reason: Deploys to Fly.io
     ask: true
 
@@ -140,10 +134,6 @@ bashToolPatterns:
 
   - pattern: '\bheroku\s+container:release\b'
     reason: Releases container to Heroku
-    ask: true
-
-  - pattern: '\bflyctl\s+deploy\b'
-    reason: Deploys to Fly.io (flyctl)
     ask: true
 
   - pattern: '\brailway\s+deploy\b'

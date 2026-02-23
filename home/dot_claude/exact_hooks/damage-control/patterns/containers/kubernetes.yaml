@@ -3,17 +3,11 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   # KUBERNETES (kubectl) DESTRUCTIVE OPERATIONS
   # ---------------------------------------------------------------------------
-  - pattern: '\bkubectl\s+delete\s+namespace\b'
+  - pattern: '\bkubectl\s+delete\s+(namespace|ns)\b'
     reason: kubectl delete namespace (destroys all resources in namespace)
 
-  - pattern: '\bkubectl\s+delete\s+ns\b'
-    reason: kubectl delete ns (destroys all resources in namespace)
-
-  - pattern: '\bkubectl\s+delete\s+(pv|persistentvolume)\b'
-    reason: kubectl delete persistent volume (data loss)
-
-  - pattern: '\bkubectl\s+delete\s+(pvc|persistentvolumeclaim)\b'
-    reason: kubectl delete persistent volume claim (data loss)
+  - pattern: '\bkubectl\s+delete\s+(pv|persistentvolume|pvc|persistentvolumeclaim)\b'
+    reason: kubectl delete persistent volume/claim (data loss)
 
   - pattern: '\bkubectl\s+delete\s+.*--all\b'
     reason: kubectl delete --all (bulk resource deletion)
@@ -24,11 +18,8 @@ bashToolPatterns:
   - pattern: '\bkubectl\s+delete\s+.*--force'
     reason: kubectl delete --force (bypasses graceful shutdown)
 
-  - pattern: '\bkubectl\s+config\s+delete-(context|cluster|user)\b'
-    reason: kubectl config delete (removes kubeconfig entry)
-
-  - pattern: '\bkubectl\s+config\s+unset\b'
-    reason: kubectl config unset (modifies kubeconfig)
+  - pattern: '\bkubectl\s+config\s+(delete-(context|cluster|user)|unset)\b'
+    reason: kubectl config delete/unset (modifies kubeconfig)
 
   - pattern: '\bkubectl\s+drain\s+.*--force'
     reason: kubectl drain --force (ignores PodDisruptionBudgets)
@@ -42,11 +33,8 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   # HELM DESTRUCTIVE OPERATIONS
   # ---------------------------------------------------------------------------
-  - pattern: '\bhelm\s+uninstall\b'
-    reason: helm uninstall (removes release)
-
-  - pattern: '\bhelm\s+delete\b'
-    reason: helm delete (removes release)
+  - pattern: '\bhelm\s+(uninstall|delete)\b'
+    reason: helm uninstall/delete (removes release)
 
   # ---------------------------------------------------------------------------
   # SERVICE MESH AND ORCHESTRATION
@@ -62,6 +50,30 @@ bashToolPatterns:
 
   - pattern: '\bconsul\s+kv\s+delete\b'
     reason: consul kv delete (destroys key-value data)
+
+  # ---------------------------------------------------------------------------
+  # LOCAL KUBERNETES
+  # ---------------------------------------------------------------------------
+  - pattern: '\bkind\s+delete\s+cluster\b'
+    reason: kind delete cluster (destroys local Kubernetes cluster)
+
+  - pattern: '\bminikube\s+delete\b'
+    reason: minikube delete (destroys local Kubernetes cluster)
+
+  - pattern: '\bk3d\s+cluster\s+delete\b'
+    reason: k3d cluster delete (destroys local k3s cluster)
+
+  # ---------------------------------------------------------------------------
+  # NOMAD (HashiCorp) DESTRUCTIVE OPERATIONS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bnomad\s+job\s+stop\b'
+    reason: nomad job stop (stops Nomad job)
+
+  - pattern: '\bnomad\s+namespace\s+delete\b'
+    reason: nomad namespace delete (destroys Nomad namespace)
+
+  - pattern: '\bnomad\s+volume\s+delete\b'
+    reason: nomad volume delete (destroys Nomad storage volume)
 
   # ---------------------------------------------------------------------------
   # KUBERNETES (kubectl/helm) OPERATIONS REQUIRING CONFIRMATION (ask: true)
@@ -173,30 +185,6 @@ bashToolPatterns:
   - pattern: '\bhelm\s+rollback\b'
     reason: Rolls back Helm release
     ask: true
-
-  # ---------------------------------------------------------------------------
-  # LOCAL KUBERNETES
-  # ---------------------------------------------------------------------------
-  - pattern: '\bkind\s+delete\s+cluster\b'
-    reason: kind delete cluster (destroys local Kubernetes cluster)
-
-  - pattern: '\bminikube\s+delete\b'
-    reason: minikube delete (destroys local Kubernetes cluster)
-
-  - pattern: '\bk3d\s+cluster\s+delete\b'
-    reason: k3d cluster delete (destroys local k3s cluster)
-
-  # ---------------------------------------------------------------------------
-  # NOMAD (HashiCorp)
-  # ---------------------------------------------------------------------------
-  - pattern: '\bnomad\s+job\s+stop\b'
-    reason: nomad job stop (stops Nomad job)
-
-  - pattern: '\bnomad\s+namespace\s+delete\b'
-    reason: nomad namespace delete (destroys Nomad namespace)
-
-  - pattern: '\bnomad\s+volume\s+delete\b'
-    reason: nomad volume delete (destroys Nomad storage volume)
 
   - pattern: '\bnomad\s+job\s+run\b'
     reason: Submits Nomad job

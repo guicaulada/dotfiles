@@ -3,8 +3,8 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   # PROCESS DESTRUCTION
   # ---------------------------------------------------------------------------
-  - pattern: '\bkill\s+(-9|-KILL|-SIGKILL)\s+-1\b'
-    reason: kill all processes
+  - pattern: '\bkill\s+(-KILL|-9|-SIGKILL)\s+(-1|%\d+)\b'
+    reason: kill -9 all processes or job group
 
   - pattern: '\bkillall\s+-9\b'
     reason: killall -9
@@ -12,11 +12,11 @@ bashToolPatterns:
   - pattern: '\bpkill\s+-9\b'
     reason: pkill -9
 
-  - pattern: '\bkill\s+(-KILL|-9|-SIGKILL)\s+(-1|%1)\b'
-    reason: kill -9 all processes or job group
-
   - pattern: '\bnohup\s+.*(rm|shred|wipe|dd|mkfs)\b'
     reason: nohup with destructive command (runs detached, harder to interrupt)
+
+  - pattern: '\bxargs\s+.*\bkill\b'
+    reason: xargs piped to kill (mass process termination)
 
   # ---------------------------------------------------------------------------
   # CRONTAB DESTRUCTION
@@ -54,8 +54,11 @@ bashToolPatterns:
   - pattern: '\bexport\s+PATH\s*=(?!.*\$\{?PATH\}?)'
     reason: overwriting PATH without preserving existing PATH
 
-  - pattern: '\bpython3?\s+-c\s+.*(os\.remove|os\.unlink|shutil\.rmtree|os\.system|subprocess|pathlib\S*\.unlink|exec\s*\(|__import__\s*\()'
+  - pattern: '\bpython3?\s+-c\s+.*(os\.remove|os\.unlink|shutil\.rmtree|os\.system|subprocess|\.unlink\(|exec\s*\(|__import__\s*\()'
     reason: Python one-liner with destructive operation
+
+  - pattern: '\bprintf\b.*\|\s*(sh|bash|zsh)\b'
+    reason: printf piped to shell (code injection vector)
 
   # ---------------------------------------------------------------------------
   # SHELL EVALUATION REQUIRING CONFIRMATION (ask: true)
@@ -72,16 +75,8 @@ bashToolPatterns:
     reason: Indirect shell command execution
     ask: true
 
-  - pattern: '\bnode\s+-e\s+'
-    reason: Node.js inline code execution
-    ask: true
-
-  - pattern: '\bruby\s+-e\s+'
-    reason: Ruby inline code execution
-    ask: true
-
-  - pattern: '\bperl\s+-e\s+'
-    reason: Perl inline code execution
+  - pattern: '\b(node|ruby|perl)\s+-e\s+'
+    reason: Inline code execution
     ask: true
 
   # ---------------------------------------------------------------------------

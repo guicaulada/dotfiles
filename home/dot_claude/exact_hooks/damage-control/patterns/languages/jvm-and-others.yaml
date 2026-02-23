@@ -136,12 +136,8 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   # ADDITIONAL INLINE CODE EXECUTION (ask: true)
   # ---------------------------------------------------------------------------
-  - pattern: '\bjulia\s+-e\b'
-    reason: Julia inline code execution
-    ask: true
-
-  - pattern: '\bRscript\s+-e\b'
-    reason: R inline code execution
+  - pattern: '\b(julia|Rscript)\s+-e\b'
+    reason: Julia/R inline code execution
     ask: true
 
   # ---------------------------------------------------------------------------

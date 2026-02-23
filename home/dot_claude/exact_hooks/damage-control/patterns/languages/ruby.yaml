@@ -3,11 +3,8 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   # RUBY ECOSYSTEM
   # ---------------------------------------------------------------------------
-  - pattern: '\brbenv\s+uninstall\b'
-    reason: rbenv uninstall (removes Ruby version)
-
-  - pattern: '\brvm\s+(remove|uninstall)\b'
-    reason: rvm remove/uninstall (removes Ruby version)
+  - pattern: '\b(rbenv|rvm)\s+(remove|uninstall)\b'
+    reason: Ruby version manager remove/uninstall (removes Ruby version)
 
   - pattern: '\bbundle\s+clean\b'
     reason: bundle clean (removes unused gems)
