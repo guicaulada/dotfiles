@@ -37,6 +37,7 @@ brew "selene"
 brew "shellcheck"
 brew "shfmt"
 brew "stylua"
+brew "yamllint"
 brew "go-jsonnet"
 
 # Cloud and infrastructure
