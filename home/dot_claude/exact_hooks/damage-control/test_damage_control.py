@@ -15,11 +15,9 @@ from pathlib import Path
 
 # Import the module under test
 sys.path.insert(0, str(Path(__file__).parent))
-import importlib
+import damage_control as dc
 
-dc = importlib.import_module("damage-control")
-
-SCRIPT = str(Path(__file__).parent / "damage-control.py")
+SCRIPT = str(Path(__file__).parent / "damage_control.py")
 HOME = str(Path("~").expanduser())
 
 
