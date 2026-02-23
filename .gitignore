@@ -39,6 +39,7 @@ Thumbs.db
 # Caches
 .cache/
 .pytest_cache/
+.ruff_cache/
 .npm/
 .yarn/
 .pnpm-store/
