@@ -3,6 +3,7 @@ local autocmd = vim.api.nvim_create_autocmd
 
 vim.filetype.add({
   extension = {
+    tmpl = 'gotmpl',
     tpl = function(_path, bufnr)
       local first_line = vim.api.nvim_buf_get_lines(bufnr, 0, 1, false)[1] or ''
 
