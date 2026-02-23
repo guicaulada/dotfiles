@@ -1,0 +1,192 @@
+# System security patterns (destruction, users/groups, kernel, MAC, disk/volume, logs, backup, system tools)
+bashToolPatterns:
+  # ---------------------------------------------------------------------------
+  # SYSTEM-LEVEL DESTRUCTION
+  # ---------------------------------------------------------------------------
+  - pattern: '\bmkfs\.'
+    reason: filesystem format command
+
+  - pattern: '>+\s*/dev/(?!null)[a-z][a-z0-9]*'
+    reason: redirect to device file (excluding /dev/null)
+
+  - pattern: '\bdd\s+.*of=/dev/'
+    reason: dd writing to device
+
+  - pattern: '\bdiskutil\s+(eraseDisk|eraseVolume|partitionDisk)\b'
+    reason: diskutil erase/partition (macOS disk destruction)
+
+  - pattern: '\b(shutdown|reboot|halt|poweroff)\b'
+    reason: system power state change
+
+  - pattern: '\bsystemctl\s+(stop|disable|mask)\b'
+    reason: systemctl stop/disable/mask (disables system services)
+
+  - pattern: '\biptables\s+(-\S+\s+)*(-F|--flush)\b'
+    reason: iptables flush (removes all firewall rules)
+
+  - pattern: '\bpfctl\s+-d\b'
+    reason: pfctl -d (disables macOS packet filter firewall)
+
+  - pattern: '\btmutil\s+delete\b'
+    reason: tmutil delete (deletes Time Machine backups)
+
+  - pattern: '\bfdisk\b'
+    reason: fdisk (partition table manipulation)
+
+  - pattern: '\bparted\b'
+    reason: parted (partition manipulation)
+
+  - pattern: '\bbadblocks\s+.*-w\b'
+    reason: badblocks -w (write mode overwrites disk sectors)
+
+  - pattern: '\bblkdiscard\b'
+    reason: blkdiscard (discards/trims all block device sectors - unrecoverable)
+
+  - pattern: '\bsgdisk\s+.*(--zap-all|-z|-o|--clear|--delete)\b'
+    reason: sgdisk destructive partition operation
+
+  - pattern: '\bcryptsetup\s+(close|luksErase|erase|luksClose)\b'
+    reason: cryptsetup close/erase (destroys encrypted volume access)
+
+  - pattern: '\bhdparm\s+.*(--security-erase|--sanitize-freeze|--trim-sector-ranges)\b'
+    reason: hdparm ATA secure erase (destroys all drive data)
+
+  - pattern: '\bnvme\s+(format|sanitize)\b'
+    reason: nvme format/sanitize (erases NVMe drive - unrecoverable)
+
+  - pattern: '\bswapoff\s+-a\b'
+    reason: swapoff -a (disables ALL swap, may cause OOM)
+
+  # ---------------------------------------------------------------------------
+  # USER AND GROUP MANAGEMENT
+  # ---------------------------------------------------------------------------
+  - pattern: '\buserdel\b'
+    reason: userdel (deletes user account)
+
+  - pattern: '\bgroupdel\b'
+    reason: groupdel (deletes group)
+
+  - pattern: '\bdeluser\b'
+    reason: deluser (Debian/Ubuntu user deletion)
+
+  # ---------------------------------------------------------------------------
+  # USER AND GROUP MANAGEMENT REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\buseradd\b'
+    reason: Adds a new user account
+    ask: true
+
+  - pattern: '\badduser\b'
+    reason: Adds a new user account (Debian/Ubuntu)
+    ask: true
+
+  - pattern: '\busermod\b'
+    reason: Modifies an existing user account
+    ask: true
+
+  - pattern: '\bpasswd\b'
+    reason: Changes user password
+    ask: true
+
+  - pattern: '\bchpasswd\b'
+    reason: Changes passwords in batch mode
+    ask: true
+
+  - pattern: '\bgroupadd\b'
+    reason: Creates a new group
+    ask: true
+
+  - pattern: '\bgroupmod\b'
+    reason: Modifies an existing group
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # KERNEL MODULES
+  # ---------------------------------------------------------------------------
+  - pattern: '\brmmod\b'
+    reason: rmmod (removes kernel module - can crash system)
+
+  - pattern: '\bmodprobe\s+.*(-r|--remove)\b'
+    reason: modprobe -r (removes kernel module)
+
+  - pattern: '\btelinit\b'
+    reason: telinit (changes system runlevel)
+
+  - pattern: '\binit\s+[016]\b'
+    reason: init 0/1/6 (shutdown, single-user, or reboot)
+
+  - pattern: '\binsmod\b'
+    reason: Inserts kernel module (arbitrary code in kernel space)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # MANDATORY ACCESS CONTROL
+  # ---------------------------------------------------------------------------
+  - pattern: '\bsetenforce\s+0\b'
+    reason: setenforce 0 (disables SELinux enforcement)
+
+  - pattern: '\baa-disable\b'
+    reason: aa-disable (disables AppArmor profile)
+
+  - pattern: '\baa-teardown\b'
+    reason: aa-teardown (tears down all AppArmor policies)
+
+  - pattern: '\bapparmor_parser\s+.*(-R|--remove)\b'
+    reason: apparmor_parser -R (removes AppArmor profile)
+
+  # ---------------------------------------------------------------------------
+  # LOG / AUDIT TRAIL MANIPULATION
+  # ---------------------------------------------------------------------------
+  - pattern: '\bjournalctl\s+--vacuum'
+    reason: journalctl vacuum (destroys journal logs)
+
+  - pattern: '\bjournalctl\s+--rotate'
+    reason: journalctl rotate (rotates journal logs)
+
+  - pattern: '\blogrotate\s+.*--force'
+    reason: logrotate --force (forced log rotation)
+
+  - pattern: '>\s*/var/log/\S+'
+    reason: redirect truncating log file (destroys audit trail)
+
+  # ---------------------------------------------------------------------------
+  # DISK / VOLUME MANAGEMENT
+  # ---------------------------------------------------------------------------
+  - pattern: '\b(mount|umount)\s+'
+    reason: mount/umount (filesystem mount state change)
+
+  - pattern: '\b(lvremove|vgremove|pvremove)\b'
+    reason: LVM volume removal (irreversible data loss)
+
+  - pattern: '\bmdadm\s+.*(--stop|--remove|--zero-superblock)\b'
+    reason: mdadm RAID manipulation (data loss)
+
+  - pattern: '\bwipefs\b'
+    reason: wipefs (erases filesystem signatures)
+
+  # ---------------------------------------------------------------------------
+  # BACKUP / RESTORE TOOLS
+  # ---------------------------------------------------------------------------
+  - pattern: '\brestic\s+(forget|prune)\b'
+    reason: restic forget/prune (destroys backup history)
+
+  - pattern: '\bborg\s+(delete|prune|compact)\b'
+    reason: borg delete/prune (destroys backup archives)
+
+  - pattern: '\btmutil\s+(disable|disablelocal)\b'
+    reason: tmutil disable (disables Time Machine backups)
+
+  # ---------------------------------------------------------------------------
+  # ADDITIONAL SYSTEM TOOLS (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bvisudo\b'
+    reason: visudo (edits sudoers file - misconfiguration locks out access)
+    ask: true
+
+  - pattern: '\bvipw\b'
+    reason: vipw (edits /etc/passwd directly)
+    ask: true
+
+  - pattern: '\bchsh\b'
+    reason: chsh (changes user default shell)
+    ask: true

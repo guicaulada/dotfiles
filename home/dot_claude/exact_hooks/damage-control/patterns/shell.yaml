@@ -1,0 +1,96 @@
+# Shell security patterns (process destruction, crontab, history, eval/injection, inline code)
+bashToolPatterns:
+  # ---------------------------------------------------------------------------
+  # PROCESS DESTRUCTION
+  # ---------------------------------------------------------------------------
+  - pattern: '\bkill\s+(-9|-KILL|-SIGKILL)\s+-1\b'
+    reason: kill all processes
+
+  - pattern: '\bkillall\s+-9\b'
+    reason: killall -9
+
+  - pattern: '\bpkill\s+-9\b'
+    reason: pkill -9
+
+  - pattern: '\bkill\s+(-KILL|-9|-SIGKILL)\s+(-1|%1)\b'
+    reason: kill -9 all processes or job group
+
+  - pattern: '\bnohup\s+.*(rm|shred|wipe|dd|mkfs)\b'
+    reason: nohup with destructive command (runs detached, harder to interrupt)
+
+  # ---------------------------------------------------------------------------
+  # CRONTAB DESTRUCTION
+  # ---------------------------------------------------------------------------
+  - pattern: '\bcrontab\s+-r\b'
+    reason: crontab -r (removes entire crontab)
+
+  # ---------------------------------------------------------------------------
+  # HISTORY/SHELL MANIPULATION
+  # ---------------------------------------------------------------------------
+  - pattern: '\bhistory\b.*-[a-z]*c'
+    reason: clearing shell history
+
+  # ---------------------------------------------------------------------------
+  # SHELL EVALUATION AND CODE INJECTION
+  # ---------------------------------------------------------------------------
+  - pattern: '\beval\s+'
+    reason: eval (arbitrary command execution - can bypass all pattern checks)
+
+  - pattern: '\bbase64\s+(-d|--decode)\b.*\|\s*(sh|bash|zsh|python|perl|ruby)\b'
+    reason: base64 decode piped to shell (encoded payload execution)
+
+  - pattern: '\\rm\s+'
+    reason: backslash-escaped rm (bypasses alias protection)
+
+  - pattern: '\bcommand\s+rm\b'
+    reason: command rm (bypasses alias/function protection)
+
+  - pattern: '\bxargs\s+.*(shred|chmod|chown|dd|mkfs)\b'
+    reason: xargs piped to destructive command
+
+  - pattern: '\bunset\b.*\b(PATH|HOME|USER|SHELL)\b'
+    reason: unsetting critical environment variable
+
+  - pattern: '\bexport\s+PATH\s*=(?!.*\$\{?PATH\}?)'
+    reason: overwriting PATH without preserving existing PATH
+
+  - pattern: '\bpython3?\s+-c\s+.*(os\.remove|os\.unlink|shutil\.rmtree|os\.system|subprocess|pathlib\S*\.unlink|exec\s*\(|__import__\s*\()'
+    reason: Python one-liner with destructive operation
+
+  # ---------------------------------------------------------------------------
+  # SHELL EVALUATION REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bsource\s+'
+    reason: Sourcing a script (executes in current shell context)
+    ask: true
+
+  - pattern: '\bexec\s+[^>]'
+    reason: exec replaces current shell process
+    ask: true
+
+  - pattern: '\b(bash|sh|zsh)\s+-c\s+'
+    reason: Indirect shell command execution
+    ask: true
+
+  - pattern: '\bnode\s+-e\s+'
+    reason: Node.js inline code execution
+    ask: true
+
+  - pattern: '\bruby\s+-e\s+'
+    reason: Ruby inline code execution
+    ask: true
+
+  - pattern: '\bperl\s+-e\s+'
+    reason: Perl inline code execution
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # PROCESS MANAGEMENT (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bkillall\s+\S+'
+    reason: Sends signal to all matching processes
+    ask: true
+
+  - pattern: '\bpkill\s+'
+    reason: Sends signal to processes matching pattern
+    ask: true

@@ -1,0 +1,203 @@
+# Kubernetes, Helm, and related orchestration security patterns
+bashToolPatterns:
+  # ---------------------------------------------------------------------------
+  # KUBERNETES (kubectl) DESTRUCTIVE OPERATIONS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bkubectl\s+delete\s+namespace\b'
+    reason: kubectl delete namespace (destroys all resources in namespace)
+
+  - pattern: '\bkubectl\s+delete\s+ns\b'
+    reason: kubectl delete ns (destroys all resources in namespace)
+
+  - pattern: '\bkubectl\s+delete\s+(pv|persistentvolume)\b'
+    reason: kubectl delete persistent volume (data loss)
+
+  - pattern: '\bkubectl\s+delete\s+(pvc|persistentvolumeclaim)\b'
+    reason: kubectl delete persistent volume claim (data loss)
+
+  - pattern: '\bkubectl\s+delete\s+.*--all\b'
+    reason: kubectl delete --all (bulk resource deletion)
+
+  - pattern: '\bkubectl\s+delete\s+.*(-A|--all-namespaces)'
+    reason: kubectl delete across all namespaces
+
+  - pattern: '\bkubectl\s+delete\s+.*--force'
+    reason: kubectl delete --force (bypasses graceful shutdown)
+
+  - pattern: '\bkubectl\s+config\s+delete-(context|cluster|user)\b'
+    reason: kubectl config delete (removes kubeconfig entry)
+
+  - pattern: '\bkubectl\s+config\s+unset\b'
+    reason: kubectl config unset (modifies kubeconfig)
+
+  - pattern: '\bkubectl\s+drain\s+.*--force'
+    reason: kubectl drain --force (ignores PodDisruptionBudgets)
+
+  - pattern: '\bkubectl\s+drain\s+.*--delete-emptydir-data'
+    reason: kubectl drain --delete-emptydir-data (deletes local data)
+
+  - pattern: '\bkubectl\s+replace\s+.*--force'
+    reason: kubectl replace --force (deletes then recreates resource)
+
+  # ---------------------------------------------------------------------------
+  # HELM DESTRUCTIVE OPERATIONS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bhelm\s+uninstall\b'
+    reason: helm uninstall (removes release)
+
+  - pattern: '\bhelm\s+delete\b'
+    reason: helm delete (removes release)
+
+  # ---------------------------------------------------------------------------
+  # SERVICE MESH AND ORCHESTRATION
+  # ---------------------------------------------------------------------------
+  - pattern: '\bistioctl\s+(uninstall|remove-from-cluster)\b'
+    reason: istioctl uninstall (removes service mesh from cluster)
+
+  - pattern: '\blinkerd\s+uninstall\b'
+    reason: linkerd uninstall (removes Linkerd service mesh)
+
+  - pattern: '\bconsul\s+(leave|force-leave)\b'
+    reason: consul leave/force-leave (removes node from service mesh)
+
+  - pattern: '\bconsul\s+kv\s+delete\b'
+    reason: consul kv delete (destroys key-value data)
+
+  # ---------------------------------------------------------------------------
+  # KUBERNETES (kubectl/helm) OPERATIONS REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bkubectl\s+delete\b'
+    reason: Deletes Kubernetes resources
+    ask: true
+
+  - pattern: '\bkubectl\s+apply\b'
+    reason: Creates or updates Kubernetes resources
+    ask: true
+
+  - pattern: '\bkubectl\s+create\b'
+    reason: Creates Kubernetes resources
+    ask: true
+
+  - pattern: '\bkubectl\s+patch\b'
+    reason: Modifies Kubernetes resources in-place
+    ask: true
+
+  - pattern: '\bkubectl\s+replace\b'
+    reason: Replaces Kubernetes resources
+    ask: true
+
+  - pattern: '\bkubectl\s+scale\b'
+    reason: Changes replica count
+    ask: true
+
+  - pattern: '\bkubectl\s+rollout\s+(restart|undo)\b'
+    reason: Restarts or rolls back deployment
+    ask: true
+
+  - pattern: '\bkubectl\s+drain\b'
+    reason: Evicts pods from node
+    ask: true
+
+  - pattern: '\bkubectl\s+cordon\b'
+    reason: Marks node as unschedulable
+    ask: true
+
+  - pattern: '\bkubectl\s+uncordon\b'
+    reason: Marks node as schedulable
+    ask: true
+
+  - pattern: '\bkubectl\s+taint\b'
+    reason: Modifies node taints
+    ask: true
+
+  - pattern: '\bkubectl\s+exec\b'
+    reason: Executes command in pod
+    ask: true
+
+  - pattern: '\bkubectl\s+set\s+(image|env|resources)\b'
+    reason: Modifies deployment configuration
+    ask: true
+
+  - pattern: '\bkubectl\s+edit\b'
+    reason: Edits Kubernetes resource in-place
+    ask: true
+
+  - pattern: '\bkubectl\s+run\b'
+    reason: Creates ad-hoc pod
+    ask: true
+
+  - pattern: '\bkubectl\s+expose\b'
+    reason: Creates Kubernetes service
+    ask: true
+
+  - pattern: '\bkubectl\s+cp\b'
+    reason: Copies files to/from pod
+    ask: true
+
+  - pattern: '\bkubectl\s+label\s+.*--overwrite'
+    reason: Overwrites existing labels
+    ask: true
+
+  - pattern: '\bkubectl\s+annotate\s+.*--overwrite'
+    reason: Overwrites existing annotations
+    ask: true
+
+  - pattern: '\bkubectl\s+port-forward\b'
+    reason: Forwards local port to pod
+    ask: true
+
+  - pattern: '\bkubectl\s+config\s+(set-context|use-context)\b'
+    reason: Changes active Kubernetes context
+    ask: true
+
+  - pattern: '\bkubectl\s+config\s+set-credentials\b'
+    reason: Modifies Kubernetes credentials
+    ask: true
+
+  - pattern: '\bkubectl\s+debug\b'
+    reason: Creates debug container in pod
+    ask: true
+
+  - pattern: '\bkubectl\s+auth\s+reconcile\b'
+    reason: Modifies Kubernetes RBAC rules
+    ask: true
+
+  - pattern: '\blinkerd\s+inject\b'
+    reason: Injects Linkerd sidecar proxy into resources
+    ask: true
+
+  - pattern: '\bhelm\s+(install|upgrade)\b'
+    reason: Deploys or updates Helm release
+    ask: true
+
+  - pattern: '\bhelm\s+rollback\b'
+    reason: Rolls back Helm release
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # LOCAL KUBERNETES
+  # ---------------------------------------------------------------------------
+  - pattern: '\bkind\s+delete\s+cluster\b'
+    reason: kind delete cluster (destroys local Kubernetes cluster)
+
+  - pattern: '\bminikube\s+delete\b'
+    reason: minikube delete (destroys local Kubernetes cluster)
+
+  - pattern: '\bk3d\s+cluster\s+delete\b'
+    reason: k3d cluster delete (destroys local k3s cluster)
+
+  # ---------------------------------------------------------------------------
+  # NOMAD (HashiCorp)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bnomad\s+job\s+stop\b'
+    reason: nomad job stop (stops Nomad job)
+
+  - pattern: '\bnomad\s+namespace\s+delete\b'
+    reason: nomad namespace delete (destroys Nomad namespace)
+
+  - pattern: '\bnomad\s+volume\s+delete\b'
+    reason: nomad volume delete (destroys Nomad storage volume)
+
+  - pattern: '\bnomad\s+job\s+run\b'
+    reason: Submits Nomad job
+    ask: true

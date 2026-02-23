@@ -1,0 +1,128 @@
+# Git security patterns
+bashToolPatterns:
+  # ---------------------------------------------------------------------------
+  # GIT DESTRUCTIVE OPERATIONS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bgit\s+reset\s+--hard\b'
+    reason: git reset --hard (use --soft or stash)
+
+  - pattern: '\bgit\s+clean\s+.*(-[fd]|--force)\b'
+    reason: git clean with force/directory flags
+
+  # Note: This blocks --force but NOT --force-with-lease
+  - pattern: '\bgit\s+push\s+.*--force(?!-with-lease)'
+    reason: git push --force (use --force-with-lease)
+
+  - pattern: '\bgit\s+push\b.*\s-f\b'
+    reason: git push -f (use --force-with-lease)
+
+  - pattern: '\bgit\s+stash\s+clear\b'
+    reason: git stash clear (deletes ALL stashes)
+
+  - pattern: '\bgit\s+reflog\s+expire\b'
+    reason: git reflog expire (destroys recovery mechanism)
+
+  - pattern: '\bgit\s+gc\s+.*--prune=now'
+    reason: git gc --prune=now (can lose dangling commits)
+
+  - pattern: '\bgit\s+filter-branch\b'
+    reason: git filter-branch (rewrites entire history)
+
+  - pattern: '\bgit\s+filter-repo\b'
+    reason: git filter-repo (rewrites entire history, modern filter-branch)
+
+  - pattern: '\bgit\s+checkout\s+(-\S+\s+)*(-f|--force)\b'
+    reason: git checkout --force (silently discards uncommitted changes)
+
+  - pattern: '\bgit\s+switch\s+(-\S+\s+)*(-f|--force)\b'
+    reason: git switch --force (silently discards uncommitted changes)
+
+  - pattern: '\bgit\s+submodule\s+deinit\s+.*--force'
+    reason: git submodule deinit --force (unregisters submodule)
+
+  # ---------------------------------------------------------------------------
+  # GIT OPERATIONS REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bgit\s+checkout\s+--\s*\.'
+    reason: Discards all uncommitted changes
+    ask: true
+
+  - pattern: '\bgit\s+restore\s+\.'
+    reason: Discards all uncommitted changes
+    ask: true
+
+  - pattern: '\bgit\s+stash\s+drop\b'
+    reason: Permanently deletes a stash
+    ask: true
+
+  - pattern: '\bgit\s+branch\s+(-\S+\s+)*-D'
+    reason: Force deletes branch (even if unmerged)
+    ask: true
+
+  - pattern: '\bgit\s+push\s+\S+\s+--delete\b'
+    reason: Deletes remote branch
+    ask: true
+
+  - pattern: '\bgit\s+push\s+\S+\s+:\S+'
+    reason: Deletes remote branch (old syntax)
+    ask: true
+
+  - pattern: '\bgit\s+revert\b'
+    reason: Creates revert commit (undoes changes)
+    ask: true
+
+  - pattern: '\bgit\s+tag\s+-d\b'
+    reason: Deletes a local tag
+    ask: true
+
+  - pattern: '\bgit\s+config\s+--global\b'
+    reason: Modifies global git configuration
+    ask: true
+
+  - pattern: '\bgit\s+remote\s+(remove|rm)\b'
+    reason: Removes a remote from repository
+    ask: true
+
+  - pattern: '\bgit\s+remote\s+set-url\b'
+    reason: Changes remote URL
+    ask: true
+
+  - pattern: '\bgit\s+tag\s+-f\b'
+    reason: Force moves an existing tag
+    ask: true
+
+  - pattern: '\bgit\s+notes\s+(remove|prune)\b'
+    reason: Removes git notes (metadata loss)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # GIT OPERATIONS WITH REMOTE SIDE EFFECTS (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bgit\s+push\b'
+    reason: Pushes commits to remote repository
+    ask: true
+
+  - pattern: '\bgit\s+fetch\s+.*--prune\b'
+    reason: Prunes remote-tracking branches
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # GIT ADDITIONAL OPERATIONS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bgit\s+config\s+--system\b'
+    reason: git config --system (modifies system-wide git configuration)
+
+  # ---------------------------------------------------------------------------
+  # GIT ADDITIONAL OPERATIONS REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bgit\s+rebase\b'
+    reason: Rewrites commit history
+    ask: true
+
+  - pattern: '\bgit\s+(cherry-pick|merge|rebase)\s+--abort\b'
+    reason: Aborts in-progress operation (discards conflict resolution work)
+    ask: true
+
+  - pattern: '\bgit\s+worktree\s+remove\b'
+    reason: Removes git worktree
+    ask: true

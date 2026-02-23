@@ -1,0 +1,111 @@
+# GCP (gcloud) security patterns
+bashToolPatterns:
+  # ---------------------------------------------------------------------------
+  # GCP (gcloud) DESTRUCTIVE OPERATIONS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bgcloud\s+projects\s+delete\b'
+    reason: gcloud projects delete (DELETES ENTIRE PROJECT)
+
+  - pattern: '\bgcloud\s+compute\s+instances\s+delete\b'
+    reason: gcloud compute instances delete
+
+  - pattern: '\bgcloud\s+sql\s+instances\s+delete\b'
+    reason: gcloud sql instances delete
+
+  - pattern: '\bgcloud\s+container\s+clusters\s+delete\b'
+    reason: gcloud container clusters delete (GKE)
+
+  - pattern: '\bgcloud\s+storage\s+rm\s+.*-r'
+    reason: gcloud storage rm -r (recursive delete)
+
+  - pattern: '\bgcloud\s+functions\s+delete\b'
+    reason: gcloud functions delete
+
+  - pattern: '\bgcloud\s+iam\s+service-accounts\s+delete\b'
+    reason: gcloud iam service-accounts delete
+
+  - pattern: '\bgcloud\s+run\s+services\s+delete\b'
+    reason: gcloud run services delete (destroys Cloud Run service)
+
+  - pattern: '\bgcloud\s+spanner\s+(instances|databases)\s+delete\b'
+    reason: gcloud spanner delete (destroys Spanner instance/database)
+
+  - pattern: '\bgcloud\s+bigtable\s+instances\s+delete\b'
+    reason: gcloud bigtable instances delete (destroys Bigtable instance)
+
+  - pattern: '\bgcloud\s+redis\s+instances\s+delete\b'
+    reason: gcloud redis instances delete (destroys Memorystore)
+
+  - pattern: '\bgcloud\s+artifacts\s+(repositories|packages|versions)\s+delete\b'
+    reason: gcloud artifacts delete (destroys container registry artifacts)
+
+  - pattern: '\bgcloud\s+container\s+images\s+delete\b'
+    reason: gcloud container images delete (destroys container images)
+
+  - pattern: '\bgcloud\s+secrets\s+delete\b'
+    reason: gcloud secrets delete (destroys Secret Manager secret)
+
+  - pattern: '\bgcloud\s+secrets\s+versions\s+(destroy|disable)\b'
+    reason: gcloud secrets versions destroy/disable (irreversible)
+
+  - pattern: '\bgcloud\s+firestore\s+databases\s+delete\b'
+    reason: gcloud firestore databases delete
+
+  - pattern: '\bgcloud\s+composer\s+environments\s+delete\b'
+    reason: gcloud composer environments delete (destroys Airflow cluster)
+
+  - pattern: '\bgcloud\s+dataflow\s+jobs\s+(cancel|drain)\b'
+    reason: gcloud dataflow jobs cancel/drain (stops data pipeline)
+
+  - pattern: '\bgcloud\s+logging\s+(sinks|buckets)\s+delete\b'
+    reason: gcloud logging delete (destroys audit/log infrastructure)
+
+  - pattern: '\bgcloud\s+monitoring\s+(dashboards|uptime)\s+delete\b'
+    reason: gcloud monitoring delete (removes monitoring resources)
+
+  - pattern: '\bgcloud\s+compute\s+(disks|snapshots|images)\s+delete\b'
+    reason: gcloud compute disks/snapshots/images delete (destroys storage)
+
+  - pattern: '\bgcloud\s+compute\s+firewall-rules\s+delete\b'
+    reason: gcloud compute firewall-rules delete (removes security rules)
+
+  - pattern: '\bgcloud\s+compute\s+networks\s+delete\b'
+    reason: gcloud compute networks delete (destroys VPC network)
+
+  # ---------------------------------------------------------------------------
+  # ADDITIONAL GCP DESTRUCTIVE OPERATIONS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bgcloud\s+pubsub\s+(topics|subscriptions)\s+delete\b'
+    reason: gcloud pubsub delete (deletes messaging infrastructure)
+
+  - pattern: '\bgcloud\s+dns\s+record-sets\s+delete\b'
+    reason: gcloud dns record-sets delete
+
+  # ---------------------------------------------------------------------------
+  # GCP OPERATIONS REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bgcloud\s+run\s+(services\s+update|deploy)\b'
+    reason: Updates or deploys Cloud Run service
+    ask: true
+
+  - pattern: '\bgcloud\s+functions\s+deploy\b'
+    reason: Deploys Cloud Function
+    ask: true
+
+  - pattern: '\bgcloud\s+secrets\s+(create|versions\s+add)\b'
+    reason: Creates or updates Secret Manager secret
+    ask: true
+
+  - pattern: '\bgcloud\s+compute\s+instances\s+(start|stop|reset)\b'
+    reason: Changes GCE instance state
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # GCP CATCH-ALL (must be AFTER specific patterns)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bgcloud\s+.*\b(delete|destroy)\b'
+    reason: GCP CLI destructive operation (catch-all)
+
+  - pattern: '\bgcloud\s+.*\b(create|update|deploy|add-iam-policy-binding|remove-iam-policy-binding|set-iam-policy)\b'
+    reason: GCP CLI mutating operation (catch-all)
+    ask: true

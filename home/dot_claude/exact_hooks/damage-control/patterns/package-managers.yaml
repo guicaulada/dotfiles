@@ -1,0 +1,185 @@
+# Package manager security patterns (registry, system, npm/yarn/pnpm, brew, pip, cargo, go, nix, snap, flatpak, asdf/mise/proto)
+bashToolPatterns:
+  # ---------------------------------------------------------------------------
+  # PACKAGE REGISTRY DESTRUCTIVE OPERATIONS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bnpm\s+unpublish\b'
+    reason: npm unpublish (removes package from registry)
+
+  - pattern: '\bnpm\s+deprecate\b'
+    reason: npm deprecate (marks package as deprecated in registry)
+
+  - pattern: '\bgem\s+yank\b'
+    reason: gem yank (removes gem from RubyGems)
+
+  - pattern: '\bcargo\s+yank\b'
+    reason: cargo yank (yanks crate from crates.io)
+
+  # ---------------------------------------------------------------------------
+  # PACKAGE MANAGERS - SYSTEM LEVEL (DESTRUCTIVE)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bsudo\s+(apt|apt-get)\s+(remove|purge|autoremove)\b'
+    reason: apt package removal (system-level)
+
+  - pattern: '\bsudo\s+(dnf|yum)\s+(remove|erase|autoremove)\b'
+    reason: dnf/yum package removal (system-level)
+
+  - pattern: '\bsudo\s+pacman\s+-R'
+    reason: pacman package removal (system-level)
+
+  - pattern: '\bsudo\s+(zypper)\s+(remove|rm)\b'
+    reason: zypper package removal (system-level)
+
+  - pattern: '\bsudo\s+apk\s+del\b'
+    reason: apk package removal (system-level)
+
+  # ---------------------------------------------------------------------------
+  # PACKAGE MANAGERS - SYSTEM LEVEL REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bsudo\s+(apt|apt-get)\s+install\b'
+    reason: apt package installation (system-level)
+    ask: true
+
+  - pattern: '\bsudo\s+(dnf|yum)\s+install\b'
+    reason: dnf/yum package installation (system-level)
+    ask: true
+
+  - pattern: '\bsudo\s+pacman\s+-S'
+    reason: pacman package installation (system-level)
+    ask: true
+
+  - pattern: '\bsudo\s+(zypper)\s+(install|in)\b'
+    reason: zypper package installation (system-level)
+    ask: true
+
+  - pattern: '\bsudo\s+apk\s+add\b'
+    reason: apk package installation (system-level)
+    ask: true
+
+  - pattern: '\bbrew\s+install\s+.*--force'
+    reason: Homebrew force install (overwrites existing)
+    ask: true
+
+  - pattern: '\bbrew\s+reinstall\b'
+    reason: Homebrew reinstall
+    ask: true
+
+  - pattern: '\bbrew\s+install\s+--cask\b'
+    reason: Homebrew cask install (macOS application)
+    ask: true
+
+  - pattern: '\bpip3?\s+install\b'
+    reason: pip install (arbitrary code execution from PyPI)
+    ask: true
+
+  - pattern: '\bcargo\s+install\b'
+    reason: cargo install (compiles and installs Rust binary)
+    ask: true
+
+  - pattern: '\bgo\s+install\b'
+    reason: go install (downloads and installs Go binary)
+    ask: true
+
+  - pattern: '\bnix-env\s+(-\S+\s+)*-e\b'
+    reason: nix-env package removal
+    ask: true
+
+  - pattern: '\bnix\s+profile\s+(remove|install)\b'
+    reason: Nix profile modification
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # PACKAGE MANAGER OPERATIONS REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bnpm\s+publish\b'
+    reason: Publishes package to npm registry
+    ask: true
+
+  - pattern: '\bbrew\s+(uninstall|remove)\b'
+    reason: Uninstalls Homebrew package
+    ask: true
+
+  - pattern: '\bpip\s+uninstall\b'
+    reason: Uninstalls Python package
+    ask: true
+
+  - pattern: '\bgem\s+uninstall\b'
+    reason: Uninstalls Ruby gem
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # NPM / YARN / PNPM DANGEROUS OPERATIONS (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bnpx\s+'
+    reason: npx downloads and executes arbitrary packages
+    ask: true
+
+  - pattern: '\bbunx\s+'
+    reason: bunx downloads and executes arbitrary packages
+    ask: true
+
+  - pattern: '\byarn\s+dlx\b'
+    reason: yarn dlx downloads and executes arbitrary packages
+    ask: true
+
+  - pattern: '\bpnpm\s+dlx\b'
+    reason: pnpm dlx downloads and executes arbitrary packages
+    ask: true
+
+  - pattern: '\bnpm\s+(install|i)\s+(-\S+\s+)*-g\b'
+    reason: npm global install (modifies system-wide packages)
+    ask: true
+
+  - pattern: '\byarn\s+global\s+add\b'
+    reason: yarn global install (modifies system-wide packages)
+    ask: true
+
+  - pattern: '\bpnpm\s+add\s+(-\S+\s+)*-g\b'
+    reason: pnpm global install (modifies system-wide packages)
+    ask: true
+
+  - pattern: '\bnpm\s+link\b'
+    reason: npm link (creates global symlink)
+    ask: true
+
+  - pattern: '\byarn\s+link\b'
+    reason: yarn link (creates global symlink)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # SYSTEM PACKAGE MANAGERS - ADDITIONAL
+  # ---------------------------------------------------------------------------
+  - pattern: '\bsnap\s+(remove|uninstall)\b'
+    reason: snap remove (removes snap package)
+
+  - pattern: '\bflatpak\s+uninstall\b'
+    reason: flatpak uninstall (removes Flatpak application)
+
+  - pattern: '\bnix-collect-garbage\b'
+    reason: nix-collect-garbage (removes unused Nix store paths)
+
+  - pattern: '\bnix-store\s+--delete\b'
+    reason: nix-store --delete (deletes Nix store path)
+
+  - pattern: '\bnix\s+store\s+gc\b'
+    reason: nix store gc (Nix garbage collection)
+
+  - pattern: '\bbrew\s+cleanup\b'
+    reason: brew cleanup (removes old Homebrew versions and cache)
+    ask: true
+
+  - pattern: '\bbrew\s+autoremove\b'
+    reason: brew autoremove (removes unused Homebrew dependencies)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # LANGUAGE-AGNOSTIC VERSION MANAGERS
+  # ---------------------------------------------------------------------------
+  - pattern: '\basdf\s+uninstall\b'
+    reason: asdf uninstall (removes language/tool version)
+
+  - pattern: '\bmise\s+(uninstall|prune)\b'
+    reason: mise uninstall/prune (removes tool versions)
+
+  - pattern: '\bproto\s+(uninstall|clean)\b'
+    reason: proto uninstall/clean (removes tool versions)

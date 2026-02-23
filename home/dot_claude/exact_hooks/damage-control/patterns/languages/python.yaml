@@ -1,0 +1,66 @@
+# Python ecosystem security patterns
+bashToolPatterns:
+  # ---------------------------------------------------------------------------
+  # PYTHON - EXPANDED PATTERNS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bpython3?\s+-c\s+.*\b(exec|eval|compile)\b'
+    reason: Python one-liner with exec/eval (arbitrary code execution)
+
+  - pattern: '\bpython3?\s+-c\s+.*\b(__import__)\b'
+    reason: Python one-liner with dynamic import (common RCE pattern)
+
+  - pattern: '\bpipx\s+uninstall-all\b'
+    reason: pipx uninstall-all (removes ALL globally installed Python apps)
+
+  - pattern: '\bpipx\s+(install|uninstall)\b'
+    reason: pipx install/uninstall (manages globally installed Python apps)
+    ask: true
+
+  - pattern: '\bconda\s+env\s+remove\b'
+    reason: conda env remove (deletes entire conda environment)
+
+  - pattern: '\bconda\s+clean\s+.*(-a|--all)\b'
+    reason: conda clean --all (removes all cached packages)
+
+  - pattern: '\bmamba\s+env\s+remove\b'
+    reason: mamba env remove (deletes conda environment)
+
+  - pattern: '\bconda\s+(remove|uninstall)\b'
+    reason: conda remove/uninstall (removes packages from environment)
+    ask: true
+
+  - pattern: '\bpoetry\s+env\s+remove\b'
+    reason: poetry env remove (removes virtual environment)
+
+  - pattern: '\bpoetry\s+remove\b'
+    reason: poetry remove (removes package from project)
+    ask: true
+
+  - pattern: '\buv\s+pip\s+uninstall\b'
+    reason: uv pip uninstall (removes Python packages)
+    ask: true
+
+  - pattern: '\buv\s+cache\s+clean\b'
+    reason: uv cache clean (removes uv cache)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # PYTHON VERSION MANAGERS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bpyenv\s+uninstall\b'
+    reason: pyenv uninstall (removes Python version)
+
+  - pattern: '\bpyenv\s+virtualenv-delete\b'
+    reason: pyenv virtualenv-delete (removes virtual environment)
+
+  - pattern: '\bpipenv\s+--rm\b'
+    reason: pipenv --rm (destroys virtual environment)
+
+  # ---------------------------------------------------------------------------
+  # DJANGO DATABASE
+  # ---------------------------------------------------------------------------
+  - pattern: '\bpython3?\s+manage\.py\s+flush\b'
+    reason: django flush (removes ALL data from database)
+
+  - pattern: '\bpython3?\s+manage\.py\s+migrate\s+.*\bzero\b'
+    reason: django migrate zero (rolls back ALL migrations for an app)

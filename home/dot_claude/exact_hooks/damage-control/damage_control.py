@@ -138,6 +138,28 @@ NO_DELETE_BLOCKED = DELETE_PATTERNS
 # ============================================================================
 
 
+def get_patterns_dir() -> Path | None:
+    """Get path to patterns/ directory, checking multiple locations."""
+    project_dir = os.environ.get("CLAUDE_PROJECT_DIR")
+    if project_dir:
+        project_patterns = (
+            Path(project_dir) / ".claude" / "hooks" / "damage-control" / "patterns"
+        )
+        if project_patterns.is_dir():
+            return project_patterns
+
+    script_dir = Path(__file__).parent
+    local_patterns = script_dir / "patterns"
+    if local_patterns.is_dir():
+        return local_patterns
+
+    skill_root = script_dir.parent.parent / "patterns"
+    if skill_root.is_dir():
+        return skill_root
+
+    return None
+
+
 def get_config_path() -> Path:
     """Get path to patterns.yaml, checking multiple locations."""
     project_dir = os.environ.get("CLAUDE_PROJECT_DIR")
@@ -160,18 +182,44 @@ def get_config_path() -> Path:
     return local_config
 
 
+_CONFIG_KEYS = ("bashToolPatterns", "zeroAccessPaths", "readOnlyPaths", "noDeletePaths")
+
+
+def load_patterns_dir(patterns_dir: Path) -> dict[str, Any]:
+    """Load and merge all YAML files from a patterns directory."""
+    merged: dict[str, list] = {k: [] for k in _CONFIG_KEYS}
+
+    # Sorted paths for deterministic load order; .yaml before .yml
+    seen: set[Path] = set()
+    files: list[Path] = []
+    for ext in ("*.yaml", "*.yml"):
+        for p in sorted(patterns_dir.rglob(ext)):
+            if p not in seen:
+                seen.add(p)
+                files.append(p)
+
+    for filepath in files:
+        with filepath.open() as f:
+            data = yaml.safe_load(f) or {}
+        for key in _CONFIG_KEYS:
+            items = data.get(key)
+            if isinstance(items, list):
+                merged[key].extend(items)
+
+    return merged
+
+
 def load_config() -> dict[str, Any]:
-    """Load patterns from YAML config file."""
+    """Load patterns from patterns/ directory or single YAML file."""
+    patterns_dir = get_patterns_dir()
+    if patterns_dir is not None:
+        return load_patterns_dir(patterns_dir)
+
     config_path = get_config_path()
 
     if not config_path.exists():
         print(f"Warning: Config not found at {config_path}", file=sys.stderr)
-        return {
-            "bashToolPatterns": [],
-            "zeroAccessPaths": [],
-            "readOnlyPaths": [],
-            "noDeletePaths": [],
-        }
+        return {k: [] for k in _CONFIG_KEYS}
 
     with config_path.open() as f:
         return yaml.safe_load(f) or {}

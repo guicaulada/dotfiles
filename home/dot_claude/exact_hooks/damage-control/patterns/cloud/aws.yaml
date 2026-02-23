@@ -1,0 +1,174 @@
+# AWS CLI security patterns
+bashToolPatterns:
+  # ---------------------------------------------------------------------------
+  # AWS CLI DESTRUCTIVE OPERATIONS
+  # ---------------------------------------------------------------------------
+  - pattern: '\baws\s+s3\s+rm\s+.*(-r\b|--recursive)'
+    reason: aws s3 rm --recursive (deletes all objects)
+
+  - pattern: '\baws\s+s3\s+rb\s+.*--force'
+    reason: aws s3 rb --force (force removes bucket)
+
+  - pattern: '\baws\s+ec2\s+terminate-instances\b'
+    reason: aws ec2 terminate-instances
+
+  - pattern: '\baws\s+rds\s+delete-db-instance\b'
+    reason: aws rds delete-db-instance
+
+  - pattern: '\baws\s+cloudformation\s+delete-stack\b'
+    reason: aws cloudformation delete-stack (deletes infrastructure)
+
+  - pattern: '\baws\s+dynamodb\s+delete-table\b'
+    reason: aws dynamodb delete-table
+
+  - pattern: '\baws\s+eks\s+delete-cluster\b'
+    reason: aws eks delete-cluster
+
+  - pattern: '\baws\s+lambda\s+delete-function\b'
+    reason: aws lambda delete-function
+
+  - pattern: '\baws\s+iam\s+delete-role\b'
+    reason: aws iam delete-role
+
+  - pattern: '\baws\s+iam\s+delete-user\b'
+    reason: aws iam delete-user
+
+  - pattern: '\baws\s+elasticache\s+delete-(cache-cluster|replication-group)\b'
+    reason: aws elasticache delete (destroys Redis/Memcached cluster)
+
+  - pattern: '\baws\s+elbv2\s+delete-(load-balancer|target-group)\b'
+    reason: aws elbv2 delete (destroys load balancer/target group)
+
+  - pattern: '\baws\s+elb\s+delete-load-balancer\b'
+    reason: aws elb delete-load-balancer (destroys classic load balancer)
+
+  - pattern: '\baws\s+secretsmanager\s+delete-secret\b'
+    reason: aws secretsmanager delete-secret (destroys secret)
+
+  - pattern: '\baws\s+ssm\s+delete-parameter(s)?\b'
+    reason: aws ssm delete-parameter(s) (destroys SSM parameters)
+
+  - pattern: '\baws\s+cognito-idp\s+(delete-user-pool|admin-delete-user)\b'
+    reason: aws cognito delete (destroys user pool/users)
+
+  - pattern: '\baws\s+apigateway(v2)?\s+delete-(rest-api|api)\b'
+    reason: aws apigateway delete (destroys API)
+
+  - pattern: '\baws\s+sagemaker\s+delete-(model|endpoint|training-job|pipeline)\b'
+    reason: aws sagemaker delete (destroys ML infrastructure)
+
+  - pattern: '\baws\s+glue\s+delete-(job|database|table|crawler)\b'
+    reason: aws glue delete (destroys data pipeline resources)
+
+  - pattern: '\baws\s+kinesis(firehose)?\s+delete-(stream|delivery-stream)\b'
+    reason: aws kinesis delete (destroys data stream)
+
+  - pattern: '\baws\s+states\s+delete-state-machine\b'
+    reason: aws states delete-state-machine (destroys Step Functions)
+
+  - pattern: '\baws\s+ecs\s+delete-(service|cluster)\b'
+    reason: aws ecs delete (destroys ECS service/cluster)
+
+  - pattern: '\baws\s+amplify\s+delete-(app|branch)\b'
+    reason: aws amplify delete (destroys Amplify application)
+
+  - pattern: '\baws\s+opensearch\s+delete-domain\b'
+    reason: aws opensearch delete-domain (destroys search cluster)
+
+  - pattern: '\baws\s+iam\s+delete-(access-key|instance-profile|login-profile|role-policy|user-policy|policy|group)\b'
+    reason: aws iam destructive operation
+
+  - pattern: '\baws\s+iam\s+detach-role-policy\b'
+    reason: aws iam detach-role-policy (removes security controls)
+
+  - pattern: '\baws\s+waf.*delete\b'
+    reason: aws waf delete (removes WAF protection)
+
+  - pattern: '\baws\s+acm\s+delete-certificate\b'
+    reason: aws acm delete-certificate (destroys SSL certificate)
+
+  - pattern: '\baws\s+codecommit\s+delete-repository\b'
+    reason: aws codecommit delete-repository (destroys code repository)
+
+  - pattern: '\baws\s+code(pipeline|build)\s+delete-(pipeline|project)\b'
+    reason: aws code pipeline/build delete
+
+  - pattern: '\baws\s+cloudwatch\s+delete-(alarms|dashboards)\b'
+    reason: aws cloudwatch delete (removes monitoring)
+
+  - pattern: '\baws\s+cloudtrail\s+(delete-trail|stop-logging)\b'
+    reason: aws cloudtrail delete/stop (destroys audit trail)
+
+  - pattern: '\baws\s+backup\s+(delete-backup-vault|delete-recovery-point)\b'
+    reason: aws backup delete (destroys backup infrastructure)
+
+  - pattern: '\baws\s+redshift\s+delete-cluster\b'
+    reason: aws redshift delete-cluster (destroys data warehouse)
+
+  - pattern: '\baws\s+emr\s+terminate-job-flows\b'
+    reason: aws emr terminate-job-flows (terminates EMR clusters)
+
+  # ---------------------------------------------------------------------------
+  # ADDITIONAL AWS CLI DESTRUCTIVE OPERATIONS
+  # ---------------------------------------------------------------------------
+  - pattern: '\baws\s+s3\s+sync\s+.*--delete\b'
+    reason: aws s3 sync --delete (deletes files at destination not in source)
+
+  - pattern: '\baws\s+iam\s+delete-(policy|group)\b'
+    reason: aws iam delete-policy/group
+
+  - pattern: '\baws\s+iam\s+detach-role-policy\b'
+    reason: aws iam detach-role-policy (removes security controls)
+
+  - pattern: '\baws\s+logs\s+delete-log-group\b'
+    reason: aws logs delete-log-group (destroys audit trails)
+
+  - pattern: '\baws\s+ecr\s+delete-repository\b'
+    reason: aws ecr delete-repository (deletes container images)
+
+  - pattern: '\baws\s+sns\s+delete-topic\b'
+    reason: aws sns delete-topic (deletes messaging infrastructure)
+
+  - pattern: '\baws\s+sqs\s+delete-queue\b'
+    reason: aws sqs delete-queue (deletes message queue)
+
+  # ---------------------------------------------------------------------------
+  # AWS CLI OPERATIONS REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\baws\s+route53\s+delete-hosted-zone\b'
+    reason: Deletes Route53 hosted zone (all DNS records)
+    ask: true
+
+  - pattern: '\baws\s+ec2\s+(stop|reboot)-instances\b'
+    reason: Changes EC2 instance state
+    ask: true
+
+  - pattern: '\baws\s+ssm\s+put-parameter\b'
+    reason: Creates or overwrites SSM parameter
+    ask: true
+
+  - pattern: '\baws\s+secretsmanager\s+(create|update)-secret\b'
+    reason: Creates or updates secret in Secrets Manager
+    ask: true
+
+  - pattern: '\baws\s+deploy\s+create-deployment\b'
+    reason: Triggers CodeDeploy deployment
+    ask: true
+
+  - pattern: '\baws\s+ecs\s+update-service\b'
+    reason: Updates ECS service (may cause rolling restart)
+    ask: true
+
+  - pattern: '\baws\s+route53\s+change-resource-record-sets\b'
+    reason: Modifies DNS records
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # AWS CLI CATCH-ALL (must be AFTER specific patterns)
+  # ---------------------------------------------------------------------------
+  - pattern: '\baws\s+\S+\s+(delete|terminate|remove|purge|deregister)-'
+    reason: AWS CLI destructive operation (catch-all)
+
+  - pattern: '\baws\s+\S+\s+(create|update|put|modify|start|stop|reboot|invoke|run|execute|send|publish|attach|detach|associate|disassociate|enable|disable|register|tag|untag)-'
+    reason: AWS CLI mutating operation (catch-all)
+    ask: true

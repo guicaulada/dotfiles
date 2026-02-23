@@ -1,0 +1,27 @@
+# Ruby ecosystem security patterns
+bashToolPatterns:
+  # ---------------------------------------------------------------------------
+  # RUBY ECOSYSTEM
+  # ---------------------------------------------------------------------------
+  - pattern: '\brbenv\s+uninstall\b'
+    reason: rbenv uninstall (removes Ruby version)
+
+  - pattern: '\brvm\s+(remove|uninstall)\b'
+    reason: rvm remove/uninstall (removes Ruby version)
+
+  - pattern: '\bbundle\s+clean\b'
+    reason: bundle clean (removes unused gems)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # RAILS DATABASE
+  # ---------------------------------------------------------------------------
+  - pattern: '\b(bin/rails|rails|bin/rake|rake)\s+db:(drop|reset)\b'
+    reason: rails db:drop/reset (drops or resets the Rails database)
+
+  - pattern: '\b(bin/rails|rails)\s+db:schema:load\b'
+    reason: rails db:schema:load (OVERWRITES existing database)
+
+  - pattern: '\b(bin/rails|rails|bin/rake|rake)\s+db:rollback\b'
+    reason: rails db:rollback (rolls back last migration)
+    ask: true

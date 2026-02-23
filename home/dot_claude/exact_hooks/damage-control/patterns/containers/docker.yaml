@@ -1,0 +1,148 @@
+# Docker, docker-compose, and Podman security patterns
+bashToolPatterns:
+  # ---------------------------------------------------------------------------
+  # DOCKER DESTRUCTIVE OPERATIONS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bdocker\s+system\s+prune\s+.*-a'
+    reason: docker system prune -a (removes all unused data)
+
+  - pattern: '\bdocker\s+rm\s+.*-f.*\$\(docker\s+ps'
+    reason: docker rm -f $(docker ps) (force removes containers)
+
+  - pattern: '\bdocker\s+rmi\s+.*-f'
+    reason: docker rmi -f (force removes images)
+
+  - pattern: '\bdocker\s+volume\s+rm\b'
+    reason: docker volume rm (data loss)
+
+  - pattern: '\bdocker\s+volume\s+prune\b'
+    reason: docker volume prune (removes unused volumes)
+
+  - pattern: '\bdocker\s+compose\s+down\s+.*(-v|--volumes)\b'
+    reason: docker compose down with volumes (data loss)
+
+  - pattern: '\bdocker\s+network\s+rm\b'
+    reason: docker network rm (can break container communication)
+
+  - pattern: '\bdocker\s+container\s+prune\b'
+    reason: docker container prune (removes all stopped containers)
+
+  - pattern: '\bdocker\s+image\s+prune\s+.*-a'
+    reason: docker image prune -a (removes all unused images)
+
+  - pattern: '\bdocker\s+builder\s+prune\b'
+    reason: docker builder prune (removes build cache)
+
+  - pattern: '\bdocker\s+stack\s+rm\b'
+    reason: docker stack rm (removes entire stack)
+
+  - pattern: '\bdocker\s+swarm\s+leave\s+.*--force'
+    reason: docker swarm leave --force (disrupts cluster)
+
+  - pattern: '\bdocker\s+service\s+rm\b'
+    reason: docker service rm (removes swarm service)
+
+  - pattern: '\bdocker\s+secret\s+rm\b'
+    reason: docker secret rm (removes Docker secret)
+
+  - pattern: '\bdocker\s+buildx\s+(rm|prune)\b'
+    reason: docker buildx rm/prune (destroys builder instance/cache)
+
+  - pattern: '\bdocker\s+context\s+rm\b'
+    reason: docker context rm (removes Docker context)
+
+  - pattern: '\bdocker\s+trust\s+revoke\b'
+    reason: docker trust revoke (revokes image signing trust)
+
+  - pattern: '\bdocker\s+plugin\s+rm\b'
+    reason: docker plugin rm (removes Docker plugin)
+
+  - pattern: '\bdocker\s+config\s+rm\b'
+    reason: docker config rm (removes Docker Swarm config)
+
+  # ---------------------------------------------------------------------------
+  # DOCKER OPERATIONS REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bdocker\s+compose\s+down\b'
+    reason: Stops and removes containers
+    ask: true
+
+  - pattern: '\bdocker\s+run\s+.*--privileged(?!=false)'
+    reason: Runs container with full host access
+    ask: true
+
+  - pattern: '\bdocker\s+push\b'
+    reason: Pushes image to registry
+    ask: true
+
+  - pattern: '\bdocker\s+manifest\s+push\b'
+    reason: Pushes multi-arch manifest to registry
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # PODMAN (mirrors Docker)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bpodman\s+system\s+prune\s+.*-a'
+    reason: podman system prune -a (removes all unused data)
+
+  - pattern: '\bpodman\s+rm\s+.*-f'
+    reason: podman rm -f (force removes containers)
+
+  - pattern: '\bpodman\s+rmi\s+.*-f'
+    reason: podman rmi -f (force removes images)
+
+  - pattern: '\bpodman\s+volume\s+(rm|prune)\b'
+    reason: podman volume rm/prune (data loss)
+
+  - pattern: '\bpodman\s+network\s+rm\b'
+    reason: podman network rm
+
+  - pattern: '\bpodman\s+container\s+prune\b'
+    reason: podman container prune
+
+  - pattern: '\bpodman\s+image\s+prune\s+.*-a'
+    reason: podman image prune -a
+
+  - pattern: '\bpodman\s+secret\s+rm\b'
+    reason: podman secret rm
+
+  # ---------------------------------------------------------------------------
+  # PODMAN REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bpodman\s+push\b'
+    reason: Pushes image to registry (podman)
+    ask: true
+
+  - pattern: '\bpodman\s+run\s+.*--privileged(?!=false)'
+    reason: Runs container with full host access (podman)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # DOCKER-COMPOSE (hyphenated form)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bdocker-compose\s+down\s+.*(-v|--volumes)\b'
+    reason: docker-compose down with volumes (data loss)
+
+  - pattern: '\bdocker-compose\s+down\b'
+    reason: Stops and removes containers (docker-compose)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # DOCKER HOST MOUNT (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bdocker\s+run\s+.*(-v|--volume)\s+/:/\b'
+    reason: Docker run mounting host root filesystem
+    ask: true
+
+  - pattern: '\bdocker\s+run\s+.*--mount\s+.*src=/[,\s]'
+    reason: Docker run mounting host root filesystem (--mount syntax)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # CONTAINER REGISTRY TOOLS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bskopeo\s+delete\b'
+    reason: skopeo delete (deletes container image from registry)
+
+  - pattern: '\bcrane\s+delete\b'
+    reason: crane delete (deletes container image from registry)
