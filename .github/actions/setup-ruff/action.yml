@@ -1,0 +1,18 @@
+name: Setup ruff
+description: Download and install ruff
+inputs:
+  version:
+    description: ruff version
+    # renovate: datasource=github-releases depName=astral-sh/ruff
+    default: '0.11.6'
+runs:
+  using: composite
+  steps:
+    - run: |
+        curl -sSL "https://github.com/astral-sh/ruff/releases/download/${VERSION}/ruff-x86_64-unknown-linux-gnu.tar.gz" -o ruff.tar.gz
+        tar -xzf ruff.tar.gz
+        mv ruff-x86_64-unknown-linux-gnu/ruff /usr/local/bin/ruff
+        rm -rf ruff.tar.gz ruff-x86_64-unknown-linux-gnu
+      shell: bash
+      env:
+        VERSION: ${{ inputs.version }}

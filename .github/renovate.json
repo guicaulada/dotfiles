@@ -20,6 +20,15 @@
       ],
       "datasourceTemplate": "git-refs",
       "packageNameTemplate": "https://github.com/{{{depName}}}"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/\\.github/actions/.*/action\\.yml$/"
+      ],
+      "matchStrings": [
+        "#\\s*renovate:\\s*datasource=(?<datasource>\\S+)\\s+depName=(?<depName>\\S+)(?:\\s+extractVersion=(?<extractVersion>\\S+))?\\n\\s+default:\\s*['\"]?(?<currentValue>[^'\"\\s]+)['\"]?"
+      ]
     }
   ]
 }

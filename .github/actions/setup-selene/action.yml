@@ -1,0 +1,18 @@
+name: Setup selene
+description: Download and install selene
+inputs:
+  version:
+    description: selene version
+    # renovate: datasource=github-releases depName=Kampfkarren/selene
+    default: '0.30.0'
+runs:
+  using: composite
+  steps:
+    - run: |
+        curl -sSL "https://github.com/Kampfkarren/selene/releases/download/${VERSION}/selene-light-${VERSION}-linux-amd64.zip" -o selene.zip
+        unzip -o selene.zip -d selene-bin
+        mv selene-bin/selene /usr/local/bin/selene
+        rm -rf selene.zip selene-bin
+      shell: bash
+      env:
+        VERSION: ${{ inputs.version }}
