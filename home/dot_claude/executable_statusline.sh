@@ -181,41 +181,43 @@ else
 	changes="${changes% }"
 fi
 
-# Line 1 (Session): Model · Cost · Duration (api) · Lines [│ VIM] [│ Agent]
+# Line 1 (Session): Model  Cost  Duration (api)  Lines  VIM  Agent
 line1="${bold}${white}${model}${reset}"
-line1+=" ${dim}·${reset} ${cost_color}${cost_formatted}${reset}"
-line1+=" ${dim}·${reset} ${dim}${duration_fmt}${reset} ${dim}(api ${api_duration_fmt})${reset}"
+line1+="  ${cost_color}${cost_formatted}${reset}"
+line1+="  ${dim}${duration_fmt}${reset} ${dim}(api ${api_duration_fmt})${reset}"
 total_lines=$((lines_added + lines_removed))
 if [ "$total_lines" -gt 0 ]; then
-	line1+=" ${dim}·${reset}"
-	line1+=" ${green}+${lines_added}${reset}"
+	line1+="  ${green}+${lines_added}${reset}"
 	line1+=" ${red}-${lines_removed}${reset}"
 	line1+=" ${dim}lines${reset}"
 fi
-[ -n "$vim_mode" ] && line1+=" ${dim}│${reset} ${bold}${blue}${vim_mode}${reset}"
-[ -n "$agent_name" ] && line1+=" ${dim}│${reset} ${bold}${cyan}${agent_name}${reset}"
+[ -n "$vim_mode" ] && line1+="  ${bold}${blue}${vim_mode}${reset}"
+[ -n "$agent_name" ] && line1+="  ${bold}${cyan}${agent_name}${reset}"
 
-# Line 2 (Workspace): Progress bar % (used/total) │ Repo  Branch │ Changes
+# Line 2 (Context): Progress bar % (used/total)
 ctx_pct=$(printf "%.1f%%" "$context_percentage")
 line2="${ctx_color}${bar}${reset}"
 line2+=" ${bold}${ctx_color}${ctx_pct}${reset}"
 line2+=" ${dim}(${ctx_used_fmt} / ${ctx_total_fmt})${reset}"
+
+# Line 3 (Git): Repo Branch Changes
+line3=""
 if [ -n "$repo_info" ]; then
-	line2+=" ${dim}│${reset} ${cyan}${repo_info}${reset}"
-	line2+="  ${magenta}${git_branch}${reset}"
-	line2+=" ${dim}│${reset} ${changes}"
+	line3+="${cyan}${repo_info}${reset}"
+	line3+="  ${magenta}${git_branch}${reset}"
+	line3+="  ${changes}"
 fi
 
-# Line 3 (Tokens): in · out · total │ cached w · r (turn)
-line3="${dim}in${reset} ${white}${input_fmt}${reset}"
-line3+="  ${dim}out${reset} ${white}${output_fmt}${reset}"
-line3+="  ${dim}total${reset} ${white}${total_fmt}${reset}"
+# Line 4 (Tokens): in out total cached ↑w ↓r
+line4="${dim}in${reset} ${white}${input_fmt}${reset}"
+line4+="  ${dim}out${reset} ${white}${output_fmt}${reset}"
+line4+="  ${dim}total${reset} ${white}${total_fmt}${reset}"
 cache_total=$((cache_write + cache_read))
 if [ "$cache_total" -gt 0 ]; then
-	line3+=" ${dim}│ cached${reset}"
-	line3+=" ${dim}↑${reset}${white}${cache_write_fmt}${reset}"
-	line3+=" ${dim}↓${reset}${white}${cache_read_fmt}${reset}"
+	line4+="  ${dim}cached${reset}"
+	line4+=" ${dim}↑${reset}${white}${cache_write_fmt}${reset}"
+	line4+=" ${dim}↓${reset}${white}${cache_read_fmt}${reset}"
 fi
 
 # Output
-printf "%b\n%b\n%b\n" "$line1" "$line2" "$line3"
+printf "%b\n%b\n%b\n%b\n" "$line1" "$line2" "$line3" "$line4"
