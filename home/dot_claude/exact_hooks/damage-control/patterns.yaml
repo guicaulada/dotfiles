@@ -26,17 +26,53 @@ bashToolPatterns:
   - pattern: '\bfind\s+.*-delete\b'
     reason: find with -delete flag (bypasses rm protections)
 
+  - pattern: '\bshred\b'
+    reason: shred (securely overwrites and deletes files - unrecoverable)
+
+  - pattern: '\bfind\s+.*-exec\s+(/usr/bin/|/bin/)?rm\b'
+    reason: find with -exec rm (bypasses rm protections)
+
+  - pattern: '\bxargs\s+.*\brm\b'
+    reason: xargs piped to rm (bypasses rm protections)
+
+  - pattern: '\brsync\s+.*--delete\b'
+    reason: rsync --delete (deletes files at destination not in source)
+
+  - pattern: '\b(/usr)?/bin/rm\s+'
+    reason: absolute path rm (bypasses alias/function protection)
+
+  - pattern: '\btruncate\s+(-s\s+0|-s0)\b'
+    reason: truncate -s 0 (empties file content without deleting)
+
+  - pattern: '\bsfill\b'
+    reason: sfill (secure-delete tool, wipes free space - unrecoverable)
+
+  - pattern: '\bsrm\b'
+    reason: srm (secure-delete, unrecoverable file removal)
+
+  - pattern: '\bnwipe\b'
+    reason: nwipe (disk wipe utility - unrecoverable)
+
+  - pattern: '\bwipe\b'
+    reason: wipe (secure file deletion - unrecoverable)
+
+  - pattern: '\bfind\s+.*-exec\s+(shred|wipe|srm)\b'
+    reason: find with -exec to secure-delete files
+
   # ---------------------------------------------------------------------------
   # PERMISSION CHANGES
   # ---------------------------------------------------------------------------
-  - pattern: '\bchmod\s+(-[^\s]+\s+)*777\b'
+  - pattern: '\bchmod\s+(-[^\s]+\s+)*0?777\b'
     reason: chmod 777 (world writable)
 
-  - pattern: '\bchmod\s+-[Rr].*777'
+  - pattern: '\bchmod\s+-[Rr].*0?777'
     reason: recursive chmod 777
 
   - pattern: '\bchown\s+-[Rr].*\broot\b'
     reason: recursive chown to root
+
+  - pattern: '\bchmod\s+(-[^\s]+\s+)*(a\+rwx|ugo\+rwx|\+rwx)\b'
+    reason: chmod world writable (symbolic equivalent of 777)
 
   # ---------------------------------------------------------------------------
   # GIT DESTRUCTIVE OPERATIONS
@@ -44,14 +80,14 @@ bashToolPatterns:
   - pattern: '\bgit\s+reset\s+--hard\b'
     reason: git reset --hard (use --soft or stash)
 
-  - pattern: '\bgit\s+clean\s+(-\S+\s+)*-[fd]'
+  - pattern: '\bgit\s+clean\s+.*(-[fd]|--force)\b'
     reason: git clean with force/directory flags
 
   # Note: This blocks --force but NOT --force-with-lease
   - pattern: '\bgit\s+push\s+.*--force(?!-with-lease)'
     reason: git push --force (use --force-with-lease)
 
-  - pattern: '\bgit\s+push\s+(-[^\s]*)*-f\b'
+  - pattern: '\bgit\s+push\b.*\s-f\b'
     reason: git push -f (use --force-with-lease)
 
   - pattern: '\bgit\s+stash\s+clear\b'
@@ -65,6 +101,18 @@ bashToolPatterns:
 
   - pattern: '\bgit\s+filter-branch\b'
     reason: git filter-branch (rewrites entire history)
+
+  - pattern: '\bgit\s+filter-repo\b'
+    reason: git filter-repo (rewrites entire history, modern filter-branch)
+
+  - pattern: '\bgit\s+checkout\s+(-\S+\s+)*(-f|--force)\b'
+    reason: git checkout --force (silently discards uncommitted changes)
+
+  - pattern: '\bgit\s+switch\s+(-\S+\s+)*(-f|--force)\b'
+    reason: git switch --force (silently discards uncommitted changes)
+
+  - pattern: '\bgit\s+submodule\s+deinit\s+.*--force'
+    reason: git submodule deinit --force (unregisters submodule)
 
   # ---------------------------------------------------------------------------
   # GIT OPERATIONS REQUIRING CONFIRMATION (ask: true)
@@ -93,13 +141,41 @@ bashToolPatterns:
     reason: Deletes remote branch (old syntax)
     ask: true
 
+  - pattern: '\bgit\s+revert\b'
+    reason: Creates revert commit (undoes changes)
+    ask: true
+
+  - pattern: '\bgit\s+tag\s+-d\b'
+    reason: Deletes a local tag
+    ask: true
+
+  - pattern: '\bgit\s+config\s+--global\b'
+    reason: Modifies global git configuration
+    ask: true
+
+  - pattern: '\bgit\s+remote\s+(remove|rm)\b'
+    reason: Removes a remote from repository
+    ask: true
+
+  - pattern: '\bgit\s+remote\s+set-url\b'
+    reason: Changes remote URL
+    ask: true
+
+  - pattern: '\bgit\s+tag\s+-f\b'
+    reason: Force moves an existing tag
+    ask: true
+
+  - pattern: '\bgit\s+notes\s+(remove|prune)\b'
+    reason: Removes git notes (metadata loss)
+    ask: true
+
   # ---------------------------------------------------------------------------
   # SYSTEM-LEVEL DESTRUCTION
   # ---------------------------------------------------------------------------
   - pattern: '\bmkfs\.'
     reason: filesystem format command
 
-  - pattern: '>\s*/dev/(?!null)[a-z]'
+  - pattern: '>+\s*/dev/(?!null)[a-z][a-z0-9]*'
     reason: redirect to device file (excluding /dev/null)
 
   - pattern: '\bdd\s+.*of=/dev/'
@@ -107,6 +183,134 @@ bashToolPatterns:
 
   - pattern: '\bdiskutil\s+(eraseDisk|eraseVolume|partitionDisk)\b'
     reason: diskutil erase/partition (macOS disk destruction)
+
+  - pattern: '\b(shutdown|reboot|halt|poweroff)\b'
+    reason: system power state change
+
+  - pattern: '\bsystemctl\s+(stop|disable|mask)\b'
+    reason: systemctl stop/disable/mask (disables system services)
+
+  - pattern: '\biptables\s+(-\S+\s+)*(-F|--flush)\b'
+    reason: iptables flush (removes all firewall rules)
+
+  - pattern: '\bpfctl\s+-d\b'
+    reason: pfctl -d (disables macOS packet filter firewall)
+
+  - pattern: '\btmutil\s+delete\b'
+    reason: tmutil delete (deletes Time Machine backups)
+
+  - pattern: '\bfdisk\b'
+    reason: fdisk (partition table manipulation)
+
+  - pattern: '\bparted\b'
+    reason: parted (partition manipulation)
+
+  - pattern: '\bbadblocks\s+.*-w\b'
+    reason: badblocks -w (write mode overwrites disk sectors)
+
+  - pattern: '\bblkdiscard\b'
+    reason: blkdiscard (discards/trims all block device sectors - unrecoverable)
+
+  - pattern: '\bsgdisk\s+.*(--zap-all|-z|-o|--clear|--delete)\b'
+    reason: sgdisk destructive partition operation
+
+  - pattern: '\bcryptsetup\s+(close|luksErase|erase|luksClose)\b'
+    reason: cryptsetup close/erase (destroys encrypted volume access)
+
+  - pattern: '\bhdparm\s+.*(--security-erase|--sanitize-freeze|--trim-sector-ranges)\b'
+    reason: hdparm ATA secure erase (destroys all drive data)
+
+  - pattern: '\bnvme\s+(format|sanitize)\b'
+    reason: nvme format/sanitize (erases NVMe drive - unrecoverable)
+
+  - pattern: '\bswapoff\s+-a\b'
+    reason: swapoff -a (disables ALL swap, may cause OOM)
+
+  # ---------------------------------------------------------------------------
+  # USER AND GROUP MANAGEMENT
+  # ---------------------------------------------------------------------------
+  - pattern: '\buserdel\b'
+    reason: userdel (deletes user account)
+
+  - pattern: '\bgroupdel\b'
+    reason: groupdel (deletes group)
+
+  - pattern: '\bdeluser\b'
+    reason: deluser (Debian/Ubuntu user deletion)
+
+  # ---------------------------------------------------------------------------
+  # USER AND GROUP MANAGEMENT REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\buseradd\b'
+    reason: Adds a new user account
+    ask: true
+
+  - pattern: '\badduser\b'
+    reason: Adds a new user account (Debian/Ubuntu)
+    ask: true
+
+  - pattern: '\busermod\b'
+    reason: Modifies an existing user account
+    ask: true
+
+  - pattern: '\bpasswd\b'
+    reason: Changes user password
+    ask: true
+
+  - pattern: '\bchpasswd\b'
+    reason: Changes passwords in batch mode
+    ask: true
+
+  - pattern: '\bgroupadd\b'
+    reason: Creates a new group
+    ask: true
+
+  - pattern: '\bgroupmod\b'
+    reason: Modifies an existing group
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # KERNEL MODULES
+  # ---------------------------------------------------------------------------
+  - pattern: '\brmmod\b'
+    reason: rmmod (removes kernel module - can crash system)
+
+  - pattern: '\bmodprobe\s+.*(-r|--remove)\b'
+    reason: modprobe -r (removes kernel module)
+
+  - pattern: '\btelinit\b'
+    reason: telinit (changes system runlevel)
+
+  - pattern: '\binit\s+[016]\b'
+    reason: init 0/1/6 (shutdown, single-user, or reboot)
+
+  - pattern: '\binsmod\b'
+    reason: Inserts kernel module (arbitrary code in kernel space)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # MANDATORY ACCESS CONTROL
+  # ---------------------------------------------------------------------------
+  - pattern: '\bsetenforce\s+0\b'
+    reason: setenforce 0 (disables SELinux enforcement)
+
+  - pattern: '\baa-disable\b'
+    reason: aa-disable (disables AppArmor profile)
+
+  - pattern: '\baa-teardown\b'
+    reason: aa-teardown (tears down all AppArmor policies)
+
+  - pattern: '\bapparmor_parser\s+.*(-R|--remove)\b'
+    reason: apparmor_parser -R (removes AppArmor profile)
+
+  # ---------------------------------------------------------------------------
+  # ARCHIVE EXTRACTION - DESTRUCTIVE
+  # ---------------------------------------------------------------------------
+  - pattern: '\btar\s+.*--overwrite\b'
+    reason: tar --overwrite (silently overwrites existing files during extraction)
+
+  - pattern: '\btar\s+.*(x|--extract).*-C\s+/\b'
+    reason: tar extracting to filesystem root (can overwrite system files)
 
   # ---------------------------------------------------------------------------
   # macOS SERVICE/PREFERENCES DESTRUCTION
@@ -117,10 +321,19 @@ bashToolPatterns:
   - pattern: '\bdefaults\s+delete\b'
     reason: defaults delete (removes macOS preferences)
 
+  - pattern: '\bsecurity\s+delete-keychain\b'
+    reason: security delete-keychain (deletes macOS keychain)
+
+  - pattern: '\bsecurity\s+delete-(generic|internet)-password\b'
+    reason: security delete password (deletes macOS keychain entry)
+
+  - pattern: '\bgpg\s+--delete-(key|secret-key|secret-and-public-key)\b'
+    reason: gpg key deletion
+
   # ---------------------------------------------------------------------------
   # PROCESS DESTRUCTION
   # ---------------------------------------------------------------------------
-  - pattern: '\bkill\s+-9\s+-1\b'
+  - pattern: '\bkill\s+(-9|-KILL|-SIGKILL)\s+-1\b'
     reason: kill all processes
 
   - pattern: '\bkillall\s+-9\b'
@@ -128,6 +341,12 @@ bashToolPatterns:
 
   - pattern: '\bpkill\s+-9\b'
     reason: pkill -9
+
+  - pattern: '\bkill\s+(-KILL|-9|-SIGKILL)\s+(-1|%1)\b'
+    reason: kill -9 all processes or job group
+
+  - pattern: '\bnohup\s+.*(rm|shred|wipe|dd|mkfs)\b'
+    reason: nohup with destructive command (runs detached, harder to interrupt)
 
   # ---------------------------------------------------------------------------
   # CRONTAB DESTRUCTION
@@ -138,7 +357,7 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   # HISTORY/SHELL MANIPULATION
   # ---------------------------------------------------------------------------
-  - pattern: '\bhistory\s+-c\b'
+  - pattern: '\bhistory\b.*-[a-z]*c'
     reason: clearing shell history
 
   # ---------------------------------------------------------------------------
@@ -153,10 +372,43 @@ bashToolPatterns:
   - pattern: '\bwget\b.*--post-data\s+'
     reason: wget with POST data (potential data exfiltration)
 
+  - pattern: '\bcurl\b.*\s+(-F|--form)\s+'
+    reason: curl with form upload (potential data exfiltration)
+
+  - pattern: '\bcurl\b.*--upload-file\s+'
+    reason: curl with file upload (potential data exfiltration)
+
+  - pattern: '\bcurl\b.*\|\s*(sh|bash|zsh|python3?|perl\d*|ruby\d*)\b'
+    reason: curl piped to shell (remote code execution)
+
+  - pattern: '\bwget\b.*\|\s*(sh|bash|zsh|python3?|perl\d*|ruby\d*)\b'
+    reason: wget piped to shell (remote code execution)
+
+  - pattern: '\b(nc|ncat|netcat)\s+.*(-[a-z]*l[a-z]*\b|--listen)\b'
+    reason: netcat listen mode (potential reverse shell)
+
+  - pattern: '\bscp\b.*\S+:\S+'
+    reason: scp to remote host (potential data exfiltration)
+    ask: true
+
+  - pattern: '\btcpdump\b'
+    reason: Captures network traffic (potential credential capture)
+    ask: true
+
+  - pattern: '\bnmap\b'
+    reason: Network scanner (reconnaissance tool)
+    ask: true
+
+  - pattern: '\biptables-restore\b'
+    reason: iptables-restore (replaces entire firewall ruleset)
+
+  - pattern: '\bip6tables\s+(-\S+\s+)*(-F|--flush)\b'
+    reason: ip6tables flush (removes all IPv6 firewall rules)
+
   # ---------------------------------------------------------------------------
   # AWS CLI DESTRUCTIVE OPERATIONS
   # ---------------------------------------------------------------------------
-  - pattern: '\baws\s+s3\s+rm\s+.*--recursive'
+  - pattern: '\baws\s+s3\s+rm\s+.*(-r\b|--recursive)'
     reason: aws s3 rm --recursive (deletes all objects)
 
   - pattern: '\baws\s+s3\s+rb\s+.*--force'
@@ -186,6 +438,118 @@ bashToolPatterns:
   - pattern: '\baws\s+iam\s+delete-user\b'
     reason: aws iam delete-user
 
+  - pattern: '\baws\s+elasticache\s+delete-(cache-cluster|replication-group)\b'
+    reason: aws elasticache delete (destroys Redis/Memcached cluster)
+
+  - pattern: '\baws\s+elbv2\s+delete-(load-balancer|target-group)\b'
+    reason: aws elbv2 delete (destroys load balancer/target group)
+
+  - pattern: '\baws\s+elb\s+delete-load-balancer\b'
+    reason: aws elb delete-load-balancer (destroys classic load balancer)
+
+  - pattern: '\baws\s+secretsmanager\s+delete-secret\b'
+    reason: aws secretsmanager delete-secret (destroys secret)
+
+  - pattern: '\baws\s+ssm\s+delete-parameter(s)?\b'
+    reason: aws ssm delete-parameter(s) (destroys SSM parameters)
+
+  - pattern: '\baws\s+cognito-idp\s+(delete-user-pool|admin-delete-user)\b'
+    reason: aws cognito delete (destroys user pool/users)
+
+  - pattern: '\baws\s+apigateway(v2)?\s+delete-(rest-api|api)\b'
+    reason: aws apigateway delete (destroys API)
+
+  - pattern: '\baws\s+sagemaker\s+delete-(model|endpoint|training-job|pipeline)\b'
+    reason: aws sagemaker delete (destroys ML infrastructure)
+
+  - pattern: '\baws\s+glue\s+delete-(job|database|table|crawler)\b'
+    reason: aws glue delete (destroys data pipeline resources)
+
+  - pattern: '\baws\s+kinesis(firehose)?\s+delete-(stream|delivery-stream)\b'
+    reason: aws kinesis delete (destroys data stream)
+
+  - pattern: '\baws\s+states\s+delete-state-machine\b'
+    reason: aws states delete-state-machine (destroys Step Functions)
+
+  - pattern: '\baws\s+ecs\s+delete-(service|cluster)\b'
+    reason: aws ecs delete (destroys ECS service/cluster)
+
+  - pattern: '\baws\s+amplify\s+delete-(app|branch)\b'
+    reason: aws amplify delete (destroys Amplify application)
+
+  - pattern: '\baws\s+opensearch\s+delete-domain\b'
+    reason: aws opensearch delete-domain (destroys search cluster)
+
+  - pattern: '\baws\s+iam\s+delete-(access-key|instance-profile|login-profile|role-policy|user-policy|policy|group)\b'
+    reason: aws iam destructive operation
+
+  - pattern: '\baws\s+iam\s+detach-role-policy\b'
+    reason: aws iam detach-role-policy (removes security controls)
+
+  - pattern: '\baws\s+waf.*delete\b'
+    reason: aws waf delete (removes WAF protection)
+
+  - pattern: '\baws\s+acm\s+delete-certificate\b'
+    reason: aws acm delete-certificate (destroys SSL certificate)
+
+  - pattern: '\baws\s+codecommit\s+delete-repository\b'
+    reason: aws codecommit delete-repository (destroys code repository)
+
+  - pattern: '\baws\s+code(pipeline|build)\s+delete-(pipeline|project)\b'
+    reason: aws code pipeline/build delete
+
+  - pattern: '\baws\s+cloudwatch\s+delete-(alarms|dashboards)\b'
+    reason: aws cloudwatch delete (removes monitoring)
+
+  - pattern: '\baws\s+cloudtrail\s+(delete-trail|stop-logging)\b'
+    reason: aws cloudtrail delete/stop (destroys audit trail)
+
+  - pattern: '\baws\s+backup\s+(delete-backup-vault|delete-recovery-point)\b'
+    reason: aws backup delete (destroys backup infrastructure)
+
+  - pattern: '\baws\s+redshift\s+delete-cluster\b'
+    reason: aws redshift delete-cluster (destroys data warehouse)
+
+  - pattern: '\baws\s+emr\s+terminate-job-flows\b'
+    reason: aws emr terminate-job-flows (terminates EMR clusters)
+
+  # ---------------------------------------------------------------------------
+  # AWS CLI OPERATIONS REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\baws\s+route53\s+delete-hosted-zone\b'
+    reason: Deletes Route53 hosted zone (all DNS records)
+    ask: true
+
+  - pattern: '\baws\s+ec2\s+(stop|reboot)-instances\b'
+    reason: Changes EC2 instance state
+    ask: true
+
+  - pattern: '\baws\s+ssm\s+put-parameter\b'
+    reason: Creates or overwrites SSM parameter
+    ask: true
+
+  - pattern: '\baws\s+secretsmanager\s+(create|update)-secret\b'
+    reason: Creates or updates secret in Secrets Manager
+    ask: true
+
+  - pattern: '\baws\s+deploy\s+create-deployment\b'
+    reason: Triggers CodeDeploy deployment
+    ask: true
+
+  - pattern: '\baws\s+ecs\s+update-service\b'
+    reason: Updates ECS service (may cause rolling restart)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # AWS CLI CATCH-ALL (must be AFTER specific patterns)
+  # ---------------------------------------------------------------------------
+  - pattern: '\baws\s+\S+\s+(delete|terminate|remove|purge|deregister)-'
+    reason: AWS CLI destructive operation (catch-all)
+
+  - pattern: '\baws\s+\S+\s+(create|update|put|modify|start|stop|reboot|invoke|run|execute|send|publish|attach|detach|associate|disassociate|enable|disable|register|tag|untag)-'
+    reason: AWS CLI mutating operation (catch-all)
+    ask: true
+
   # ---------------------------------------------------------------------------
   # GCP (gcloud) DESTRUCTIVE OPERATIONS
   # ---------------------------------------------------------------------------
@@ -209,6 +573,203 @@ bashToolPatterns:
 
   - pattern: '\bgcloud\s+iam\s+service-accounts\s+delete\b'
     reason: gcloud iam service-accounts delete
+
+  - pattern: '\bgcloud\s+run\s+services\s+delete\b'
+    reason: gcloud run services delete (destroys Cloud Run service)
+
+  - pattern: '\bgcloud\s+spanner\s+(instances|databases)\s+delete\b'
+    reason: gcloud spanner delete (destroys Spanner instance/database)
+
+  - pattern: '\bgcloud\s+bigtable\s+instances\s+delete\b'
+    reason: gcloud bigtable instances delete (destroys Bigtable instance)
+
+  - pattern: '\bgcloud\s+redis\s+instances\s+delete\b'
+    reason: gcloud redis instances delete (destroys Memorystore)
+
+  - pattern: '\bgcloud\s+artifacts\s+(repositories|packages|versions)\s+delete\b'
+    reason: gcloud artifacts delete (destroys container registry artifacts)
+
+  - pattern: '\bgcloud\s+container\s+images\s+delete\b'
+    reason: gcloud container images delete (destroys container images)
+
+  - pattern: '\bgcloud\s+secrets\s+delete\b'
+    reason: gcloud secrets delete (destroys Secret Manager secret)
+
+  - pattern: '\bgcloud\s+secrets\s+versions\s+(destroy|disable)\b'
+    reason: gcloud secrets versions destroy/disable (irreversible)
+
+  - pattern: '\bgcloud\s+firestore\s+databases\s+delete\b'
+    reason: gcloud firestore databases delete
+
+  - pattern: '\bgcloud\s+composer\s+environments\s+delete\b'
+    reason: gcloud composer environments delete (destroys Airflow cluster)
+
+  - pattern: '\bgcloud\s+dataflow\s+jobs\s+(cancel|drain)\b'
+    reason: gcloud dataflow jobs cancel/drain (stops data pipeline)
+
+  - pattern: '\bgcloud\s+logging\s+(sinks|buckets)\s+delete\b'
+    reason: gcloud logging delete (destroys audit/log infrastructure)
+
+  - pattern: '\bgcloud\s+monitoring\s+(dashboards|uptime)\s+delete\b'
+    reason: gcloud monitoring delete (removes monitoring resources)
+
+  - pattern: '\bgcloud\s+compute\s+(disks|snapshots|images)\s+delete\b'
+    reason: gcloud compute disks/snapshots/images delete (destroys storage)
+
+  - pattern: '\bgcloud\s+compute\s+firewall-rules\s+delete\b'
+    reason: gcloud compute firewall-rules delete (removes security rules)
+
+  - pattern: '\bgcloud\s+compute\s+networks\s+delete\b'
+    reason: gcloud compute networks delete (destroys VPC network)
+
+  # ---------------------------------------------------------------------------
+  # GCP OPERATIONS REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bgcloud\s+run\s+(services\s+update|deploy)\b'
+    reason: Updates or deploys Cloud Run service
+    ask: true
+
+  - pattern: '\bgcloud\s+functions\s+deploy\b'
+    reason: Deploys Cloud Function
+    ask: true
+
+  - pattern: '\bgcloud\s+secrets\s+(create|versions\s+add)\b'
+    reason: Creates or updates Secret Manager secret
+    ask: true
+
+  - pattern: '\bgcloud\s+compute\s+instances\s+(start|stop|reset)\b'
+    reason: Changes GCE instance state
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # GCP CATCH-ALL (must be AFTER specific patterns)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bgcloud\s+.*\b(delete|destroy)\b'
+    reason: GCP CLI destructive operation (catch-all)
+
+  - pattern: '\bgcloud\s+.*\b(create|update|deploy|add-iam-policy-binding|remove-iam-policy-binding|set-iam-policy)\b'
+    reason: GCP CLI mutating operation (catch-all)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # AZURE CLI DESTRUCTIVE OPERATIONS
+  # ---------------------------------------------------------------------------
+  - pattern: '\baz\s+group\s+delete\b'
+    reason: az group delete (deletes entire resource group)
+
+  - pattern: '\baz\s+vm\s+delete\b'
+    reason: az vm delete
+
+  - pattern: '\baz\s+sql\s+(server|db)\s+delete\b'
+    reason: az sql delete (database/server)
+
+  - pattern: '\baz\s+storage\s+account\s+delete\b'
+    reason: az storage account delete
+
+  - pattern: '\baz\s+aks\s+delete\b'
+    reason: az aks delete (AKS cluster)
+
+  - pattern: '\baz\s+webapp\s+delete\b'
+    reason: az webapp delete
+
+  - pattern: '\baz\s+functionapp\s+delete\b'
+    reason: az functionapp delete
+
+  - pattern: '\baz\s+keyvault\s+(delete|purge)\b'
+    reason: az keyvault delete/purge
+
+  - pattern: '\baz\s+cosmosdb\s+delete\b'
+    reason: az cosmosdb delete
+
+  - pattern: '\baz\s+network\s+vnet\s+delete\b'
+    reason: az network vnet delete
+
+  - pattern: '\baz\s+cognitiveservices\s+account\s+delete\b'
+    reason: az cognitiveservices delete (destroys AI/ML service)
+
+  - pattern: '\baz\s+container\s+delete\b'
+    reason: az container delete (destroys container instance)
+
+  - pattern: '\baz\s+acr\s+(delete|repository\s+delete)\b'
+    reason: az acr delete (destroys Azure Container Registry/images)
+
+  - pattern: '\baz\s+logic\s+workflow\s+delete\b'
+    reason: az logic workflow delete (destroys Logic App)
+
+  - pattern: '\baz\s+apim\s+delete\b'
+    reason: az apim delete (destroys API Management service)
+
+  - pattern: '\baz\s+eventgrid\s+(topic|domain|event-subscription)\s+delete\b'
+    reason: az eventgrid delete (destroys Event Grid resources)
+
+  - pattern: '\baz\s+servicebus\s+(namespace|queue|topic|subscription)\s+delete\b'
+    reason: az servicebus delete (destroys messaging infrastructure)
+
+  - pattern: '\baz\s+eventhubs\s+(namespace|eventhub)\s+delete\b'
+    reason: az eventhubs delete (destroys Event Hubs)
+
+  - pattern: '\baz\s+cdn\s+(profile|endpoint)\s+delete\b'
+    reason: az cdn delete (destroys CDN profile/endpoint)
+
+  - pattern: '\baz\s+disk\s+delete\b'
+    reason: az disk delete (destroys managed disk - data loss)
+
+  - pattern: '\baz\s+snapshot\s+delete\b'
+    reason: az snapshot delete (destroys disk snapshot)
+
+  - pattern: '\baz\s+backup\s+(delete|protection\s+disable)\b'
+    reason: az backup delete/disable (destroys backup infrastructure)
+
+  - pattern: '\baz\s+iot\s+(hub\s+delete|dps\s+delete)\b'
+    reason: az iot delete (destroys IoT Hub/DPS)
+
+  - pattern: '\baz\s+ml\s+(workspace|compute|endpoint)\s+delete\b'
+    reason: az ml delete (destroys Azure ML resources)
+
+  - pattern: '\baz\s+network\s+(nsg|firewall|application-gateway|vpn-gateway)\s+delete\b'
+    reason: az network security/gateway delete (removes network security)
+
+  - pattern: '\baz\s+keyvault\s+(key|secret|certificate)\s+(delete|purge)\b'
+    reason: az keyvault key/secret/certificate delete/purge
+
+  - pattern: '\baz\s+monitor\s+(action-group|alert-rule|diagnostic-settings)\s+delete\b'
+    reason: az monitor delete (removes monitoring and alerting)
+
+  - pattern: '\baz\s+devops\s+project\s+delete\b'
+    reason: az devops project delete (destroys Azure DevOps project)
+
+  # ---------------------------------------------------------------------------
+  # AZURE CLI OPERATIONS REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\baz\s+(webapp|functionapp)\s+(start|stop|restart)\b'
+    reason: Changes Azure Web App/Function App state
+    ask: true
+
+  - pattern: '\baz\s+vm\s+(start|stop|restart|deallocate)\b'
+    reason: Changes Azure VM state
+    ask: true
+
+  - pattern: '\baz\s+aks\s+upgrade\b'
+    reason: Upgrades AKS cluster (potential downtime)
+    ask: true
+
+  - pattern: '\baz\s+keyvault\s+secret\s+set\b'
+    reason: Creates or updates Key Vault secret
+    ask: true
+
+  - pattern: '\baz\s+deployment\s+(group|sub|mg|tenant)\s+create\b'
+    reason: Deploys Azure ARM template
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # AZURE CLI CATCH-ALL (must be AFTER specific patterns)
+  # ---------------------------------------------------------------------------
+  - pattern: '\baz\s+.*\b(delete|purge)\b'
+    reason: Azure CLI destructive operation (catch-all)
+
+  - pattern: '\baz\s+.*\b(create|update|set|start|stop|restart|deploy)\b'
+    reason: Azure CLI mutating operation (catch-all)
+    ask: true
 
   # ---------------------------------------------------------------------------
   # FIREBASE DESTRUCTIVE OPERATIONS
@@ -285,28 +846,242 @@ bashToolPatterns:
   - pattern: '\bdocker\s+volume\s+prune\b'
     reason: docker volume prune (removes unused volumes)
 
+  - pattern: '\bdocker\s+compose\s+down\s+.*(-v|--volumes)\b'
+    reason: docker compose down with volumes (data loss)
+
+  - pattern: '\bdocker\s+network\s+rm\b'
+    reason: docker network rm (can break container communication)
+
+  - pattern: '\bdocker\s+container\s+prune\b'
+    reason: docker container prune (removes all stopped containers)
+
+  - pattern: '\bdocker\s+image\s+prune\s+.*-a'
+    reason: docker image prune -a (removes all unused images)
+
+  - pattern: '\bdocker\s+builder\s+prune\b'
+    reason: docker builder prune (removes build cache)
+
+  - pattern: '\bdocker\s+stack\s+rm\b'
+    reason: docker stack rm (removes entire stack)
+
+  - pattern: '\bdocker\s+swarm\s+leave\s+.*--force'
+    reason: docker swarm leave --force (disrupts cluster)
+
+  - pattern: '\bdocker\s+service\s+rm\b'
+    reason: docker service rm (removes swarm service)
+
+  - pattern: '\bdocker\s+secret\s+rm\b'
+    reason: docker secret rm (removes Docker secret)
+
+  - pattern: '\bdocker\s+buildx\s+(rm|prune)\b'
+    reason: docker buildx rm/prune (destroys builder instance/cache)
+
+  - pattern: '\bdocker\s+context\s+rm\b'
+    reason: docker context rm (removes Docker context)
+
+  - pattern: '\bdocker\s+trust\s+revoke\b'
+    reason: docker trust revoke (revokes image signing trust)
+
+  - pattern: '\bdocker\s+plugin\s+rm\b'
+    reason: docker plugin rm (removes Docker plugin)
+
+  - pattern: '\bdocker\s+config\s+rm\b'
+    reason: docker config rm (removes Docker Swarm config)
+
   # ---------------------------------------------------------------------------
-  # KUBERNETES (kubectl) DESTRUCTIVE OPERATIONS
+  # DOCKER OPERATIONS REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bdocker\s+compose\s+down\b'
+    reason: Stops and removes containers
+    ask: true
+
+  - pattern: '\bdocker\s+run\s+.*--privileged(?!=false)'
+    reason: Runs container with full host access
+    ask: true
+
+  - pattern: '\bdocker\s+push\b'
+    reason: Pushes image to registry
+    ask: true
+
+  - pattern: '\bdocker\s+manifest\s+push\b'
+    reason: Pushes multi-arch manifest to registry
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # KUBERNETES (kubectl/helm) DESTRUCTIVE OPERATIONS
   # ---------------------------------------------------------------------------
   - pattern: '\bkubectl\s+delete\s+namespace\b'
-    reason: kubectl delete namespace
+    reason: kubectl delete namespace (destroys all resources in namespace)
 
-  - pattern: '\bkubectl\s+delete\s+all\s+--all'
-    reason: kubectl delete all --all
+  - pattern: '\bkubectl\s+delete\s+ns\b'
+    reason: kubectl delete ns (destroys all resources in namespace)
 
-  - pattern: '\bkubectl\s+delete\s+.*--all\s+--all-namespaces'
+  - pattern: '\bkubectl\s+delete\s+(pv|persistentvolume)\b'
+    reason: kubectl delete persistent volume (data loss)
+
+  - pattern: '\bkubectl\s+delete\s+(pvc|persistentvolumeclaim)\b'
+    reason: kubectl delete persistent volume claim (data loss)
+
+  - pattern: '\bkubectl\s+delete\s+.*--all\b'
+    reason: kubectl delete --all (bulk resource deletion)
+
+  - pattern: '\bkubectl\s+delete\s+.*(-A|--all-namespaces)'
     reason: kubectl delete across all namespaces
+
+  - pattern: '\bkubectl\s+delete\s+.*--force'
+    reason: kubectl delete --force (bypasses graceful shutdown)
+
+  - pattern: '\bkubectl\s+config\s+delete-(context|cluster|user)\b'
+    reason: kubectl config delete (removes kubeconfig entry)
+
+  - pattern: '\bkubectl\s+config\s+unset\b'
+    reason: kubectl config unset (modifies kubeconfig)
+
+  - pattern: '\bkubectl\s+drain\s+.*--force'
+    reason: kubectl drain --force (ignores PodDisruptionBudgets)
+
+  - pattern: '\bkubectl\s+drain\s+.*--delete-emptydir-data'
+    reason: kubectl drain --delete-emptydir-data (deletes local data)
+
+  - pattern: '\bkubectl\s+replace\s+.*--force'
+    reason: kubectl replace --force (deletes then recreates resource)
 
   - pattern: '\bhelm\s+uninstall\b'
     reason: helm uninstall (removes release)
 
+  - pattern: '\bhelm\s+delete\b'
+    reason: helm delete (removes release)
+
+  - pattern: '\bistioctl\s+(uninstall|remove-from-cluster)\b'
+    reason: istioctl uninstall (removes service mesh from cluster)
+
+  - pattern: '\blinkerd\s+uninstall\b'
+    reason: linkerd uninstall (removes Linkerd service mesh)
+
+  - pattern: '\bconsul\s+(leave|force-leave)\b'
+    reason: consul leave/force-leave (removes node from service mesh)
+
+  - pattern: '\bconsul\s+kv\s+delete\b'
+    reason: consul kv delete (destroys key-value data)
+
+  # ---------------------------------------------------------------------------
+  # KUBERNETES (kubectl/helm) OPERATIONS REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bkubectl\s+delete\b'
+    reason: Deletes Kubernetes resources
+    ask: true
+
+  - pattern: '\bkubectl\s+apply\b'
+    reason: Creates or updates Kubernetes resources
+    ask: true
+
+  - pattern: '\bkubectl\s+create\b'
+    reason: Creates Kubernetes resources
+    ask: true
+
+  - pattern: '\bkubectl\s+patch\b'
+    reason: Modifies Kubernetes resources in-place
+    ask: true
+
+  - pattern: '\bkubectl\s+replace\b'
+    reason: Replaces Kubernetes resources
+    ask: true
+
+  - pattern: '\bkubectl\s+scale\b'
+    reason: Changes replica count
+    ask: true
+
+  - pattern: '\bkubectl\s+rollout\s+(restart|undo)\b'
+    reason: Restarts or rolls back deployment
+    ask: true
+
+  - pattern: '\bkubectl\s+drain\b'
+    reason: Evicts pods from node
+    ask: true
+
+  - pattern: '\bkubectl\s+cordon\b'
+    reason: Marks node as unschedulable
+    ask: true
+
+  - pattern: '\bkubectl\s+uncordon\b'
+    reason: Marks node as schedulable
+    ask: true
+
+  - pattern: '\bkubectl\s+taint\b'
+    reason: Modifies node taints
+    ask: true
+
+  - pattern: '\bkubectl\s+exec\b'
+    reason: Executes command in pod
+    ask: true
+
+  - pattern: '\bkubectl\s+set\s+(image|env|resources)\b'
+    reason: Modifies deployment configuration
+    ask: true
+
+  - pattern: '\bkubectl\s+edit\b'
+    reason: Edits Kubernetes resource in-place
+    ask: true
+
+  - pattern: '\bkubectl\s+run\b'
+    reason: Creates ad-hoc pod
+    ask: true
+
+  - pattern: '\bkubectl\s+expose\b'
+    reason: Creates Kubernetes service
+    ask: true
+
+  - pattern: '\bkubectl\s+cp\b'
+    reason: Copies files to/from pod
+    ask: true
+
+  - pattern: '\bkubectl\s+label\s+.*--overwrite'
+    reason: Overwrites existing labels
+    ask: true
+
+  - pattern: '\bkubectl\s+annotate\s+.*--overwrite'
+    reason: Overwrites existing annotations
+    ask: true
+
+  - pattern: '\bkubectl\s+port-forward\b'
+    reason: Forwards local port to pod
+    ask: true
+
+  - pattern: '\bkubectl\s+config\s+(set-context|use-context)\b'
+    reason: Changes active Kubernetes context
+    ask: true
+
+  - pattern: '\bkubectl\s+config\s+set-credentials\b'
+    reason: Modifies Kubernetes credentials
+    ask: true
+
+  - pattern: '\bkubectl\s+debug\b'
+    reason: Creates debug container in pod
+    ask: true
+
+  - pattern: '\bkubectl\s+auth\s+reconcile\b'
+    reason: Modifies Kubernetes RBAC rules
+    ask: true
+
+  - pattern: '\blinkerd\s+inject\b'
+    reason: Injects Linkerd sidecar proxy into resources
+    ask: true
+
+  - pattern: '\bhelm\s+(install|upgrade)\b'
+    reason: Deploys or updates Helm release
+    ask: true
+
+  - pattern: '\bhelm\s+rollback\b'
+    reason: Rolls back Helm release
+    ask: true
+
   # ---------------------------------------------------------------------------
   # DATABASE CLI DESTRUCTIVE OPERATIONS
   # ---------------------------------------------------------------------------
-  - pattern: '\bredis-cli\s+FLUSHALL'
+  - pattern: '\bredis-cli\b.*\bFLUSHALL\b'
     reason: redis-cli FLUSHALL (wipes ALL data)
 
-  - pattern: '\bredis-cli\s+FLUSHDB'
+  - pattern: '\bredis-cli\b.*\bFLUSHDB\b'
     reason: redis-cli FLUSHDB (wipes database)
 
   - pattern: '\bmongosh.*dropDatabase'
@@ -320,6 +1095,39 @@ bashToolPatterns:
 
   - pattern: '\bmysqladmin\s+drop\b'
     reason: MySQL drop database
+
+  - pattern: '\bmongosh?\b.*\.drop\s*\('
+    reason: MongoDB drop (collection/database)
+
+  - pattern: '\bmongosh?\b.*\.deleteMany\s*\(\s*\{\s*\}'
+    reason: MongoDB deleteMany({}) (deletes all documents)
+
+  - pattern: '\bmongosh?\b.*\.dropCollection\s*\('
+    reason: MongoDB dropCollection (destroys collection)
+
+  # ---------------------------------------------------------------------------
+  # MESSAGE QUEUE DESTRUCTIVE OPERATIONS
+  # ---------------------------------------------------------------------------
+  - pattern: '\brabbitmqctl\s+(delete_queue|delete_vhost|delete_exchange|delete_user)\b'
+    reason: rabbitmqctl delete (destroys RabbitMQ resources)
+
+  - pattern: '\brabbitmqctl\s+(stop|shutdown)\b'
+    reason: rabbitmqctl stop/shutdown (stops RabbitMQ server)
+
+  - pattern: '\brabbitmqctl\s+purge_queue\b'
+    reason: rabbitmqctl purge_queue (destroys all messages in queue)
+
+  - pattern: '\brabbitmqctl\s+reset\b'
+    reason: rabbitmqctl reset (resets RabbitMQ node to virgin state)
+
+  - pattern: '\bkafka-topics\b.*--delete\b'
+    reason: kafka-topics --delete (destroys Kafka topic)
+
+  - pattern: '\bkafka-consumer-groups\b.*--delete\b'
+    reason: kafka-consumer-groups --delete (destroys consumer group)
+
+  - pattern: '\bkafka-configs\b.*--delete\b'
+    reason: kafka-configs --delete (removes Kafka configuration)
 
   # ---------------------------------------------------------------------------
   # INFRASTRUCTURE AS CODE DESTRUCTIVE OPERATIONS
@@ -338,6 +1146,33 @@ bashToolPatterns:
 
   - pattern: '\bsam\s+delete\b'
     reason: sam delete (deletes SAM application)
+
+  - pattern: '\bterraform\s+state\s+rm\b'
+    reason: terraform state rm (removes resource from state, causes drift)
+
+  - pattern: '\bterraform\s+force-unlock\b'
+    reason: terraform force-unlock (can cause state corruption)
+
+  - pattern: '\bcdk\s+destroy\b'
+    reason: cdk destroy (AWS CDK, destroys infrastructure)
+
+  - pattern: '\bcdktf\s+destroy\b'
+    reason: cdktf destroy (CDK for Terraform, destroys infrastructure)
+
+  - pattern: '\bterraform\s+workspace\s+delete\b'
+    reason: terraform workspace delete (destroys workspace and state)
+
+  - pattern: '\bterragrunt\s+destroy\b'
+    reason: terragrunt destroy (destroys infrastructure)
+
+  - pattern: '\bterragrunt\s+run-all\s+destroy\b'
+    reason: terragrunt run-all destroy (destroys ALL infrastructure across modules)
+
+  - pattern: '\bpulumi\s+stack\s+rm\b'
+    reason: pulumi stack rm (destroys stack and state)
+
+  - pattern: '\bterraform\s+state\s+(push|replace-provider)\b'
+    reason: terraform state push/replace (overwrites state file)
 
   # ---------------------------------------------------------------------------
   # HEROKU DESTRUCTIVE OPERATIONS
@@ -499,19 +1334,106 @@ bashToolPatterns:
     reason: gh api with write method (mutating API call)
     ask: true
 
+  - pattern: '\bgh\s+workflow\s+disable\b'
+    reason: Disables GitHub Actions workflow
+    ask: true
+
+  - pattern: '\bgh\s+run\s+cancel\b'
+    reason: Cancels a workflow run
+    ask: true
+
+  - pattern: '\bgh\s+secret\s+(set|delete)\b'
+    reason: Manages repository secrets
+    ask: true
+
+  - pattern: '\bgh\s+variable\s+(set|delete)\b'
+    reason: Manages Actions variables
+    ask: true
+
+  - pattern: '\bgh\s+gist\s+create\b'
+    reason: Creates a gist (potential data exposure)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # DEPLOYMENT OPERATIONS REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bvercel\s+(deploy|--prod)\b'
+    reason: Deploys to Vercel
+    ask: true
+
+  - pattern: '\bnetlify\s+deploy\b'
+    reason: Deploys to Netlify
+    ask: true
+
+  - pattern: '\bfirebase\s+deploy\b'
+    reason: Deploys to Firebase
+    ask: true
+
+  - pattern: '\bfly\s+deploy\b'
+    reason: Deploys to Fly.io
+    ask: true
+
+  - pattern: '\bwrangler\s+(deploy|publish)\b'
+    reason: Deploys Cloudflare Worker
+    ask: true
+
+  - pattern: '\bgcloud\s+app\s+deploy\b'
+    reason: Deploys to Google App Engine
+    ask: true
+
+  - pattern: '\bheroku\s+container:release\b'
+    reason: Releases container to Heroku
+    ask: true
+
+  - pattern: '\bansible-playbook\b'
+    reason: Runs Ansible playbook against hosts
+    ask: true
+
+  - pattern: '\bansible\s+.*(-m|--module-name)\b'
+    reason: Runs Ansible ad-hoc command on remote hosts
+    ask: true
+
   # ---------------------------------------------------------------------------
   # PACKAGE REGISTRY DESTRUCTIVE OPERATIONS
   # ---------------------------------------------------------------------------
   - pattern: '\bnpm\s+unpublish\b'
     reason: npm unpublish (removes package from registry)
 
+  - pattern: '\bnpm\s+deprecate\b'
+    reason: npm deprecate (marks package as deprecated in registry)
+
+  - pattern: '\bgem\s+yank\b'
+    reason: gem yank (removes gem from RubyGems)
+
+  - pattern: '\bcargo\s+yank\b'
+    reason: cargo yank (yanks crate from crates.io)
+
+  # ---------------------------------------------------------------------------
+  # PACKAGE MANAGER OPERATIONS REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bnpm\s+publish\b'
+    reason: Publishes package to npm registry
+    ask: true
+
+  - pattern: '\bbrew\s+(uninstall|remove)\b'
+    reason: Uninstalls Homebrew package
+    ask: true
+
+  - pattern: '\bpip\s+uninstall\b'
+    reason: Uninstalls Python package
+    ask: true
+
+  - pattern: '\bgem\s+uninstall\b'
+    reason: Uninstalls Ruby gem
+    ask: true
+
   # ---------------------------------------------------------------------------
   # SQL DESTRUCTIVE OPERATIONS (catastrophic - no WHERE clause)
   # ---------------------------------------------------------------------------
-  - pattern: 'DELETE\s+FROM\s+\w+\s*;'
+  - pattern: 'DELETE\s+FROM\s+[\w.`"]+\s*;'
     reason: DELETE without WHERE clause (will delete ALL rows)
 
-  - pattern: 'DELETE\s+FROM\s+\w+\s*$'
+  - pattern: 'DELETE\s+FROM\s+[\w.`"]+\s*$'
     reason: DELETE without WHERE clause (will delete ALL rows)
 
   - pattern: 'DELETE\s+\*\s+FROM'
@@ -531,6 +1453,1234 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   - pattern: '\bDELETE\s+FROM\s+\w+\s+WHERE\b.*\bid\s*='
     reason: SQL DELETE with specific ID
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # SHELL EVALUATION AND CODE INJECTION
+  # ---------------------------------------------------------------------------
+  - pattern: '\beval\s+'
+    reason: eval (arbitrary command execution - can bypass all pattern checks)
+
+  - pattern: '\bbase64\s+(-d|--decode)\b.*\|\s*(sh|bash|zsh|python|perl|ruby)\b'
+    reason: base64 decode piped to shell (encoded payload execution)
+
+  - pattern: '\\rm\s+'
+    reason: backslash-escaped rm (bypasses alias protection)
+
+  - pattern: '\bcommand\s+rm\b'
+    reason: command rm (bypasses alias/function protection)
+
+  - pattern: '\bxargs\s+.*(shred|chmod|chown|dd|mkfs)\b'
+    reason: xargs piped to destructive command
+
+  - pattern: '\bunset\b.*\b(PATH|HOME|USER|SHELL)\b'
+    reason: unsetting critical environment variable
+
+  - pattern: '\bexport\s+PATH\s*=(?!.*\$\{?PATH\}?)'
+    reason: overwriting PATH without preserving existing PATH
+
+  - pattern: '\bpython3?\s+-c\s+.*(os\.remove|os\.unlink|shutil\.rmtree|os\.system|subprocess|pathlib\S*\.unlink|exec\s*\(|__import__\s*\()'
+    reason: Python one-liner with destructive operation
+
+  - pattern: '\bsocat\b.*(LISTEN|listen)'
+    reason: socat listen mode (potential reverse shell)
+
+  # ---------------------------------------------------------------------------
+  # SHELL EVALUATION REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bsource\s+'
+    reason: Sourcing a script (executes in current shell context)
+    ask: true
+
+  - pattern: '\bexec\s+[^>]'
+    reason: exec replaces current shell process
+    ask: true
+
+  - pattern: '\b(bash|sh|zsh)\s+-c\s+'
+    reason: Indirect shell command execution
+    ask: true
+
+  - pattern: '\bnode\s+-e\s+'
+    reason: Node.js inline code execution
+    ask: true
+
+  - pattern: '\bruby\s+-e\s+'
+    reason: Ruby inline code execution
+    ask: true
+
+  - pattern: '\bperl\s+-e\s+'
+    reason: Perl inline code execution
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # PACKAGE MANAGERS - SYSTEM LEVEL (DESTRUCTIVE)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bsudo\s+(apt|apt-get)\s+(remove|purge|autoremove)\b'
+    reason: apt package removal (system-level)
+
+  - pattern: '\bsudo\s+(dnf|yum)\s+(remove|erase|autoremove)\b'
+    reason: dnf/yum package removal (system-level)
+
+  - pattern: '\bsudo\s+pacman\s+-R'
+    reason: pacman package removal (system-level)
+
+  - pattern: '\bsudo\s+(zypper)\s+(remove|rm)\b'
+    reason: zypper package removal (system-level)
+
+  - pattern: '\bsudo\s+apk\s+del\b'
+    reason: apk package removal (system-level)
+
+  # ---------------------------------------------------------------------------
+  # PACKAGE MANAGERS - SYSTEM LEVEL REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bsudo\s+(apt|apt-get)\s+install\b'
+    reason: apt package installation (system-level)
+    ask: true
+
+  - pattern: '\bsudo\s+(dnf|yum)\s+install\b'
+    reason: dnf/yum package installation (system-level)
+    ask: true
+
+  - pattern: '\bsudo\s+pacman\s+-S'
+    reason: pacman package installation (system-level)
+    ask: true
+
+  - pattern: '\bsudo\s+(zypper)\s+(install|in)\b'
+    reason: zypper package installation (system-level)
+    ask: true
+
+  - pattern: '\bsudo\s+apk\s+add\b'
+    reason: apk package installation (system-level)
+    ask: true
+
+  - pattern: '\bbrew\s+install\s+.*--force'
+    reason: Homebrew force install (overwrites existing)
+    ask: true
+
+  - pattern: '\bbrew\s+reinstall\b'
+    reason: Homebrew reinstall
+    ask: true
+
+  - pattern: '\bbrew\s+install\s+--cask\b'
+    reason: Homebrew cask install (macOS application)
+    ask: true
+
+  - pattern: '\bpip3?\s+install\b'
+    reason: pip install (arbitrary code execution from PyPI)
+    ask: true
+
+  - pattern: '\bcargo\s+install\b'
+    reason: cargo install (compiles and installs Rust binary)
+    ask: true
+
+  - pattern: '\bgo\s+install\b'
+    reason: go install (downloads and installs Go binary)
+    ask: true
+
+  - pattern: '\bnix-env\s+(-\S+\s+)*-e\b'
+    reason: nix-env package removal
+    ask: true
+
+  - pattern: '\bnix\s+profile\s+(remove|install)\b'
+    reason: Nix profile modification
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # NPM / YARN / PNPM DANGEROUS OPERATIONS (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bnpx\s+'
+    reason: npx downloads and executes arbitrary packages
+    ask: true
+
+  - pattern: '\bbunx\s+'
+    reason: bunx downloads and executes arbitrary packages
+    ask: true
+
+  - pattern: '\byarn\s+dlx\b'
+    reason: yarn dlx downloads and executes arbitrary packages
+    ask: true
+
+  - pattern: '\bpnpm\s+dlx\b'
+    reason: pnpm dlx downloads and executes arbitrary packages
+    ask: true
+
+  - pattern: '\bnpm\s+(install|i)\s+(-\S+\s+)*-g\b'
+    reason: npm global install (modifies system-wide packages)
+    ask: true
+
+  - pattern: '\byarn\s+global\s+add\b'
+    reason: yarn global install (modifies system-wide packages)
+    ask: true
+
+  - pattern: '\bpnpm\s+add\s+(-\S+\s+)*-g\b'
+    reason: pnpm global install (modifies system-wide packages)
+    ask: true
+
+  - pattern: '\bnpm\s+link\b'
+    reason: npm link (creates global symlink)
+    ask: true
+
+  - pattern: '\byarn\s+link\b'
+    reason: yarn link (creates global symlink)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # CONTAINER TOOLS - PODMAN (mirrors Docker)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bpodman\s+system\s+prune\s+.*-a'
+    reason: podman system prune -a (removes all unused data)
+
+  - pattern: '\bpodman\s+rm\s+.*-f'
+    reason: podman rm -f (force removes containers)
+
+  - pattern: '\bpodman\s+rmi\s+.*-f'
+    reason: podman rmi -f (force removes images)
+
+  - pattern: '\bpodman\s+volume\s+(rm|prune)\b'
+    reason: podman volume rm/prune (data loss)
+
+  - pattern: '\bpodman\s+network\s+rm\b'
+    reason: podman network rm
+
+  - pattern: '\bpodman\s+container\s+prune\b'
+    reason: podman container prune
+
+  - pattern: '\bpodman\s+image\s+prune\s+.*-a'
+    reason: podman image prune -a
+
+  - pattern: '\bpodman\s+secret\s+rm\b'
+    reason: podman secret rm
+
+  # ---------------------------------------------------------------------------
+  # CONTAINER TOOLS - PODMAN REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bpodman\s+push\b'
+    reason: Pushes image to registry (podman)
+    ask: true
+
+  - pattern: '\bpodman\s+run\s+.*--privileged(?!=false)'
+    reason: Runs container with full host access (podman)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # CONTAINER TOOLS - DOCKER-COMPOSE (hyphenated form)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bdocker-compose\s+down\s+.*(-v|--volumes)\b'
+    reason: docker-compose down with volumes (data loss)
+
+  - pattern: '\bdocker-compose\s+down\b'
+    reason: Stops and removes containers (docker-compose)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # CONTAINER TOOLS - LOCAL KUBERNETES
+  # ---------------------------------------------------------------------------
+  - pattern: '\bkind\s+delete\s+cluster\b'
+    reason: kind delete cluster (destroys local Kubernetes cluster)
+
+  - pattern: '\bminikube\s+delete\b'
+    reason: minikube delete (destroys local Kubernetes cluster)
+
+  - pattern: '\bk3d\s+cluster\s+delete\b'
+    reason: k3d cluster delete (destroys local k3s cluster)
+
+  # ---------------------------------------------------------------------------
+  # CONTAINER TOOLS - DOCKER HOST MOUNT (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bdocker\s+run\s+.*(-v|--volume)\s+/:/\b'
+    reason: Docker run mounting host root filesystem
+    ask: true
+
+  - pattern: '\bdocker\s+run\s+.*--mount\s+.*src=/[,\s]'
+    reason: Docker run mounting host root filesystem (--mount syntax)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # DATABASE CLI GAPS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bpsql\b.*(-c|--command)\s+.*(DROP|TRUNCATE|DELETE\s+FROM)'
+    reason: psql with destructive SQL
+
+  - pattern: '\b(mysql|mariadb)\b.*(-e|--execute)\s+.*(DROP|TRUNCATE|DELETE\s+FROM)'
+    reason: mysql/mariadb with destructive SQL
+
+  - pattern: '\bdropuser\b'
+    reason: PostgreSQL dropuser (drops database user/role)
+
+  - pattern: '\bredis-cli\b.*\bCONFIG\s+SET\b'
+    reason: redis-cli CONFIG SET (runtime configuration change)
+
+  - pattern: '\bredis-cli\b.*\bDEBUG\b'
+    reason: redis-cli DEBUG (dangerous debug operations)
+
+  - pattern: '\bredis-cli\b.*\bCONFIG\s+REWRITE\b'
+    reason: redis-cli CONFIG REWRITE (overwrites redis.conf)
+
+  - pattern: '\bredis-cli\b.*\b(SLAVEOF|REPLICAOF)\b'
+    reason: redis-cli SLAVEOF/REPLICAOF (modifies replication configuration)
+
+  # ---------------------------------------------------------------------------
+  # ADDITIONAL AWS CLI DESTRUCTIVE OPERATIONS
+  # ---------------------------------------------------------------------------
+  - pattern: '\baws\s+s3\s+sync\s+.*--delete\b'
+    reason: aws s3 sync --delete (deletes files at destination not in source)
+
+  - pattern: '\baws\s+iam\s+delete-(policy|group)\b'
+    reason: aws iam delete-policy/group
+
+  - pattern: '\baws\s+iam\s+detach-role-policy\b'
+    reason: aws iam detach-role-policy (removes security controls)
+
+  - pattern: '\baws\s+logs\s+delete-log-group\b'
+    reason: aws logs delete-log-group (destroys audit trails)
+
+  - pattern: '\baws\s+ecr\s+delete-repository\b'
+    reason: aws ecr delete-repository (deletes container images)
+
+  - pattern: '\baws\s+sns\s+delete-topic\b'
+    reason: aws sns delete-topic (deletes messaging infrastructure)
+
+  - pattern: '\baws\s+sqs\s+delete-queue\b'
+    reason: aws sqs delete-queue (deletes message queue)
+
+  # ---------------------------------------------------------------------------
+  # ADDITIONAL AWS CLI REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\baws\s+route53\s+change-resource-record-sets\b'
+    reason: Modifies DNS records
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # ADDITIONAL GCP DESTRUCTIVE OPERATIONS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bgcloud\s+pubsub\s+(topics|subscriptions)\s+delete\b'
+    reason: gcloud pubsub delete (deletes messaging infrastructure)
+
+  - pattern: '\bgcloud\s+dns\s+record-sets\s+delete\b'
+    reason: gcloud dns record-sets delete
+
+  # ---------------------------------------------------------------------------
+  # ADDITIONAL AZURE DESTRUCTIVE OPERATIONS
+  # ---------------------------------------------------------------------------
+  - pattern: '\baz\s+redis\s+delete\b'
+    reason: az redis delete
+
+  - pattern: '\baz\s+appservice\s+plan\s+delete\b'
+    reason: az appservice plan delete
+
+  - pattern: '\baz\s+monitor\s+.*delete\b'
+    reason: az monitor delete (removes monitoring resources)
+
+  # ---------------------------------------------------------------------------
+  # FLYCTL (alias for fly)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bflyctl\s+(apps\s+destroy|destroy)\b'
+    reason: flyctl destroy (Fly.io)
+
+  - pattern: '\bflyctl\s+deploy\b'
+    reason: Deploys to Fly.io (flyctl)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # RAILWAY CLI
+  # ---------------------------------------------------------------------------
+  - pattern: '\brailway\s+(delete|remove)\b'
+    reason: railway delete/remove (destroys Railway resources)
+
+  - pattern: '\brailway\s+deploy\b'
+    reason: Deploys to Railway
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # OPENTOFU (Terraform fork)
+  # ---------------------------------------------------------------------------
+  - pattern: '\btofu\s+destroy\b'
+    reason: tofu destroy (destroys all infrastructure)
+
+  - pattern: '\btofu\s+state\s+rm\b'
+    reason: tofu state rm (removes resource from state)
+
+  - pattern: '\btofu\s+force-unlock\b'
+    reason: tofu force-unlock (can cause state corruption)
+
+  - pattern: '\btofu\s+apply\b'
+    reason: Applies OpenTofu infrastructure changes
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # IAC OPERATIONS REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bterraform\s+apply\b'
+    reason: Applies Terraform infrastructure changes
+    ask: true
+
+  - pattern: '\bterraform\s+(import|state\s+mv)\b'
+    reason: Modifies Terraform state
+    ask: true
+
+  - pattern: '\bpulumi\s+up\b'
+    reason: Deploys Pulumi infrastructure changes
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # NETWORK CONFIGURATION
+  # ---------------------------------------------------------------------------
+  - pattern: '\bip\s+(addr|route|link|rule)\s+(add|del|change|replace|flush)\b'
+    reason: ip command modifying network configuration
+
+  - pattern: '\bifconfig\s+\S+\s+(down|up)\b'
+    reason: ifconfig interface state change
+
+  - pattern: '\broute\s+(add|del|delete|change)\b'
+    reason: route table modification
+
+  - pattern: '\bufw\s+(disable|reset|delete)\b'
+    reason: ufw firewall disable/reset/delete
+
+  - pattern: '\bnft\s+(flush|delete)\b'
+    reason: nftables flush/delete (removes firewall rules)
+
+  - pattern: '\bsysctl\s+(-w|--write)\b'
+    reason: sysctl write (modifies kernel parameters)
+
+  # ---------------------------------------------------------------------------
+  # NETWORK CONFIGURATION REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\biptables\s+.*(-A|--append|-D|--delete|-I|--insert)\b'
+    reason: Modifies individual firewall rules
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # macOS-SPECIFIC
+  # ---------------------------------------------------------------------------
+  - pattern: '\bcsrutil\b'
+    reason: csrutil (System Integrity Protection control)
+
+  - pattern: '\bspctl\s+--master-disable\b'
+    reason: spctl --master-disable (disables Gatekeeper)
+
+  - pattern: '\bdscl\b.*\b(create|delete|merge|change)\b'
+    reason: dscl directory services modification
+
+  - pattern: '\bxattr\s+-d\b.*com\.apple\.quarantine'
+    reason: xattr removes quarantine (bypasses Gatekeeper)
+
+  - pattern: '\blaunchctl\s+unload\b'
+    reason: launchctl unload (stops macOS service)
+
+  - pattern: '\bdiskutil\s+apfs\s+deleteVolume\b'
+    reason: diskutil APFS volume deletion
+
+  # ---------------------------------------------------------------------------
+  # macOS-SPECIFIC REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bdefaults\s+write\b'
+    reason: Modifies macOS preferences
+    ask: true
+
+  - pattern: '\bnetworksetup\b'
+    reason: Modifies macOS network configuration
+    ask: true
+
+  - pattern: '\bscutil\s+--set\b'
+    reason: Modifies macOS system configuration
+    ask: true
+
+  - pattern: '\bpmset\b'
+    reason: Modifies macOS power management settings
+    ask: true
+
+  - pattern: '\blaunchctl\s+(load|bootstrap|submit)\b'
+    reason: Loads macOS service
+    ask: true
+
+  - pattern: '\bdiskutil\s+(unmount|unmountDisk|mount|mountDisk)\b'
+    reason: Mounts/unmounts macOS disk
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # LOG / AUDIT TRAIL MANIPULATION
+  # ---------------------------------------------------------------------------
+  - pattern: '\bjournalctl\s+--vacuum'
+    reason: journalctl vacuum (destroys journal logs)
+
+  - pattern: '\bjournalctl\s+--rotate'
+    reason: journalctl rotate (rotates journal logs)
+
+  - pattern: '\blogrotate\s+.*--force'
+    reason: logrotate --force (forced log rotation)
+
+  # ---------------------------------------------------------------------------
+  # DISK / VOLUME MANAGEMENT
+  # ---------------------------------------------------------------------------
+  - pattern: '\b(mount|umount)\s+'
+    reason: mount/umount (filesystem mount state change)
+
+  - pattern: '\b(lvremove|vgremove|pvremove)\b'
+    reason: LVM volume removal (irreversible data loss)
+
+  - pattern: '\bmdadm\s+.*(--stop|--remove|--zero-superblock)\b'
+    reason: mdadm RAID manipulation (data loss)
+
+  - pattern: '\bwipefs\b'
+    reason: wipefs (erases filesystem signatures)
+
+  # ---------------------------------------------------------------------------
+  # GIT ADDITIONAL OPERATIONS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bgit\s+config\s+--system\b'
+    reason: git config --system (modifies system-wide git configuration)
+
+  # ---------------------------------------------------------------------------
+  # GIT ADDITIONAL OPERATIONS REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bgit\s+rebase\b'
+    reason: Rewrites commit history
+    ask: true
+
+  - pattern: '\bgit\s+(cherry-pick|merge|rebase)\s+--abort\b'
+    reason: Aborts in-progress operation (discards conflict resolution work)
+    ask: true
+
+  - pattern: '\bgit\s+worktree\s+remove\b'
+    reason: Removes git worktree
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # PROCESS MANAGEMENT (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bkillall\s+\S+'
+    reason: Sends signal to all matching processes
+    ask: true
+
+  - pattern: '\bpkill\s+'
+    reason: Sends signal to processes matching pattern
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # CREDENTIAL MANAGER COMMANDS (ALL ACCESS DENIED)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bpass\s+(show|ls|list|find|grep|insert|edit|generate|rm|mv|cp|git|init|delete|remove|otp|close|open|tomb)\b'
+    reason: pass (password-store) - credential manager access denied
+
+  - pattern: '\bop\s+(item|vault|document|account|group|user|connect|events-api|whoami|signin|signout|read|inject|run)\b'
+    reason: 1Password CLI (op) - credential manager access denied
+
+  - pattern: '\bvault\s+(read|write|delete|destroy|list|login|token|kv|secrets|auth|operator|lease|unwrap|audit|status|seal|unseal)\b'
+    reason: HashiCorp Vault - credential manager access denied
+
+  - pattern: '\bsecurity\s+(find-generic-password|find-internet-password|dump-keychain|show-keychain-info|find-certificate|find-identity)\b'
+    reason: macOS Keychain read - credential manager access denied
+
+  - pattern: '\bsecret-tool\s+'
+    reason: GNOME Keyring (secret-tool) - credential manager access denied
+
+  - pattern: '\bkwallet-query\b'
+    reason: KDE Wallet (kwallet-query) - credential manager access denied
+
+  # ---------------------------------------------------------------------------
+  # BACKUP / RESTORE TOOLS
+  # ---------------------------------------------------------------------------
+  - pattern: '\brestic\s+(forget|prune)\b'
+    reason: restic forget/prune (destroys backup history)
+
+  - pattern: '\bborg\s+(delete|prune|compact)\b'
+    reason: borg delete/prune (destroys backup archives)
+
+  - pattern: '\btmutil\s+(disable|disablelocal)\b'
+    reason: tmutil disable (disables Time Machine backups)
+
+  # ---------------------------------------------------------------------------
+  # DATA TRANSFER / EXFILTRATION
+  # ---------------------------------------------------------------------------
+  - pattern: '\brclone\s+(delete|purge)\b'
+    reason: rclone delete/purge (destroys remote data)
+
+  # ---------------------------------------------------------------------------
+  # DATA TRANSFER / EXFILTRATION REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\brsync\s+.*\S+:\S+'
+    reason: rsync to/from remote host
+    ask: true
+
+  - pattern: '\bsftp\b'
+    reason: SFTP file transfer
+    ask: true
+
+  - pattern: '\b(ftp|tftp)\b'
+    reason: Unencrypted file transfer protocol
+    ask: true
+
+  - pattern: '\bsocat\b'
+    reason: socat (bidirectional data relay)
+    ask: true
+
+  - pattern: '\brclone\s+(copy|sync|move)\b'
+    reason: rclone data transfer
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # SSH OPERATIONS REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bssh\b.*\S+@\S+\s+\S+'
+    reason: SSH remote command execution
+    ask: true
+
+  - pattern: '\bssh-keygen\b'
+    reason: SSH key generation (may overwrite existing keys)
+    ask: true
+
+  - pattern: '\bssh-add\b'
+    reason: Loads private key into SSH agent
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # ENCRYPTION / SIGNING REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bgpg\s+--(encrypt|sign|clearsign|detach-sign)\b'
+    reason: GPG encryption/signing operation
+    ask: true
+
+  - pattern: '\bopenssl\s+(genrsa|genpkey|req|x509|pkcs12)\b'
+    reason: OpenSSL key/certificate generation
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # SCHEDULED EXECUTION REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bcrontab\s+[^-\s]'
+    reason: Replaces entire crontab from file
+    ask: true
+
+  - pattern: '\b(at|batch)\b'
+    reason: Schedules command for later execution
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # ARCHIVE / COMPRESSION REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bunzip\s+.*-o\b'
+    reason: unzip -o (overwrites files without prompting)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # CI/CD TOOLS REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bact\b\s+'
+    reason: Runs GitHub Actions workflows locally
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # VERSION CONTROL - NON-GIT
+  # ---------------------------------------------------------------------------
+  - pattern: '\bhg\s+(strip|purge|rollback)\b'
+    reason: Mercurial destructive operation
+
+  # ---------------------------------------------------------------------------
+  # VERSION CONTROL - NON-GIT REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bsvn\s+(delete|revert)\b'
+    reason: SVN destructive operation
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # ADDITIONAL HEROKU DESTRUCTIVE OPERATIONS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bheroku\s+addons:destroy\b'
+    reason: heroku addons:destroy (destroys add-on/database)
+
+  # ---------------------------------------------------------------------------
+  # ADDITIONAL HEROKU REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bheroku\s+(config:unset|domains:remove)\b'
+    reason: Heroku configuration change
+    ask: true
+
+  - pattern: '\bheroku\s+releases:rollback\b'
+    reason: Heroku release rollback
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # ADDITIONAL SUPABASE DESTRUCTIVE OPERATIONS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bsupabase\s+(projects\s+delete|functions\s+delete)\b'
+    reason: supabase delete (destroys Supabase resources)
+
+  # ---------------------------------------------------------------------------
+  # ADDITIONAL DIGITALOCEAN DESTRUCTIVE OPERATIONS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bdoctl\s+kubernetes\s+cluster\s+delete\b'
+    reason: doctl kubernetes cluster delete (DigitalOcean)
+
+  - pattern: '\bdoctl\s+apps\s+delete\b'
+    reason: doctl apps delete (DigitalOcean)
+
+  # ---------------------------------------------------------------------------
+  # MISCELLANEOUS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bchmod\s+([ugoa]*\+s|[24][0-7]{3})\b'
+    reason: chmod setuid/setgid (creates privilege escalation vector)
+
+  - pattern: '\bchattr\b'
+    reason: chattr (changes file attributes)
+    ask: true
+
+  - pattern: '\bsystemctl\s+(start|restart|enable|unmask)\b'
+    reason: Starts/enables system service
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # GITHUB CLI ADDITIONAL (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bgh\s+workflow\s+(enable|run)\b'
+    reason: Manages GitHub Actions workflow
+    ask: true
+
+  - pattern: '\bgh\s+run\s+(rerun|delete)\b'
+    reason: Manages GitHub Actions workflow run
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # CI/CD TOOLS - GITLAB CLI
+  # ---------------------------------------------------------------------------
+  - pattern: '\bglab\s+project\s+delete\b'
+    reason: glab project delete (deletes GitLab project)
+
+  - pattern: '\bglab\s+mr\s+(merge|close|create)\b'
+    reason: GitLab merge request action
+    ask: true
+
+  - pattern: '\bglab\s+issue\s+(create|close)\b'
+    reason: GitLab issue action
+    ask: true
+
+  - pattern: '\bglab\s+pipeline\s+(cancel|delete|retry)\b'
+    reason: GitLab pipeline action
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # CI/CD TOOLS - CIRCLECI
+  # ---------------------------------------------------------------------------
+  - pattern: '\bcircleci\s+context\s+(delete|remove-secret|store-secret)\b'
+    reason: CircleCI context management (destroys or modifies secrets)
+
+  # ---------------------------------------------------------------------------
+  # CI/CD TOOLS - SERVERLESS FRAMEWORK
+  # ---------------------------------------------------------------------------
+  - pattern: '\b(serverless|sls)\s+deploy\b'
+    reason: Deploys Serverless Framework application
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # CI/CD TOOLS - SST (Serverless Stack)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bsst\s+remove\b'
+    reason: sst remove (destroys SST stack)
+
+  - pattern: '\bsst\s+deploy\b'
+    reason: Deploys SST application
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # IAC ADDITIONAL OPERATIONS REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bterraform\s+workspace\s+(new|select)\b'
+    reason: Creates or switches Terraform workspace
+    ask: true
+
+  - pattern: '\bpulumi\s+stack\s+(init|select)\b'
+    reason: Creates or selects Pulumi stack
+    ask: true
+
+  - pattern: '\bcdk\s+deploy\b'
+    reason: Deploys AWS CDK infrastructure
+    ask: true
+
+  - pattern: '\bcdktf\s+deploy\b'
+    reason: Deploys CDK for Terraform infrastructure
+    ask: true
+
+  - pattern: '\b(terraform|tofu)\s+refresh\b'
+    reason: Refreshes Terraform/OpenTofu state from cloud
+    ask: true
+
+  - pattern: '\bpulumi\s+refresh\b'
+    reason: Refreshes Pulumi state from cloud
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # CONTAINER REGISTRY TOOLS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bskopeo\s+delete\b'
+    reason: skopeo delete (deletes container image from registry)
+
+  - pattern: '\bcrane\s+delete\b'
+    reason: crane delete (deletes container image from registry)
+
+  # ---------------------------------------------------------------------------
+  # NOMAD (HashiCorp)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bnomad\s+job\s+stop\b'
+    reason: nomad job stop (stops Nomad job)
+
+  - pattern: '\bnomad\s+namespace\s+delete\b'
+    reason: nomad namespace delete (destroys Nomad namespace)
+
+  - pattern: '\bnomad\s+volume\s+delete\b'
+    reason: nomad volume delete (destroys Nomad storage volume)
+
+  - pattern: '\bnomad\s+job\s+run\b'
+    reason: Submits Nomad job
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # PYTHON - EXPANDED PATTERNS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bpython3?\s+-c\s+.*\b(exec|eval|compile)\b'
+    reason: Python one-liner with exec/eval (arbitrary code execution)
+
+  - pattern: '\bpython3?\s+-c\s+.*\b(__import__)\b'
+    reason: Python one-liner with dynamic import (common RCE pattern)
+
+  - pattern: '\bpipx\s+uninstall-all\b'
+    reason: pipx uninstall-all (removes ALL globally installed Python apps)
+
+  - pattern: '\bpipx\s+(install|uninstall)\b'
+    reason: pipx install/uninstall (manages globally installed Python apps)
+    ask: true
+
+  - pattern: '\bconda\s+env\s+remove\b'
+    reason: conda env remove (deletes entire conda environment)
+
+  - pattern: '\bconda\s+clean\s+.*(-a|--all)\b'
+    reason: conda clean --all (removes all cached packages)
+
+  - pattern: '\bmamba\s+env\s+remove\b'
+    reason: mamba env remove (deletes conda environment)
+
+  - pattern: '\bconda\s+(remove|uninstall)\b'
+    reason: conda remove/uninstall (removes packages from environment)
+    ask: true
+
+  - pattern: '\bpoetry\s+env\s+remove\b'
+    reason: poetry env remove (removes virtual environment)
+
+  - pattern: '\bpoetry\s+remove\b'
+    reason: poetry remove (removes package from project)
+    ask: true
+
+  - pattern: '\buv\s+pip\s+uninstall\b'
+    reason: uv pip uninstall (removes Python packages)
+    ask: true
+
+  - pattern: '\buv\s+cache\s+clean\b'
+    reason: uv cache clean (removes uv cache)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # NODE.JS - DENO / BUN
+  # ---------------------------------------------------------------------------
+  - pattern: '\bdeno\s+run\s+.*(-A\b|--allow-all)\b'
+    reason: deno run with full system access
+
+  - pattern: '\bdeno\s+install\b'
+    reason: deno install (installs script as global command)
+    ask: true
+
+  - pattern: '\bdeno\s+eval\b'
+    reason: deno eval (executes Deno code inline)
+    ask: true
+
+  - pattern: '\bbun\s+pm\s+cache\s+rm\b'
+    reason: bun pm cache rm (removes bun package cache)
+
+  - pattern: '\bbun\s+(remove|rm)\b'
+    reason: bun remove (removes packages from project)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # NODE.JS - EXPANDED ONE-LINER PATTERNS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bnode\s+-e\s+.*\b(fs\.rm|fs\.rmdir|fs\.unlink|fs\.rmSync|fs\.rmdirSync|fs\.unlinkSync)\b'
+    reason: Node.js one-liner with filesystem deletion
+
+  - pattern: '\bnode\s+-e\s+.*\b(child_process|exec|execSync|spawn|spawnSync)\b'
+    reason: Node.js one-liner with child process execution
+
+  # ---------------------------------------------------------------------------
+  # GO - CACHE OPERATIONS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bgo\s+clean\s+.*-modcache\b'
+    reason: go clean -modcache (removes entire module download cache)
+
+  - pattern: '\bgo\s+clean\s+.*-(cache|testcache|fuzzcache)\b'
+    reason: go clean cache-clearing flags (destroys Go build cache)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # RUST - CARGO AND RUSTUP
+  # ---------------------------------------------------------------------------
+  - pattern: '\brustup\s+self\s+uninstall\b'
+    reason: rustup self uninstall (removes entire Rust toolchain)
+
+  - pattern: '\bcargo\s+clean\b'
+    reason: cargo clean (removes target directory / all build artifacts)
+    ask: true
+
+  - pattern: '\brustup\s+toolchain\s+(uninstall|remove)\b'
+    reason: rustup toolchain uninstall (removes Rust toolchain version)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # JAVA / JVM
+  # ---------------------------------------------------------------------------
+  - pattern: '\bmvn\s+dependency:purge-local-repository\b'
+    reason: mvn dependency:purge-local-repository (removes local Maven repo)
+
+  - pattern: '\bmvn\s+.*clean\b'
+    reason: mvn clean (removes target build directory)
+    ask: true
+
+  - pattern: '\b(gradle|gradlew)\s+clean\b'
+    reason: gradle clean (removes build directory)
+    ask: true
+
+  - pattern: '\bsbt\s+clean\b'
+    reason: sbt clean (removes target directory)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # PHP - COMPOSER AND LARAVEL
+  # ---------------------------------------------------------------------------
+  - pattern: '\bphp\s+artisan\s+migrate:fresh\b'
+    reason: artisan migrate:fresh (drops ALL tables - WIPES DATABASE)
+
+  - pattern: '\bphp\s+artisan\s+db:wipe\b'
+    reason: artisan db:wipe (drops all tables, views, and types)
+
+  - pattern: '\bphp\s+artisan\s+migrate:reset\b'
+    reason: artisan migrate:reset (rolls back ALL migrations)
+
+  - pattern: '\bcomposer\s+remove\b'
+    reason: composer remove (removes PHP package from project)
+    ask: true
+
+  - pattern: '\bphp\s+artisan\s+migrate:rollback\b'
+    reason: artisan migrate:rollback (rolls back last batch)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # ELIXIR - MIX / ECTO
+  # ---------------------------------------------------------------------------
+  - pattern: '\bmix\s+ecto\.drop\b'
+    reason: mix ecto.drop (drops the database)
+
+  - pattern: '\bmix\s+ecto\.reset\b'
+    reason: mix ecto.reset (drops and recreates database)
+
+  - pattern: '\bmix\s+deps\.clean\s+.*--all\b'
+    reason: mix deps.clean --all (removes all Mix dependencies)
+
+  - pattern: '\bmix\s+ecto\.rollback\b'
+    reason: mix ecto.rollback (rolls back database migrations)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # SWIFT / XCODE
+  # ---------------------------------------------------------------------------
+  - pattern: '\bswift\s+package\s+reset\b'
+    reason: swift package reset (removes all build artifacts and resolved packages)
+
+  - pattern: '\bxcodebuild\s+clean\b'
+    reason: xcodebuild clean (removes Xcode build products)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # .NET / C#
+  # ---------------------------------------------------------------------------
+  - pattern: '\bdotnet\s+nuget\s+delete\b'
+    reason: dotnet nuget delete (removes NuGet package from feed)
+
+  - pattern: '\bdotnet\s+clean\b'
+    reason: dotnet clean (removes build outputs)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # HASKELL
+  # ---------------------------------------------------------------------------
+  - pattern: '\bstack\s+purge\b'
+    reason: stack purge (removes Stack work directory completely)
+
+  - pattern: '\bstack\s+clean\b'
+    reason: stack clean (removes Haskell Stack build artifacts)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # DART / FLUTTER
+  # ---------------------------------------------------------------------------
+  - pattern: '\bflutter\s+clean\b'
+    reason: flutter clean (removes Flutter build artifacts)
+    ask: true
+
+  - pattern: '\bdart\s+pub\s+cache\s+clean\b'
+    reason: dart pub cache clean (clears Dart package cache)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # LUA / PERL
+  # ---------------------------------------------------------------------------
+  - pattern: '\bluarocks\s+purge\b'
+    reason: luarocks purge (removes ALL rocks from a tree)
+
+  - pattern: '\bluarocks\s+remove\b'
+    reason: luarocks remove (uninstalls Lua rock/package)
+    ask: true
+
+  - pattern: '\bcpanm\s+--uninstall\b'
+    reason: cpanm --uninstall (removes Perl module)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # ADDITIONAL INLINE CODE EXECUTION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bjulia\s+-e\b'
+    reason: Julia inline code execution
+    ask: true
+
+  - pattern: '\bRscript\s+-e\b'
+    reason: R inline code execution
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # PRISMA DATABASE MIGRATIONS
+  # ---------------------------------------------------------------------------
+  - pattern: '\b(npx\s+)?prisma\s+migrate\s+reset\b'
+    reason: prisma migrate reset (drops and recreates database)
+
+  - pattern: '\b(npx\s+)?prisma\s+db\s+push\s+.*--force-reset\b'
+    reason: prisma db push --force-reset (resets database before pushing schema)
+
+  - pattern: '\b(npx\s+)?prisma\s+db\s+execute\b'
+    reason: prisma db execute (runs raw SQL against database)
+    ask: true
+
+  - pattern: '\b(npx\s+)?prisma\s+migrate\s+deploy\b'
+    reason: prisma migrate deploy (applies pending migrations to production)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # DJANGO DATABASE (Python)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bpython3?\s+manage\.py\s+flush\b'
+    reason: django flush (removes ALL data from database)
+
+  - pattern: '\bpython3?\s+manage\.py\s+migrate\s+.*\bzero\b'
+    reason: django migrate zero (rolls back ALL migrations for an app)
+
+  # ---------------------------------------------------------------------------
+  # RAILS DATABASE (Ruby)
+  # ---------------------------------------------------------------------------
+  - pattern: '\b(bin/rails|rails|bin/rake|rake)\s+db:(drop|reset)\b'
+    reason: rails db:drop/reset (drops or resets the Rails database)
+
+  - pattern: '\b(bin/rails|rails)\s+db:schema:load\b'
+    reason: rails db:schema:load (OVERWRITES existing database)
+
+  - pattern: '\b(bin/rails|rails|bin/rake|rake)\s+db:rollback\b'
+    reason: rails db:rollback (rolls back last migration)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # FLYWAY / LIQUIBASE DATABASE
+  # ---------------------------------------------------------------------------
+  - pattern: '\bflyway\s+clean\b'
+    reason: flyway clean (drops ALL objects in schema - DESTRUCTIVE)
+
+  - pattern: '\bliquibase\s+drop-all\b'
+    reason: liquibase drop-all (drops all database objects)
+
+  - pattern: '\bflyway\s+undo\b'
+    reason: flyway undo (undoes most recent migration)
+    ask: true
+
+  - pattern: '\bliquibase\s+rollback\b'
+    reason: liquibase rollback (rolls back database changes)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # NODE.JS ECOSYSTEM - VERSION MANAGERS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bnvm\s+uninstall\b'
+    reason: nvm uninstall (removes Node.js version)
+
+  - pattern: '\bfnm\s+uninstall\b'
+    reason: fnm uninstall (removes Node.js version)
+
+  - pattern: '\bvolta\s+uninstall\b'
+    reason: volta uninstall (removes tool from Volta)
+
+  # ---------------------------------------------------------------------------
+  # NODE.JS ECOSYSTEM - CACHE AND CLEANUP
+  # ---------------------------------------------------------------------------
+  - pattern: '\bnpm\s+cache\s+clean\b'
+    reason: npm cache clean (destroys package cache)
+
+  - pattern: '\byarn\s+cache\s+clean\b'
+    reason: yarn cache clean (destroys Yarn package cache)
+
+  - pattern: '\bpnpm\s+store\s+prune\b'
+    reason: pnpm store prune (removes unreferenced packages from store)
+
+  - pattern: '\bnpm\s+ci\b'
+    reason: npm ci (deletes node_modules and reinstalls from lockfile)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # PYTHON ECOSYSTEM - VERSION MANAGERS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bpyenv\s+uninstall\b'
+    reason: pyenv uninstall (removes Python version)
+
+  - pattern: '\bpyenv\s+virtualenv-delete\b'
+    reason: pyenv virtualenv-delete (removes virtual environment)
+
+  - pattern: '\bpipenv\s+--rm\b'
+    reason: pipenv --rm (destroys virtual environment)
+
+  # ---------------------------------------------------------------------------
+  # RUBY ECOSYSTEM
+  # ---------------------------------------------------------------------------
+  - pattern: '\brbenv\s+uninstall\b'
+    reason: rbenv uninstall (removes Ruby version)
+
+  - pattern: '\brvm\s+(remove|uninstall)\b'
+    reason: rvm remove/uninstall (removes Ruby version)
+
+  - pattern: '\bbundle\s+clean\b'
+    reason: bundle clean (removes unused gems)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # RUST ECOSYSTEM ADDITIONAL
+  # ---------------------------------------------------------------------------
+  - pattern: '\bcargo\s+uninstall\b'
+    reason: cargo uninstall (removes installed Rust binary)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # JAVA / JVM ECOSYSTEM
+  # ---------------------------------------------------------------------------
+  - pattern: '\bsdk\s+(uninstall|rm)\b'
+    reason: sdkman uninstall (removes SDK version)
+
+  # ---------------------------------------------------------------------------
+  # SYSTEM PACKAGE MANAGERS - ADDITIONAL
+  # ---------------------------------------------------------------------------
+  - pattern: '\bsnap\s+(remove|uninstall)\b'
+    reason: snap remove (removes snap package)
+
+  - pattern: '\bflatpak\s+uninstall\b'
+    reason: flatpak uninstall (removes Flatpak application)
+
+  - pattern: '\bnix-collect-garbage\b'
+    reason: nix-collect-garbage (removes unused Nix store paths)
+
+  - pattern: '\bnix-store\s+--delete\b'
+    reason: nix-store --delete (deletes Nix store path)
+
+  - pattern: '\bnix\s+store\s+gc\b'
+    reason: nix store gc (Nix garbage collection)
+
+  # ---------------------------------------------------------------------------
+  # macOS - ADDITIONAL PACKAGE MANAGERS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bport\s+(uninstall|deactivate)\b'
+    reason: port uninstall/deactivate (removes MacPorts package)
+
+  - pattern: '\bbrew\s+cleanup\b'
+    reason: brew cleanup (removes old Homebrew versions and cache)
+    ask: true
+
+  - pattern: '\bbrew\s+autoremove\b'
+    reason: brew autoremove (removes unused Homebrew dependencies)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # LANGUAGE-AGNOSTIC VERSION MANAGERS
+  # ---------------------------------------------------------------------------
+  - pattern: '\basdf\s+uninstall\b'
+    reason: asdf uninstall (removes language/tool version)
+
+  - pattern: '\bmise\s+(uninstall|prune)\b'
+    reason: mise uninstall/prune (removes tool versions)
+
+  - pattern: '\bproto\s+(uninstall|clean)\b'
+    reason: proto uninstall/clean (removes tool versions)
+
+  # ---------------------------------------------------------------------------
+  # MONOREPO TOOLS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bnx\s+reset\b'
+    reason: nx reset (clears Nx daemon and cache)
+    ask: true
+
+  - pattern: '\bturbo\s+(clean|prune)\b'
+    reason: turbo clean/prune (removes Turborepo cache or dependencies)
+    ask: true
+
+  - pattern: '\blerna\s+clean\b'
+    reason: lerna clean (removes node_modules from all packages)
+    ask: true
+
+  - pattern: '\brush\s+purge\b'
+    reason: rush purge (deletes all node_modules in Rush monorepo)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # DOTFILE MANAGERS (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bchezmoi\s+(apply|update|re-add|remove|forget)\b'
+    reason: chezmoi modifying dotfiles on disk
+    ask: true
+
+  - pattern: '\bhome-manager\s+switch\b'
+    reason: home-manager switch (applies NixOS Home Manager config changes)
+    ask: true
+
+  - pattern: '\bstow\s+.*(-D|--delete|-R|--restow)\b'
+    reason: GNU stow delete/restow (removes or recreates symlinks)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # LOG / AUDIT MANIPULATION - ADDITIONAL
+  # ---------------------------------------------------------------------------
+  - pattern: '>\s*/var/log/\S+'
+    reason: redirect truncating log file (destroys audit trail)
+
+  # ---------------------------------------------------------------------------
+  # ADDITIONAL SYSTEM TOOLS (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bvisudo\b'
+    reason: visudo (edits sudoers file - misconfiguration locks out access)
+    ask: true
+
+  - pattern: '\bvipw\b'
+    reason: vipw (edits /etc/passwd directly)
+    ask: true
+
+  - pattern: '\bchsh\b'
+    reason: chsh (changes user default shell)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # PRIVILEGE ESCALATION (catch-all, must be AFTER all specific sudo patterns)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bsudo\s+'
+    reason: Elevated privilege execution
+    ask: true
+
+  - pattern: '\b(su|doas)\s+'
+    reason: Privilege escalation
     ask: true
 
 # ---------------------------------------------------------------------------
@@ -645,6 +2795,120 @@ zeroAccessPaths:
   - "backup.sql"
   - "*.dump"
 
+  # ---------------------------------------------------------------------------
+  # CREDENTIAL MANAGERS AND SECRET STORES
+  # ---------------------------------------------------------------------------
+  # password-store (pass)
+  - "~/.password-store/"
+
+  # 1Password CLI
+  - "~/.config/op/"
+
+  # HashiCorp Vault
+  - "~/.vault-token"
+
+  # GNOME Keyring
+  - "~/.local/share/keyrings/"
+  - "~/.gnome2/keyrings/"
+
+  # KDE Wallet
+  - "~/.local/share/kwalletd/"
+
+  # macOS Keychain files
+  - "~/Library/Keychains/"
+
+  # ---------------------------------------------------------------------------
+  # APPLICATION-SPECIFIC SECRETS
+  # ---------------------------------------------------------------------------
+  - ".secret"
+  - ".secrets"
+  - "*.secret"
+
+  # ---------------------------------------------------------------------------
+  # TOKEN FILES
+  # ---------------------------------------------------------------------------
+  - ".token"
+  - "*.token"
+  - "token.json"
+  - "tokens.json"
+
+  # ---------------------------------------------------------------------------
+  # OAUTH / CLIENT SECRETS
+  # ---------------------------------------------------------------------------
+  - "oauth*.json"
+  - "client_secret*.json"
+  - "client-secret*.json"
+
+  # ---------------------------------------------------------------------------
+  # ANSIBLE VAULT FILES
+  # ---------------------------------------------------------------------------
+  - "vault.yml"
+  - "vault.yaml"
+  - "*-vault.yml"
+  - "*-vault.yaml"
+  - "*_vault.yml"
+  - "*_vault.yaml"
+
+  # ---------------------------------------------------------------------------
+  # AGE / SOPS ENCRYPTION KEYS
+  # ---------------------------------------------------------------------------
+  - "*.age"
+  - ".sops.yaml"
+  - ".sops.yml"
+
+  # ---------------------------------------------------------------------------
+  # API KEY FILES
+  # ---------------------------------------------------------------------------
+  - "*-api-key*"
+  - "*_api_key*"
+  - ".api_key"
+  - ".apikey"
+  - "api-keys.*"
+  - "api_keys.*"
+
+  # ---------------------------------------------------------------------------
+  # AUTH CONFIG FILES
+  # ---------------------------------------------------------------------------
+  - ".authinfo"
+  - ".authinfo.gpg"
+
+  # ---------------------------------------------------------------------------
+  # ADDITIONAL CERTIFICATES
+  # ---------------------------------------------------------------------------
+  - "*.csr"
+  - "*.cert"
+  - "*.cer"
+  - "*.der"
+
+  # ---------------------------------------------------------------------------
+  # HELM SECRETS
+  # ---------------------------------------------------------------------------
+  - "secrets.yml"
+
+  # ---------------------------------------------------------------------------
+  # ADDITIONAL CLOUD / PLATFORM CREDENTIALS
+  # ---------------------------------------------------------------------------
+  # Cloudflare
+  - "~/.config/wrangler/"
+  - ".wrangler/"
+  # Fly.io
+  - "~/.fly/"
+  # Heroku
+  - "~/.heroku/"
+  # DigitalOcean
+  - "~/.config/doctl/"
+  # Bitwarden CLI
+  - "~/.config/Bitwarden CLI/"
+  # Project-level npm auth
+  - ".npmrc"
+
+  # ---------------------------------------------------------------------------
+  # BROWSER PROFILES (contain saved passwords)
+  # ---------------------------------------------------------------------------
+  - "~/.mozilla/"
+  - "~/Library/Application Support/Google/Chrome/"
+  - "~/Library/Application Support/Firefox/"
+
 # ---------------------------------------------------------------------------
 # READ-ONLY PATHS - Can read, but not write/edit/delete
 # ---------------------------------------------------------------------------
@@ -661,6 +2925,7 @@ readOnlyPaths:
   - /sbin/
   - /boot/
   - /root/
+  - /var/log/
 
   # ---------------------------------------------------------------------------
   # SHELL HISTORY FILES
@@ -722,6 +2987,37 @@ readOnlyPaths:
   - venv/
   - target/
 
+  # ---------------------------------------------------------------------------
+  # VENDORED DEPENDENCIES
+  # ---------------------------------------------------------------------------
+  - vendor/
+  - third_party/
+
+  # ---------------------------------------------------------------------------
+  # GENERATED CODE - Never manually edit
+  # ---------------------------------------------------------------------------
+  - "*.generated.*"
+  - "*.pb.go"
+  - "*_generated.go"
+  - "*.g.dart"
+
+  # ---------------------------------------------------------------------------
+  # SOURCE MAPS - Generated, don't edit
+  # ---------------------------------------------------------------------------
+  - "*.js.map"
+  - "*.css.map"
+
+  # ---------------------------------------------------------------------------
+  # IDE / EDITOR CONFIG DIRECTORIES
+  # ---------------------------------------------------------------------------
+  - .idea/
+  - .vscode/
+
+  # ---------------------------------------------------------------------------
+  # EDITOR CONFIG FILES
+  # ---------------------------------------------------------------------------
+  - .editorconfig
+
 # ---------------------------------------------------------------------------
 # NO-DELETE PATHS - Can read/write/edit, but not delete
 # ---------------------------------------------------------------------------
@@ -781,6 +3077,43 @@ noDeletePaths:
   - docker-compose.yml
   - "docker-compose.*.yml"
   - .dockerignore
+
+  # ---------------------------------------------------------------------------
+  # DATABASE MIGRATION FILES
+  # ---------------------------------------------------------------------------
+  - migrations/
+  - db/migrate/
+  - "db/migrations/"
+
+  # ---------------------------------------------------------------------------
+  # BUILD / TASK AUTOMATION
+  # ---------------------------------------------------------------------------
+  - Makefile
+  - Taskfile.yml
+  - justfile
+  - Justfile
+
+  # ---------------------------------------------------------------------------
+  # PACKAGE MANIFESTS
+  # ---------------------------------------------------------------------------
+  - package.json
+  - Cargo.toml
+  - go.mod
+  - pyproject.toml
+  - requirements.txt
+  - Gemfile
+  - composer.json
+  - pom.xml
+  - mix.exs
+  - pubspec.yaml
+
+  # ---------------------------------------------------------------------------
+  # MONOREPO CONFIGURATION
+  # ---------------------------------------------------------------------------
+  - lerna.json
+  - nx.json
+  - turbo.json
+  - pnpm-workspace.yaml
 
   # ---------------------------------------------------------------------------
   # COMMON PROJECT DIRECTORIES (uncomment to enable)
