@@ -1,0 +1,47 @@
+# Security patterns (credential managers, scheduled execution, misc)
+bashToolPatterns:
+  # ---------------------------------------------------------------------------
+  # CREDENTIAL MANAGER COMMANDS (ALL ACCESS DENIED)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bpass\s+(show|ls|list|find|grep|insert|edit|generate|rm|mv|cp|git|init|delete|remove|otp|close|open|tomb)\b'
+    reason: pass (password-store) - credential manager access denied
+
+  - pattern: '\bop\s+(item|vault|document|account|group|user|connect|events-api|whoami|signin|signout|read|inject|run)\b'
+    reason: 1Password CLI (op) - credential manager access denied
+
+  - pattern: '\bvault\s+(read|write|delete|destroy|list|login|token|kv|secrets|auth|operator|lease|unwrap|audit|status|seal|unseal)\b'
+    reason: HashiCorp Vault - credential manager access denied
+
+  - pattern: '\bsecurity\s+(find-generic-password|find-internet-password|dump-keychain|show-keychain-info|find-certificate|find-identity)\b'
+    reason: macOS Keychain read - credential manager access denied
+
+  - pattern: '\bsecret-tool\s+'
+    reason: GNOME Keyring (secret-tool) - credential manager access denied
+
+  - pattern: '\bkwallet-query\b'
+    reason: KDE Wallet (kwallet-query) - credential manager access denied
+
+  # ---------------------------------------------------------------------------
+  # SCHEDULED EXECUTION REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bcrontab\s+[^-\s]'
+    reason: Replaces entire crontab from file
+    ask: true
+
+  - pattern: '\b(at|batch)\b'
+    reason: Schedules command for later execution
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # MISCELLANEOUS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bchmod\s+([ugoa]*\+s|[24][0-7]{3})\b'
+    reason: chmod setuid/setgid (creates privilege escalation vector)
+
+  - pattern: '\bchattr\b'
+    reason: chattr (changes file attributes)
+    ask: true
+
+  - pattern: '\bsystemctl\s+(start|restart|enable|unmask)\b'
+    reason: Starts/enables system service
+    ask: true

@@ -1,0 +1,73 @@
+# macOS-specific security patterns
+bashToolPatterns:
+  # ---------------------------------------------------------------------------
+  # macOS SERVICE/PREFERENCES DESTRUCTION
+  # ---------------------------------------------------------------------------
+  - pattern: '\blaunchctl\s+(remove|bootout)\b'
+    reason: launchctl remove/bootout (disables macOS services)
+
+  - pattern: '\bdefaults\s+delete\b'
+    reason: defaults delete (removes macOS preferences)
+
+  - pattern: '\bsecurity\s+delete-keychain\b'
+    reason: security delete-keychain (deletes macOS keychain)
+
+  - pattern: '\bsecurity\s+delete-(generic|internet)-password\b'
+    reason: security delete password (deletes macOS keychain entry)
+
+  - pattern: '\bgpg\s+--delete-(key|secret-key|secret-and-public-key)\b'
+    reason: gpg key deletion
+
+  - pattern: '\blaunchctl\s+unload\b'
+    reason: launchctl unload (stops macOS service)
+
+  - pattern: '\bdiskutil\s+apfs\s+deleteVolume\b'
+    reason: diskutil APFS volume deletion
+
+  # ---------------------------------------------------------------------------
+  # macOS-SPECIFIC
+  # ---------------------------------------------------------------------------
+  - pattern: '\bcsrutil\b'
+    reason: csrutil (System Integrity Protection control)
+
+  - pattern: '\bspctl\s+--master-disable\b'
+    reason: spctl --master-disable (disables Gatekeeper)
+
+  - pattern: '\bdscl\b.*\b(create|delete|merge|change)\b'
+    reason: dscl directory services modification
+
+  - pattern: '\bxattr\s+-d\b.*com\.apple\.quarantine'
+    reason: xattr removes quarantine (bypasses Gatekeeper)
+
+  # ---------------------------------------------------------------------------
+  # macOS-SPECIFIC REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bdefaults\s+write\b'
+    reason: Modifies macOS preferences
+    ask: true
+
+  - pattern: '\bnetworksetup\b'
+    reason: Modifies macOS network configuration
+    ask: true
+
+  - pattern: '\bscutil\s+--set\b'
+    reason: Modifies macOS system configuration
+    ask: true
+
+  - pattern: '\bpmset\b'
+    reason: Modifies macOS power management settings
+    ask: true
+
+  - pattern: '\blaunchctl\s+(load|bootstrap|submit)\b'
+    reason: Loads macOS service
+    ask: true
+
+  - pattern: '\bdiskutil\s+(unmount|unmountDisk|mount|mountDisk)\b'
+    reason: Mounts/unmounts macOS disk
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # macOS - ADDITIONAL PACKAGE MANAGERS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bport\s+(uninstall|deactivate)\b'
+    reason: port uninstall/deactivate (removes MacPorts package)

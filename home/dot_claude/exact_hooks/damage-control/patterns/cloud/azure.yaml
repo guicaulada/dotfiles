@@ -1,0 +1,133 @@
+# Azure CLI security patterns
+bashToolPatterns:
+  # ---------------------------------------------------------------------------
+  # AZURE CLI DESTRUCTIVE OPERATIONS
+  # ---------------------------------------------------------------------------
+  - pattern: '\baz\s+group\s+delete\b'
+    reason: az group delete (deletes entire resource group)
+
+  - pattern: '\baz\s+vm\s+delete\b'
+    reason: az vm delete
+
+  - pattern: '\baz\s+sql\s+(server|db)\s+delete\b'
+    reason: az sql delete (database/server)
+
+  - pattern: '\baz\s+storage\s+account\s+delete\b'
+    reason: az storage account delete
+
+  - pattern: '\baz\s+aks\s+delete\b'
+    reason: az aks delete (AKS cluster)
+
+  - pattern: '\baz\s+webapp\s+delete\b'
+    reason: az webapp delete
+
+  - pattern: '\baz\s+functionapp\s+delete\b'
+    reason: az functionapp delete
+
+  - pattern: '\baz\s+keyvault\s+(delete|purge)\b'
+    reason: az keyvault delete/purge
+
+  - pattern: '\baz\s+cosmosdb\s+delete\b'
+    reason: az cosmosdb delete
+
+  - pattern: '\baz\s+network\s+vnet\s+delete\b'
+    reason: az network vnet delete
+
+  - pattern: '\baz\s+cognitiveservices\s+account\s+delete\b'
+    reason: az cognitiveservices delete (destroys AI/ML service)
+
+  - pattern: '\baz\s+container\s+delete\b'
+    reason: az container delete (destroys container instance)
+
+  - pattern: '\baz\s+acr\s+(delete|repository\s+delete)\b'
+    reason: az acr delete (destroys Azure Container Registry/images)
+
+  - pattern: '\baz\s+logic\s+workflow\s+delete\b'
+    reason: az logic workflow delete (destroys Logic App)
+
+  - pattern: '\baz\s+apim\s+delete\b'
+    reason: az apim delete (destroys API Management service)
+
+  - pattern: '\baz\s+eventgrid\s+(topic|domain|event-subscription)\s+delete\b'
+    reason: az eventgrid delete (destroys Event Grid resources)
+
+  - pattern: '\baz\s+servicebus\s+(namespace|queue|topic|subscription)\s+delete\b'
+    reason: az servicebus delete (destroys messaging infrastructure)
+
+  - pattern: '\baz\s+eventhubs\s+(namespace|eventhub)\s+delete\b'
+    reason: az eventhubs delete (destroys Event Hubs)
+
+  - pattern: '\baz\s+cdn\s+(profile|endpoint)\s+delete\b'
+    reason: az cdn delete (destroys CDN profile/endpoint)
+
+  - pattern: '\baz\s+disk\s+delete\b'
+    reason: az disk delete (destroys managed disk - data loss)
+
+  - pattern: '\baz\s+snapshot\s+delete\b'
+    reason: az snapshot delete (destroys disk snapshot)
+
+  - pattern: '\baz\s+backup\s+(delete|protection\s+disable)\b'
+    reason: az backup delete/disable (destroys backup infrastructure)
+
+  - pattern: '\baz\s+iot\s+(hub\s+delete|dps\s+delete)\b'
+    reason: az iot delete (destroys IoT Hub/DPS)
+
+  - pattern: '\baz\s+ml\s+(workspace|compute|endpoint)\s+delete\b'
+    reason: az ml delete (destroys Azure ML resources)
+
+  - pattern: '\baz\s+network\s+(nsg|firewall|application-gateway|vpn-gateway)\s+delete\b'
+    reason: az network security/gateway delete (removes network security)
+
+  - pattern: '\baz\s+keyvault\s+(key|secret|certificate)\s+(delete|purge)\b'
+    reason: az keyvault key/secret/certificate delete/purge
+
+  - pattern: '\baz\s+monitor\s+(action-group|alert-rule|diagnostic-settings)\s+delete\b'
+    reason: az monitor delete (removes monitoring and alerting)
+
+  - pattern: '\baz\s+devops\s+project\s+delete\b'
+    reason: az devops project delete (destroys Azure DevOps project)
+
+  # ---------------------------------------------------------------------------
+  # ADDITIONAL AZURE DESTRUCTIVE OPERATIONS
+  # ---------------------------------------------------------------------------
+  - pattern: '\baz\s+redis\s+delete\b'
+    reason: az redis delete
+
+  - pattern: '\baz\s+appservice\s+plan\s+delete\b'
+    reason: az appservice plan delete
+
+  - pattern: '\baz\s+monitor\s+.*delete\b'
+    reason: az monitor delete (removes monitoring resources)
+
+  # ---------------------------------------------------------------------------
+  # AZURE CLI OPERATIONS REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\baz\s+(webapp|functionapp)\s+(start|stop|restart)\b'
+    reason: Changes Azure Web App/Function App state
+    ask: true
+
+  - pattern: '\baz\s+vm\s+(start|stop|restart|deallocate)\b'
+    reason: Changes Azure VM state
+    ask: true
+
+  - pattern: '\baz\s+aks\s+upgrade\b'
+    reason: Upgrades AKS cluster (potential downtime)
+    ask: true
+
+  - pattern: '\baz\s+keyvault\s+secret\s+set\b'
+    reason: Creates or updates Key Vault secret
+    ask: true
+
+  - pattern: '\baz\s+deployment\s+(group|sub|mg|tenant)\s+create\b'
+    reason: Deploys Azure ARM template
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # AZURE CLI CATCH-ALL (must be AFTER specific patterns)
+  # ---------------------------------------------------------------------------
+  - pattern: '\baz\s+.*\b(delete|purge)\b'
+    reason: Azure CLI destructive operation (catch-all)
+
+  - pattern: '\baz\s+.*\b(create|update|set|start|stop|restart|deploy)\b'
+    reason: Azure CLI mutating operation (catch-all)
+    ask: true

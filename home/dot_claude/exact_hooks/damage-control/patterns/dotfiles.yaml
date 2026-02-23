@@ -1,0 +1,16 @@
+# Dotfile manager security patterns (chezmoi, home-manager, stow)
+bashToolPatterns:
+  # ---------------------------------------------------------------------------
+  # DOTFILE MANAGERS (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bchezmoi\s+(apply|update|re-add|remove|forget)\b'
+    reason: chezmoi modifying dotfiles on disk
+    ask: true
+
+  - pattern: '\bhome-manager\s+switch\b'
+    reason: home-manager switch (applies NixOS Home Manager config changes)
+    ask: true
+
+  - pattern: '\bstow\s+.*(-D|--delete|-R|--restow)\b'
+    reason: GNU stow delete/restow (removes or recreates symlinks)
+    ask: true

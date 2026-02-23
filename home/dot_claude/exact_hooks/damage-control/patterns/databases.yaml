@@ -1,0 +1,141 @@
+# Database security patterns (Redis, MongoDB, PostgreSQL, MySQL, SQL, message queues, Prisma, Flyway, Liquibase)
+bashToolPatterns:
+  # ---------------------------------------------------------------------------
+  # DATABASE CLI DESTRUCTIVE OPERATIONS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bredis-cli\b.*\bFLUSHALL\b'
+    reason: redis-cli FLUSHALL (wipes ALL data)
+
+  - pattern: '\bredis-cli\b.*\bFLUSHDB\b'
+    reason: redis-cli FLUSHDB (wipes database)
+
+  - pattern: '\bmongosh.*dropDatabase'
+    reason: MongoDB dropDatabase
+
+  - pattern: '\bmongo.*dropDatabase'
+    reason: MongoDB dropDatabase
+
+  - pattern: '\bdropdb\b'
+    reason: PostgreSQL dropdb
+
+  - pattern: '\bmysqladmin\s+drop\b'
+    reason: MySQL drop database
+
+  - pattern: '\bmongosh?\b.*\.drop\s*\('
+    reason: MongoDB drop (collection/database)
+
+  - pattern: '\bmongosh?\b.*\.deleteMany\s*\(\s*\{\s*\}'
+    reason: MongoDB deleteMany({}) (deletes all documents)
+
+  - pattern: '\bmongosh?\b.*\.dropCollection\s*\('
+    reason: MongoDB dropCollection (destroys collection)
+
+  # ---------------------------------------------------------------------------
+  # DATABASE CLI GAPS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bpsql\b.*(-c|--command)\s+.*(DROP|TRUNCATE|DELETE\s+FROM)'
+    reason: psql with destructive SQL
+
+  - pattern: '\b(mysql|mariadb)\b.*(-e|--execute)\s+.*(DROP|TRUNCATE|DELETE\s+FROM)'
+    reason: mysql/mariadb with destructive SQL
+
+  - pattern: '\bdropuser\b'
+    reason: PostgreSQL dropuser (drops database user/role)
+
+  - pattern: '\bredis-cli\b.*\bCONFIG\s+SET\b'
+    reason: redis-cli CONFIG SET (runtime configuration change)
+
+  - pattern: '\bredis-cli\b.*\bDEBUG\b'
+    reason: redis-cli DEBUG (dangerous debug operations)
+
+  - pattern: '\bredis-cli\b.*\bCONFIG\s+REWRITE\b'
+    reason: redis-cli CONFIG REWRITE (overwrites redis.conf)
+
+  - pattern: '\bredis-cli\b.*\b(SLAVEOF|REPLICAOF)\b'
+    reason: redis-cli SLAVEOF/REPLICAOF (modifies replication configuration)
+
+  # ---------------------------------------------------------------------------
+  # MESSAGE QUEUE DESTRUCTIVE OPERATIONS
+  # ---------------------------------------------------------------------------
+  - pattern: '\brabbitmqctl\s+(delete_queue|delete_vhost|delete_exchange|delete_user)\b'
+    reason: rabbitmqctl delete (destroys RabbitMQ resources)
+
+  - pattern: '\brabbitmqctl\s+(stop|shutdown)\b'
+    reason: rabbitmqctl stop/shutdown (stops RabbitMQ server)
+
+  - pattern: '\brabbitmqctl\s+purge_queue\b'
+    reason: rabbitmqctl purge_queue (destroys all messages in queue)
+
+  - pattern: '\brabbitmqctl\s+reset\b'
+    reason: rabbitmqctl reset (resets RabbitMQ node to virgin state)
+
+  - pattern: '\bkafka-topics\b.*--delete\b'
+    reason: kafka-topics --delete (destroys Kafka topic)
+
+  - pattern: '\bkafka-consumer-groups\b.*--delete\b'
+    reason: kafka-consumer-groups --delete (destroys consumer group)
+
+  - pattern: '\bkafka-configs\b.*--delete\b'
+    reason: kafka-configs --delete (removes Kafka configuration)
+
+  # ---------------------------------------------------------------------------
+  # SQL DESTRUCTIVE OPERATIONS (catastrophic - no WHERE clause)
+  # ---------------------------------------------------------------------------
+  - pattern: 'DELETE\s+FROM\s+[\w.`"]+\s*;'
+    reason: DELETE without WHERE clause (will delete ALL rows)
+
+  - pattern: 'DELETE\s+FROM\s+[\w.`"]+\s*$'
+    reason: DELETE without WHERE clause (will delete ALL rows)
+
+  - pattern: 'DELETE\s+\*\s+FROM'
+    reason: DELETE * (will delete ALL rows)
+
+  - pattern: '\bTRUNCATE\s+TABLE\b'
+    reason: TRUNCATE TABLE (will delete ALL rows)
+
+  - pattern: '\bDROP\s+TABLE\b'
+    reason: DROP TABLE
+
+  - pattern: '\bDROP\s+DATABASE\b'
+    reason: DROP DATABASE
+
+  # ---------------------------------------------------------------------------
+  # SQL OPERATIONS REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bDELETE\s+FROM\s+\w+\s+WHERE\b.*\bid\s*='
+    reason: SQL DELETE with specific ID
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # PRISMA DATABASE MIGRATIONS
+  # ---------------------------------------------------------------------------
+  - pattern: '\b(npx\s+)?prisma\s+migrate\s+reset\b'
+    reason: prisma migrate reset (drops and recreates database)
+
+  - pattern: '\b(npx\s+)?prisma\s+db\s+push\s+.*--force-reset\b'
+    reason: prisma db push --force-reset (resets database before pushing schema)
+
+  - pattern: '\b(npx\s+)?prisma\s+db\s+execute\b'
+    reason: prisma db execute (runs raw SQL against database)
+    ask: true
+
+  - pattern: '\b(npx\s+)?prisma\s+migrate\s+deploy\b'
+    reason: prisma migrate deploy (applies pending migrations to production)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # FLYWAY / LIQUIBASE DATABASE
+  # ---------------------------------------------------------------------------
+  - pattern: '\bflyway\s+clean\b'
+    reason: flyway clean (drops ALL objects in schema - DESTRUCTIVE)
+
+  - pattern: '\bliquibase\s+drop-all\b'
+    reason: liquibase drop-all (drops all database objects)
+
+  - pattern: '\bflyway\s+undo\b'
+    reason: flyway undo (undoes most recent migration)
+    ask: true
+
+  - pattern: '\bliquibase\s+rollback\b'
+    reason: liquibase rollback (rolls back database changes)
+    ask: true

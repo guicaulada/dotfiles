@@ -1,0 +1,158 @@
+# JVM, Go, Rust, PHP, Elixir, Swift, Haskell, .NET, Dart, Lua, Perl security patterns
+bashToolPatterns:
+  # ---------------------------------------------------------------------------
+  # GO - CACHE OPERATIONS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bgo\s+clean\s+.*-modcache\b'
+    reason: go clean -modcache (removes entire module download cache)
+
+  - pattern: '\bgo\s+clean\s+.*-(cache|testcache|fuzzcache)\b'
+    reason: go clean cache-clearing flags (destroys Go build cache)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # RUST - CARGO AND RUSTUP
+  # ---------------------------------------------------------------------------
+  - pattern: '\brustup\s+self\s+uninstall\b'
+    reason: rustup self uninstall (removes entire Rust toolchain)
+
+  - pattern: '\bcargo\s+clean\b'
+    reason: cargo clean (removes target directory / all build artifacts)
+    ask: true
+
+  - pattern: '\brustup\s+toolchain\s+(uninstall|remove)\b'
+    reason: rustup toolchain uninstall (removes Rust toolchain version)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # JAVA / JVM
+  # ---------------------------------------------------------------------------
+  - pattern: '\bmvn\s+dependency:purge-local-repository\b'
+    reason: mvn dependency:purge-local-repository (removes local Maven repo)
+
+  - pattern: '\bmvn\s+.*clean\b'
+    reason: mvn clean (removes target build directory)
+    ask: true
+
+  - pattern: '\b(gradle|gradlew)\s+clean\b'
+    reason: gradle clean (removes build directory)
+    ask: true
+
+  - pattern: '\bsbt\s+clean\b'
+    reason: sbt clean (removes target directory)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # PHP - COMPOSER AND LARAVEL
+  # ---------------------------------------------------------------------------
+  - pattern: '\bphp\s+artisan\s+migrate:fresh\b'
+    reason: artisan migrate:fresh (drops ALL tables - WIPES DATABASE)
+
+  - pattern: '\bphp\s+artisan\s+db:wipe\b'
+    reason: artisan db:wipe (drops all tables, views, and types)
+
+  - pattern: '\bphp\s+artisan\s+migrate:reset\b'
+    reason: artisan migrate:reset (rolls back ALL migrations)
+
+  - pattern: '\bcomposer\s+remove\b'
+    reason: composer remove (removes PHP package from project)
+    ask: true
+
+  - pattern: '\bphp\s+artisan\s+migrate:rollback\b'
+    reason: artisan migrate:rollback (rolls back last batch)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # ELIXIR - MIX / ECTO
+  # ---------------------------------------------------------------------------
+  - pattern: '\bmix\s+ecto\.drop\b'
+    reason: mix ecto.drop (drops the database)
+
+  - pattern: '\bmix\s+ecto\.reset\b'
+    reason: mix ecto.reset (drops and recreates database)
+
+  - pattern: '\bmix\s+deps\.clean\s+.*--all\b'
+    reason: mix deps.clean --all (removes all Mix dependencies)
+
+  - pattern: '\bmix\s+ecto\.rollback\b'
+    reason: mix ecto.rollback (rolls back database migrations)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # SWIFT / XCODE
+  # ---------------------------------------------------------------------------
+  - pattern: '\bswift\s+package\s+reset\b'
+    reason: swift package reset (removes all build artifacts and resolved packages)
+
+  - pattern: '\bxcodebuild\s+clean\b'
+    reason: xcodebuild clean (removes Xcode build products)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # .NET / C#
+  # ---------------------------------------------------------------------------
+  - pattern: '\bdotnet\s+nuget\s+delete\b'
+    reason: dotnet nuget delete (removes NuGet package from feed)
+
+  - pattern: '\bdotnet\s+clean\b'
+    reason: dotnet clean (removes build outputs)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # HASKELL
+  # ---------------------------------------------------------------------------
+  - pattern: '\bstack\s+purge\b'
+    reason: stack purge (removes Stack work directory completely)
+
+  - pattern: '\bstack\s+clean\b'
+    reason: stack clean (removes Haskell Stack build artifacts)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # DART / FLUTTER
+  # ---------------------------------------------------------------------------
+  - pattern: '\bflutter\s+clean\b'
+    reason: flutter clean (removes Flutter build artifacts)
+    ask: true
+
+  - pattern: '\bdart\s+pub\s+cache\s+clean\b'
+    reason: dart pub cache clean (clears Dart package cache)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # LUA / PERL
+  # ---------------------------------------------------------------------------
+  - pattern: '\bluarocks\s+purge\b'
+    reason: luarocks purge (removes ALL rocks from a tree)
+
+  - pattern: '\bluarocks\s+remove\b'
+    reason: luarocks remove (uninstalls Lua rock/package)
+    ask: true
+
+  - pattern: '\bcpanm\s+--uninstall\b'
+    reason: cpanm --uninstall (removes Perl module)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # ADDITIONAL INLINE CODE EXECUTION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bjulia\s+-e\b'
+    reason: Julia inline code execution
+    ask: true
+
+  - pattern: '\bRscript\s+-e\b'
+    reason: R inline code execution
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # JAVA / JVM ECOSYSTEM - SDKMAN
+  # ---------------------------------------------------------------------------
+  - pattern: '\bsdk\s+(uninstall|rm)\b'
+    reason: sdkman uninstall (removes SDK version)
+
+  # ---------------------------------------------------------------------------
+  # RUST ECOSYSTEM ADDITIONAL
+  # ---------------------------------------------------------------------------
+  - pattern: '\bcargo\s+uninstall\b'
+    reason: cargo uninstall (removes installed Rust binary)
+    ask: true

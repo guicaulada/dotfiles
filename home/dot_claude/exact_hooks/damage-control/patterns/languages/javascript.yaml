@@ -1,0 +1,78 @@
+# JavaScript ecosystem security patterns (Deno, Bun, Node.js, version managers, monorepo tools)
+bashToolPatterns:
+  # ---------------------------------------------------------------------------
+  # NODE.JS - DENO / BUN
+  # ---------------------------------------------------------------------------
+  - pattern: '\bdeno\s+run\s+.*(-A\b|--allow-all)\b'
+    reason: deno run with full system access
+
+  - pattern: '\bdeno\s+install\b'
+    reason: deno install (installs script as global command)
+    ask: true
+
+  - pattern: '\bdeno\s+eval\b'
+    reason: deno eval (executes Deno code inline)
+    ask: true
+
+  - pattern: '\bbun\s+pm\s+cache\s+rm\b'
+    reason: bun pm cache rm (removes bun package cache)
+
+  - pattern: '\bbun\s+(remove|rm)\b'
+    reason: bun remove (removes packages from project)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # NODE.JS - EXPANDED ONE-LINER PATTERNS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bnode\s+-e\s+.*\b(fs\.rm|fs\.rmdir|fs\.unlink|fs\.rmSync|fs\.rmdirSync|fs\.unlinkSync)\b'
+    reason: Node.js one-liner with filesystem deletion
+
+  - pattern: '\bnode\s+-e\s+.*\b(child_process|exec|execSync|spawn|spawnSync)\b'
+    reason: Node.js one-liner with child process execution
+
+  # ---------------------------------------------------------------------------
+  # NODE.JS - VERSION MANAGERS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bnvm\s+uninstall\b'
+    reason: nvm uninstall (removes Node.js version)
+
+  - pattern: '\bfnm\s+uninstall\b'
+    reason: fnm uninstall (removes Node.js version)
+
+  - pattern: '\bvolta\s+uninstall\b'
+    reason: volta uninstall (removes tool from Volta)
+
+  # ---------------------------------------------------------------------------
+  # NODE.JS - CACHE AND CLEANUP
+  # ---------------------------------------------------------------------------
+  - pattern: '\bnpm\s+cache\s+clean\b'
+    reason: npm cache clean (destroys package cache)
+
+  - pattern: '\byarn\s+cache\s+clean\b'
+    reason: yarn cache clean (destroys Yarn package cache)
+
+  - pattern: '\bpnpm\s+store\s+prune\b'
+    reason: pnpm store prune (removes unreferenced packages from store)
+
+  - pattern: '\bnpm\s+ci\b'
+    reason: npm ci (deletes node_modules and reinstalls from lockfile)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # MONOREPO TOOLS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bnx\s+reset\b'
+    reason: nx reset (clears Nx daemon and cache)
+    ask: true
+
+  - pattern: '\bturbo\s+(clean|prune)\b'
+    reason: turbo clean/prune (removes Turborepo cache or dependencies)
+    ask: true
+
+  - pattern: '\blerna\s+clean\b'
+    reason: lerna clean (removes node_modules from all packages)
+    ask: true
+
+  - pattern: '\brush\s+purge\b'
+    reason: rush purge (deletes all node_modules in Rush monorepo)
+    ask: true

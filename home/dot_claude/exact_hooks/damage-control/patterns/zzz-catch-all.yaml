@@ -1,0 +1,12 @@
+# Privilege escalation catch-all (must load LAST - zzz prefix ensures sorted order)
+bashToolPatterns:
+  # ---------------------------------------------------------------------------
+  # PRIVILEGE ESCALATION (catch-all, must be AFTER all specific sudo patterns)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bsudo\s+'
+    reason: Elevated privilege execution
+    ask: true
+
+  - pattern: '\b(su|doas)\s+'
+    reason: Privilege escalation
+    ask: true

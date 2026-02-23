@@ -1,0 +1,162 @@
+# Cloud platform security patterns (Firebase, Vercel, Netlify, Cloudflare, Heroku, Fly.io, Railway, DigitalOcean, Supabase)
+bashToolPatterns:
+  # ---------------------------------------------------------------------------
+  # FIREBASE DESTRUCTIVE OPERATIONS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bfirebase\s+projects:delete\b'
+    reason: firebase projects:delete (deletes entire project)
+
+  - pattern: '\bfirebase\s+firestore:delete\s+.*--all-collections'
+    reason: firebase firestore:delete --all-collections (wipes all data)
+
+  - pattern: '\bfirebase\s+database:remove\b'
+    reason: firebase database:remove (wipes Realtime DB)
+
+  - pattern: '\bfirebase\s+hosting:disable\b'
+    reason: firebase hosting:disable
+
+  - pattern: '\bfirebase\s+functions:delete\b'
+    reason: firebase functions:delete
+
+  # ---------------------------------------------------------------------------
+  # VERCEL DESTRUCTIVE OPERATIONS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bvercel\s+remove\s+.*--yes'
+    reason: vercel remove --yes (removes deployment)
+
+  - pattern: '\bvercel\s+projects\s+rm\b'
+    reason: vercel projects rm (deletes project)
+
+  - pattern: '\bvercel\s+env\s+rm\s+.*--yes'
+    reason: vercel env rm --yes (removes env variables)
+
+  # ---------------------------------------------------------------------------
+  # NETLIFY DESTRUCTIVE OPERATIONS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bnetlify\s+sites:delete\b'
+    reason: netlify sites:delete (deletes entire site)
+
+  - pattern: '\bnetlify\s+functions:delete\b'
+    reason: netlify functions:delete
+
+  # ---------------------------------------------------------------------------
+  # CLOUDFLARE (wrangler) DESTRUCTIVE OPERATIONS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bwrangler\s+delete\b'
+    reason: wrangler delete (deletes Worker)
+
+  - pattern: '\bwrangler\s+r2\s+bucket\s+delete\b'
+    reason: wrangler r2 bucket delete
+
+  - pattern: '\bwrangler\s+kv:namespace\s+delete\b'
+    reason: wrangler kv:namespace delete
+
+  - pattern: '\bwrangler\s+d1\s+delete\b'
+    reason: wrangler d1 delete (deletes database)
+
+  - pattern: '\bwrangler\s+queues\s+delete\b'
+    reason: wrangler queues delete
+
+  # ---------------------------------------------------------------------------
+  # HEROKU DESTRUCTIVE OPERATIONS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bheroku\s+apps:destroy\b'
+    reason: heroku apps:destroy
+
+  - pattern: '\bheroku\s+pg:reset\b'
+    reason: heroku pg:reset (resets database)
+
+  - pattern: '\bheroku\s+addons:destroy\b'
+    reason: heroku addons:destroy (destroys add-on/database)
+
+  # ---------------------------------------------------------------------------
+  # FLY.IO DESTRUCTIVE OPERATIONS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bfly\s+apps\s+destroy\b'
+    reason: fly apps destroy (Fly.io)
+
+  - pattern: '\bfly\s+destroy\b'
+    reason: fly destroy (Fly.io)
+
+  - pattern: '\bflyctl\s+(apps\s+destroy|destroy)\b'
+    reason: flyctl destroy (Fly.io)
+
+  # ---------------------------------------------------------------------------
+  # RAILWAY CLI
+  # ---------------------------------------------------------------------------
+  - pattern: '\brailway\s+(delete|remove)\b'
+    reason: railway delete/remove (destroys Railway resources)
+
+  # ---------------------------------------------------------------------------
+  # DIGITALOCEAN DESTRUCTIVE OPERATIONS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bdoctl\s+compute\s+droplet\s+delete\b'
+    reason: doctl droplet delete (DigitalOcean)
+
+  - pattern: '\bdoctl\s+databases\s+delete\b'
+    reason: doctl databases delete (DigitalOcean)
+
+  - pattern: '\bdoctl\s+kubernetes\s+cluster\s+delete\b'
+    reason: doctl kubernetes cluster delete (DigitalOcean)
+
+  - pattern: '\bdoctl\s+apps\s+delete\b'
+    reason: doctl apps delete (DigitalOcean)
+
+  # ---------------------------------------------------------------------------
+  # SUPABASE DESTRUCTIVE OPERATIONS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bsupabase\s+db\s+reset\b'
+    reason: supabase db reset
+
+  - pattern: '\bsupabase\s+(projects\s+delete|functions\s+delete)\b'
+    reason: supabase delete (destroys Supabase resources)
+
+  # ---------------------------------------------------------------------------
+  # DEPLOYMENT OPERATIONS REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bvercel\s+(deploy|--prod)\b'
+    reason: Deploys to Vercel
+    ask: true
+
+  - pattern: '\bnetlify\s+deploy\b'
+    reason: Deploys to Netlify
+    ask: true
+
+  - pattern: '\bfirebase\s+deploy\b'
+    reason: Deploys to Firebase
+    ask: true
+
+  - pattern: '\bfly\s+deploy\b'
+    reason: Deploys to Fly.io
+    ask: true
+
+  - pattern: '\bwrangler\s+(deploy|publish)\b'
+    reason: Deploys Cloudflare Worker
+    ask: true
+
+  - pattern: '\bgcloud\s+app\s+deploy\b'
+    reason: Deploys to Google App Engine
+    ask: true
+
+  - pattern: '\bheroku\s+container:release\b'
+    reason: Releases container to Heroku
+    ask: true
+
+  - pattern: '\bflyctl\s+deploy\b'
+    reason: Deploys to Fly.io (flyctl)
+    ask: true
+
+  - pattern: '\brailway\s+deploy\b'
+    reason: Deploys to Railway
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # HEROKU REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bheroku\s+(config:unset|domains:remove)\b'
+    reason: Heroku configuration change
+    ask: true
+
+  - pattern: '\bheroku\s+releases:rollback\b'
+    reason: Heroku release rollback
+    ask: true
