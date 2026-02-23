@@ -45,6 +45,7 @@
 **/.Trashes
 
 # Caches
+**/.pytest_cache
 **/.cache
 **/.npm
 **/.yarn
