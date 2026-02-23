@@ -23,6 +23,8 @@ jobs:
       - name: Run shfmt
         run: |
           go install mvdan.cc/sh/v3/cmd/shfmt@v3.12.0
+          GOPATH="$(go env GOPATH)"
+          export PATH="$GOPATH/bin:$PATH"
           find . -name '*.sh' -not -path './.git/*' -exec shfmt -d {} +
 
       - name: Run actionlint
