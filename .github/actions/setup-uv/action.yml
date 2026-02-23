@@ -1,0 +1,6 @@
+name: Setup uv
+description: Install uv via astral-sh/setup-uv
+runs:
+  using: composite
+  steps:
+    - uses: astral-sh/setup-uv@eac588ad8def6316056a12d4907a9d4d84ff7a3b # v7.3.0

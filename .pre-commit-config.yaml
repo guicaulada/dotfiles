@@ -39,6 +39,16 @@ repos:
         language: system
         types: [lua]
 
+      - id: pytest-damage-control
+        name: pytest (damage-control)
+        entry: >-
+          bash -c
+          'cd home/dot_claude/exact_hooks/damage-control &&
+          uv run --with pytest --with pyyaml pytest tests/ -v'
+        language: system
+        pass_filenames: false
+        files: ^home/dot_claude/exact_hooks/damage-control/
+
   - repo: https://github.com/JohnnyMorganz/StyLua
     rev: v2.3.1
     hooks:
