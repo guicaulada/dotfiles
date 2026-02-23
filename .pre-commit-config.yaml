@@ -44,7 +44,7 @@ repos:
         entry: >-
           bash -c
           'cd home/dot_claude/exact_hooks/damage-control &&
-          uv run --with pytest --with pyyaml pytest tests/ -v'
+          uv run --with pytest --with pytest-xdist --with pyyaml pytest tests/ -v -n auto'
         language: system
         pass_filenames: false
         files: ^home/dot_claude/exact_hooks/damage-control/

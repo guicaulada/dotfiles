@@ -20,5 +20,5 @@ jobs:
 
       - uses: ./.github/actions/setup-uv
       - name: Run pytest
-        run: uv run --with pytest --with pyyaml pytest tests/ -v
+        run: uv run --with pytest --with pytest-xdist --with pyyaml pytest tests/ -v -n auto
         working-directory: home/dot_claude/exact_hooks/damage-control

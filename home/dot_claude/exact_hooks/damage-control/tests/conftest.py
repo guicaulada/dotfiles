@@ -1,11 +1,11 @@
 # /// script
 # requires-python = ">=3.8"
-# dependencies = ["pyyaml", "pytest"]
+# dependencies = ["pyyaml", "pytest", "pytest-xdist"]
 # ///
 """
 Shared test fixtures for damage-control tests.
 
-Run with: uv run pytest tests/ -v
+Run with: uv run pytest tests/ -v -n auto
 """
 
 import json
