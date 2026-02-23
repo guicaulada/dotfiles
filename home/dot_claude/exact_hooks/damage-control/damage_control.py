@@ -2,6 +2,9 @@
 # requires-python = ">=3.8"
 # dependencies = ["pyyaml"]
 # ///
+#
+# Based on https://github.com/disler/claude-code-damage-control
+# Original work Copyright (c) disler, MIT License
 """
 Claude Code Security Firewall - Consolidated Damage Control
 ============================================================
