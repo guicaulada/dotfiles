@@ -9,12 +9,17 @@ runs:
   using: composite
   steps:
     - run: |
-        TAG=$(git ls-remote --tags https://github.com/koalaman/shellcheck.git | grep "^${VERSION}" | head -1 | sed -e 's|.*refs/tags/||' -e 's/\^{}//')
+        REPO=koalaman/shellcheck
+        TAG=$(git ls-remote --tags "https://github.com/${REPO}.git" \
+          | grep "^${VERSION}" | head -1 \
+          | sed -e 's|.*refs/tags/||' -e 's/\^{}//')
         if [ -z "$TAG" ]; then
-          echo "::error::No tag found for SHA ${VERSION} in koalaman/shellcheck"
+          echo "::error::No tag found for SHA ${VERSION} in ${REPO}"
           exit 1
         fi
-        curl -sSL "https://github.com/koalaman/shellcheck/releases/download/${TAG}/shellcheck-${TAG}.linux.x86_64.tar.xz" -o shellcheck.tar.xz
+        BASE="https://github.com/${REPO}/releases/download/${TAG}"
+        curl -sSL "${BASE}/shellcheck-${TAG}.linux.x86_64.tar.xz" \
+          -o shellcheck.tar.xz
         tar -xJf shellcheck.tar.xz
         mv "shellcheck-${TAG}/shellcheck" /usr/local/bin/shellcheck
         rm -rf shellcheck.tar.xz "shellcheck-${TAG}"

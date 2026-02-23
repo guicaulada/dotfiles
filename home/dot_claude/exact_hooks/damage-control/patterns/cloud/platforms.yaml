@@ -1,4 +1,5 @@
-# Cloud platform security patterns (Firebase, Vercel, Netlify, Cloudflare, Heroku, Fly.io, Railway, DigitalOcean, Supabase)
+# Cloud platform security patterns
+# (Firebase, Vercel, Netlify, Cloudflare, Heroku, Fly.io, Railway, DigitalOcean, Supabase)
 bashToolPatterns:
   # ---------------------------------------------------------------------------
   # FIREBASE DESTRUCTIVE OPERATIONS

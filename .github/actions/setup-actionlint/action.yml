@@ -9,13 +9,18 @@ runs:
   using: composite
   steps:
     - run: |
-        TAG=$(git ls-remote --tags https://github.com/rhysd/actionlint.git | grep "^${VERSION}" | head -1 | sed -e 's|.*refs/tags/||' -e 's/\^{}//')
+        REPO=rhysd/actionlint
+        TAG=$(git ls-remote --tags "https://github.com/${REPO}.git" \
+          | grep "^${VERSION}" | head -1 \
+          | sed -e 's|.*refs/tags/||' -e 's/\^{}//')
         if [ -z "$TAG" ]; then
-          echo "::error::No tag found for SHA ${VERSION} in rhysd/actionlint"
+          echo "::error::No tag found for SHA ${VERSION} in ${REPO}"
           exit 1
         fi
         VER="${TAG#v}"
-        curl -sSL "https://github.com/rhysd/actionlint/releases/download/${TAG}/actionlint_${VER}_linux_amd64.tar.gz" -o actionlint.tar.gz
+        BASE="https://github.com/${REPO}/releases/download/${TAG}"
+        curl -sSL "${BASE}/actionlint_${VER}_linux_amd64.tar.gz" \
+          -o actionlint.tar.gz
         tar -xzf actionlint.tar.gz actionlint
         mv actionlint /usr/local/bin/actionlint
         rm -f actionlint.tar.gz

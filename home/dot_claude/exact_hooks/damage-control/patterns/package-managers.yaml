@@ -1,4 +1,5 @@
-# Package manager security patterns (registry, system, npm/yarn/pnpm, brew, pip, cargo, go, nix, snap, flatpak, asdf/mise/proto)
+# Package manager security patterns
+# (registry, system, npm/yarn/pnpm, brew, pip, cargo, go, nix, snap, flatpak, asdf/mise/proto)
 bashToolPatterns:
   # ---------------------------------------------------------------------------
   # PACKAGE REGISTRY DESTRUCTIVE OPERATIONS
