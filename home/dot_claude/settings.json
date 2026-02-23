@@ -9,10 +9,10 @@
     "pr": ""
   },
   "permissions": {
-    "defaultMode": "bypassPermissions",
     "allow": [],
     "deny": [],
-    "ask": []
+    "ask": [],
+    "defaultMode": "bypassPermissions"
   },
   "model": "opus",
   "hooks": {
@@ -62,7 +62,8 @@
   "enabledPlugins": {
     "typescript-lsp@claude-plugins-official": true,
     "gopls-lsp@claude-plugins-official": true,
-    "rust-analyzer-lsp@claude-plugins-official": true
+    "rust-analyzer-lsp@claude-plugins-official": true,
+    "superpowers@superpowers-marketplace": true
   },
   "skipDangerousModePermissionPrompt": true,
   "autoCompact": false
