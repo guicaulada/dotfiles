@@ -9,7 +9,7 @@ runs:
   using: composite
   steps:
     - run: |
-        TAG=$(git ls-remote --tags https://github.com/koalaman/shellcheck.git | grep "^${VERSION}" | head -1 | sed 's/.*refs\/tags\//;s/\^{}//')
+        TAG=$(git ls-remote --tags https://github.com/koalaman/shellcheck.git | grep "^${VERSION}" | head -1 | sed -e 's|.*refs/tags/||' -e 's/\^{}//')
         if [ -z "$TAG" ]; then
           echo "::error::No tag found for SHA ${VERSION} in koalaman/shellcheck"
           exit 1
