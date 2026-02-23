@@ -1,7 +1,22 @@
 # CI/CD and deployment security patterns
 bashToolPatterns:
   # ---------------------------------------------------------------------------
-  # DEPLOYMENT OPERATIONS REQUIRING CONFIRMATION (ask: true)
+  # DESTRUCTIVE OPERATIONS (block)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bglab\s+project\s+delete\b'
+    reason: glab project delete (deletes GitLab project)
+
+  - pattern: '\bcircleci\s+context\s+(delete|remove-secret|store-secret)\b'
+    reason: CircleCI context management (destroys or modifies secrets)
+
+  - pattern: '\bsst\s+remove\b'
+    reason: sst remove (destroys SST stack)
+
+  - pattern: '\bhg\s+(strip|purge|rollback)\b'
+    reason: Mercurial destructive operation
+
+  # ---------------------------------------------------------------------------
+  # OPERATIONS REQUIRING CONFIRMATION (ask: true)
   # ---------------------------------------------------------------------------
   - pattern: '\bansible-playbook\b'
     reason: Runs Ansible playbook against hosts
@@ -11,18 +26,9 @@ bashToolPatterns:
     reason: Runs Ansible ad-hoc command on remote hosts
     ask: true
 
-  # ---------------------------------------------------------------------------
-  # CI/CD TOOLS REQUIRING CONFIRMATION (ask: true)
-  # ---------------------------------------------------------------------------
   - pattern: '\bact\b\s+'
     reason: Runs GitHub Actions workflows locally
     ask: true
-
-  # ---------------------------------------------------------------------------
-  # CI/CD TOOLS - GITLAB CLI
-  # ---------------------------------------------------------------------------
-  - pattern: '\bglab\s+project\s+delete\b'
-    reason: glab project delete (deletes GitLab project)
 
   - pattern: '\bglab\s+mr\s+(merge|close|create)\b'
     reason: GitLab merge request action
@@ -36,38 +42,14 @@ bashToolPatterns:
     reason: GitLab pipeline action
     ask: true
 
-  # ---------------------------------------------------------------------------
-  # CI/CD TOOLS - CIRCLECI
-  # ---------------------------------------------------------------------------
-  - pattern: '\bcircleci\s+context\s+(delete|remove-secret|store-secret)\b'
-    reason: CircleCI context management (destroys or modifies secrets)
-
-  # ---------------------------------------------------------------------------
-  # CI/CD TOOLS - SERVERLESS FRAMEWORK
-  # ---------------------------------------------------------------------------
   - pattern: '\b(serverless|sls)\s+deploy\b'
     reason: Deploys Serverless Framework application
     ask: true
-
-  # ---------------------------------------------------------------------------
-  # CI/CD TOOLS - SST (Serverless Stack)
-  # ---------------------------------------------------------------------------
-  - pattern: '\bsst\s+remove\b'
-    reason: sst remove (destroys SST stack)
 
   - pattern: '\bsst\s+deploy\b'
     reason: Deploys SST application
     ask: true
 
-  # ---------------------------------------------------------------------------
-  # VERSION CONTROL - NON-GIT
-  # ---------------------------------------------------------------------------
-  - pattern: '\bhg\s+(strip|purge|rollback)\b'
-    reason: Mercurial destructive operation
-
-  # ---------------------------------------------------------------------------
-  # VERSION CONTROL - NON-GIT REQUIRING CONFIRMATION (ask: true)
-  # ---------------------------------------------------------------------------
   - pattern: '\bsvn\s+(delete|revert)\b'
     reason: SVN destructive operation
     ask: true

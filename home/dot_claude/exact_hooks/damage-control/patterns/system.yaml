@@ -27,8 +27,8 @@ bashToolPatterns:
   - pattern: '\bpfctl\s+-d\b'
     reason: pfctl -d (disables macOS packet filter firewall)
 
-  - pattern: '\btmutil\s+delete\b'
-    reason: tmutil delete (deletes Time Machine backups)
+  - pattern: '\btmutil\s+(delete|disable|disablelocal)\b'
+    reason: tmutil delete/disable (deletes or disables Time Machine backups)
 
   - pattern: '\bfdisk\b'
     reason: fdisk (partition table manipulation)
@@ -60,36 +60,22 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   # USER AND GROUP MANAGEMENT
   # ---------------------------------------------------------------------------
-  - pattern: '\buserdel\b'
-    reason: userdel (deletes user account)
-
-  - pattern: '\bgroupdel\b'
-    reason: groupdel (deletes group)
-
-  - pattern: '\bdeluser\b'
-    reason: deluser (Debian/Ubuntu user deletion)
+  - pattern: '\b(userdel|groupdel|deluser)\b'
+    reason: user/group deletion command
 
   # ---------------------------------------------------------------------------
   # USER AND GROUP MANAGEMENT REQUIRING CONFIRMATION (ask: true)
   # ---------------------------------------------------------------------------
-  - pattern: '\buseradd\b'
+  - pattern: '\b(useradd|adduser)\b'
     reason: Adds a new user account
-    ask: true
-
-  - pattern: '\badduser\b'
-    reason: Adds a new user account (Debian/Ubuntu)
     ask: true
 
   - pattern: '\busermod\b'
     reason: Modifies an existing user account
     ask: true
 
-  - pattern: '\bpasswd\b'
+  - pattern: '\b(passwd|chpasswd)\b'
     reason: Changes user password
-    ask: true
-
-  - pattern: '\bchpasswd\b'
-    reason: Changes passwords in batch mode
     ask: true
 
   - pattern: '\bgroupadd\b'
@@ -125,11 +111,8 @@ bashToolPatterns:
   - pattern: '\bsetenforce\s+0\b'
     reason: setenforce 0 (disables SELinux enforcement)
 
-  - pattern: '\baa-disable\b'
-    reason: aa-disable (disables AppArmor profile)
-
-  - pattern: '\baa-teardown\b'
-    reason: aa-teardown (tears down all AppArmor policies)
+  - pattern: '\b(aa-disable|aa-teardown)\b'
+    reason: AppArmor disable/teardown (removes security policy enforcement)
 
   - pattern: '\bapparmor_parser\s+.*(-R|--remove)\b'
     reason: apparmor_parser -R (removes AppArmor profile)
@@ -172,9 +155,6 @@ bashToolPatterns:
 
   - pattern: '\bborg\s+(delete|prune|compact)\b'
     reason: borg delete/prune (destroys backup archives)
-
-  - pattern: '\btmutil\s+(disable|disablelocal)\b'
-    reason: tmutil disable (disables Time Machine backups)
 
   # ---------------------------------------------------------------------------
   # ADDITIONAL SYSTEM TOOLS (ask: true)

@@ -3,14 +3,8 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   # GITHUB CLI DESTRUCTIVE OPERATIONS
   # ---------------------------------------------------------------------------
-  - pattern: '\bgh\s+repo\s+delete\b'
-    reason: gh repo delete (deletes repository)
-
-  - pattern: '\bgh\s+repo\s+archive\b'
-    reason: gh repo archive (archives repository)
-
-  - pattern: '\bgh\s+repo\s+rename\b'
-    reason: gh repo rename (renames repository)
+  - pattern: '\bgh\s+repo\s+(delete|archive|rename)\b'
+    reason: gh repo delete/archive/rename (destructive repository operation)
 
   - pattern: '\bgh\s+release\s+delete\b'
     reason: gh release delete (deletes a release)
@@ -18,116 +12,36 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   # GITHUB CLI OPERATIONS REQUIRING CONFIRMATION (ask: true)
   # ---------------------------------------------------------------------------
-  - pattern: '\bgh\s+pr\s+create\b'
-    reason: Creates a pull request
+  - pattern: '\bgh\s+pr\s+(create|merge|close|reopen|review|comment|edit|ready)\b'
+    reason: Mutating pull request operation
     ask: true
 
-  - pattern: '\bgh\s+pr\s+merge\b'
-    reason: Merges a pull request
+  - pattern: '\bgh\s+issue\s+(create|close|reopen|comment|edit|transfer|pin|unpin)\b'
+    reason: Mutating issue operation
     ask: true
 
-  - pattern: '\bgh\s+pr\s+close\b'
-    reason: Closes a pull request
+  - pattern: '\bgh\s+release\s+(create|edit)\b'
+    reason: Mutating release operation
     ask: true
 
-  - pattern: '\bgh\s+pr\s+reopen\b'
-    reason: Reopens a pull request
+  - pattern: '\bgh\s+repo\s+(create|fork|edit)\b'
+    reason: Mutating repository operation
     ask: true
 
-  - pattern: '\bgh\s+pr\s+review\b'
-    reason: Submits a pull request review (approve/request changes/comment)
+  - pattern: '\bgh\s+label\s+(create|edit|delete)\b'
+    reason: Mutating label operation
     ask: true
 
-  - pattern: '\bgh\s+pr\s+comment\b'
-    reason: Comments on a pull request
-    ask: true
-
-  - pattern: '\bgh\s+pr\s+edit\b'
-    reason: Edits a pull request
-    ask: true
-
-  - pattern: '\bgh\s+pr\s+ready\b'
-    reason: Marks a pull request as ready for review
-    ask: true
-
-  - pattern: '\bgh\s+issue\s+create\b'
-    reason: Creates an issue
-    ask: true
-
-  - pattern: '\bgh\s+issue\s+close\b'
-    reason: Closes an issue
-    ask: true
-
-  - pattern: '\bgh\s+issue\s+reopen\b'
-    reason: Reopens an issue
-    ask: true
-
-  - pattern: '\bgh\s+issue\s+comment\b'
-    reason: Comments on an issue
-    ask: true
-
-  - pattern: '\bgh\s+issue\s+edit\b'
-    reason: Edits an issue
-    ask: true
-
-  - pattern: '\bgh\s+issue\s+transfer\b'
-    reason: Transfers an issue to another repository
-    ask: true
-
-  - pattern: '\bgh\s+issue\s+pin\b'
-    reason: Pins an issue
-    ask: true
-
-  - pattern: '\bgh\s+issue\s+unpin\b'
-    reason: Unpins an issue
-    ask: true
-
-  - pattern: '\bgh\s+release\s+create\b'
-    reason: Creates a release
-    ask: true
-
-  - pattern: '\bgh\s+release\s+edit\b'
-    reason: Edits a release
-    ask: true
-
-  - pattern: '\bgh\s+repo\s+create\b'
-    reason: Creates a repository
-    ask: true
-
-  - pattern: '\bgh\s+repo\s+fork\b'
-    reason: Forks a repository
-    ask: true
-
-  - pattern: '\bgh\s+repo\s+edit\b'
-    reason: Edits repository settings
-    ask: true
-
-  - pattern: '\bgh\s+label\s+create\b'
-    reason: Creates a label
-    ask: true
-
-  - pattern: '\bgh\s+label\s+edit\b'
-    reason: Edits a label
-    ask: true
-
-  - pattern: '\bgh\s+label\s+delete\b'
-    reason: Deletes a label
-    ask: true
-
-  - pattern: '\bgh\s+api\b.*-X\s+(POST|PUT|PATCH|DELETE)\b'
+  - pattern: '\bgh\s+api\b.*(-X|--method)\s+(POST|PUT|PATCH|DELETE)\b'
     reason: gh api with write method (mutating API call)
     ask: true
 
-  - pattern: '\bgh\s+api\b.*--method\s+(POST|PUT|PATCH|DELETE)\b'
-    reason: gh api with write method (mutating API call)
+  - pattern: '\bgh\s+workflow\s+(enable|disable|run)\b'
+    reason: Mutating GitHub Actions workflow operation
     ask: true
 
-  - pattern: '\bgh\s+workflow\s+disable\b'
-    reason: Disables GitHub Actions workflow
-    ask: true
-
-  - pattern: '\bgh\s+run\s+cancel\b'
-    reason: Cancels a workflow run
+  - pattern: '\bgh\s+run\s+(cancel|rerun|delete)\b'
+    reason: Mutating GitHub Actions run operation
     ask: true
 
   - pattern: '\bgh\s+secret\s+(set|delete)\b'
@@ -140,15 +54,4 @@ bashToolPatterns:
 
   - pattern: '\bgh\s+gist\s+create\b'
     reason: Creates a gist (potential data exposure)
-    ask: true
-
-  # ---------------------------------------------------------------------------
-  # GITHUB CLI ADDITIONAL (ask: true)
-  # ---------------------------------------------------------------------------
-  - pattern: '\bgh\s+workflow\s+(enable|run)\b'
-    reason: Manages GitHub Actions workflow
-    ask: true
-
-  - pattern: '\bgh\s+run\s+(rerun|delete)\b'
-    reason: Manages GitHub Actions workflow run
     ask: true

@@ -1,10 +1,20 @@
 # Network security patterns (curl/wget exfiltration, SSH, encryption/signing, network config, data transfer)
 bashToolPatterns:
+  # ===========================================================================
+  # BLOCK PATTERNS (no "ask" key = exit code 2)
+  # ===========================================================================
+
   # ---------------------------------------------------------------------------
-  # NETWORK DATA EXFILTRATION
+  # Remote code execution
   # ---------------------------------------------------------------------------
-  - pattern: '\bcurl\b.*\s+(-d|--data|--data-\w+)\s*'
-    reason: curl with POST data (potential data exfiltration)
+  - pattern: '\b(curl|wget)\b.*\|\s*(sh|bash|zsh|python3?|perl\d*|ruby\d*)\b'
+    reason: curl/wget piped to shell (remote code execution)
+
+  # ---------------------------------------------------------------------------
+  # Network data exfiltration (curl / wget)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bcurl\b.*\s+(-d\b|--data\b|--data-\w+|-F\b|--form\b|--upload-file)\s*'
+    reason: curl with data/form/file upload (potential data exfiltration)
 
   - pattern: '\bcurl\b.*-X\s+(POST|PUT|PATCH|DELETE)\b'
     reason: curl with mutating HTTP method (potential data exfiltration)
@@ -12,41 +22,32 @@ bashToolPatterns:
   - pattern: '\bwget\b.*--post-data\s+'
     reason: wget with POST data (potential data exfiltration)
 
-  - pattern: '\bcurl\b.*\s+(-F|--form)\s+'
-    reason: curl with form upload (potential data exfiltration)
-
-  - pattern: '\bcurl\b.*--upload-file\s+'
-    reason: curl with file upload (potential data exfiltration)
-
-  - pattern: '\bcurl\b.*\|\s*(sh|bash|zsh|python3?|perl\d*|ruby\d*)\b'
-    reason: curl piped to shell (remote code execution)
-
-  - pattern: '\bwget\b.*\|\s*(sh|bash|zsh|python3?|perl\d*|ruby\d*)\b'
-    reason: wget piped to shell (remote code execution)
-
+  # ---------------------------------------------------------------------------
+  # Reverse shells / listeners
+  # ---------------------------------------------------------------------------
   - pattern: '\b(nc|ncat|netcat)\s+.*(-[a-z]*l[a-z]*\b|--listen)\b'
     reason: netcat listen mode (potential reverse shell)
 
-  - pattern: '\bscp\b.*\S+:\S+'
-    reason: scp to remote host (potential data exfiltration)
-    ask: true
+  - pattern: '\bsocat\b.*(LISTEN|listen)'
+    reason: socat listen mode (potential reverse shell)
 
-  - pattern: '\btcpdump\b'
-    reason: Captures network traffic (potential credential capture)
-    ask: true
-
-  - pattern: '\bnmap\b'
-    reason: Network scanner (reconnaissance tool)
-    ask: true
-
+  # ---------------------------------------------------------------------------
+  # Firewall (destructive operations)
+  # ---------------------------------------------------------------------------
   - pattern: '\biptables-restore\b'
     reason: iptables-restore (replaces entire firewall ruleset)
 
-  - pattern: '\bip6tables\s+(-\S+\s+)*(-F|--flush)\b'
+  - pattern: '\bip6tables\s+.*(-F|--flush)\b'
     reason: ip6tables flush (removes all IPv6 firewall rules)
 
+  - pattern: '\bufw\s+(disable|reset|delete)\b'
+    reason: ufw firewall disable/reset/delete
+
+  - pattern: '\bnft\s+(flush|delete)\b'
+    reason: nftables flush/delete (removes firewall rules)
+
   # ---------------------------------------------------------------------------
-  # NETWORK CONFIGURATION
+  # Network configuration (destructive)
   # ---------------------------------------------------------------------------
   - pattern: '\bip\s+(addr|route|link|rule)\s+(add|del|change|replace|flush)\b'
     reason: ip command modifying network configuration
@@ -57,24 +58,39 @@ bashToolPatterns:
   - pattern: '\broute\s+(add|del|delete|change)\b'
     reason: route table modification
 
-  - pattern: '\bufw\s+(disable|reset|delete)\b'
-    reason: ufw firewall disable/reset/delete
-
-  - pattern: '\bnft\s+(flush|delete)\b'
-    reason: nftables flush/delete (removes firewall rules)
-
   - pattern: '\bsysctl\s+(-w|--write)\b'
     reason: sysctl write (modifies kernel parameters)
 
   # ---------------------------------------------------------------------------
-  # NETWORK CONFIGURATION REQUIRING CONFIRMATION (ask: true)
+  # Remote data destruction
+  # ---------------------------------------------------------------------------
+  - pattern: '\brclone\s+(delete|purge)\b'
+    reason: rclone delete/purge (destroys remote data)
+
+  # ===========================================================================
+  # ASK PATTERNS (ask: true = prompt for confirmation)
+  # ===========================================================================
+
+  # ---------------------------------------------------------------------------
+  # Network reconnaissance
+  # ---------------------------------------------------------------------------
+  - pattern: '\bnmap\b'
+    reason: Network scanner (reconnaissance tool)
+    ask: true
+
+  - pattern: '\btcpdump\b'
+    reason: Captures network traffic (potential credential capture)
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # Firewall (individual rule changes)
   # ---------------------------------------------------------------------------
   - pattern: '\biptables\s+.*(-A|--append|-D|--delete|-I|--insert)\b'
     reason: Modifies individual firewall rules
     ask: true
 
   # ---------------------------------------------------------------------------
-  # SSH OPERATIONS REQUIRING CONFIRMATION (ask: true)
+  # SSH operations
   # ---------------------------------------------------------------------------
   - pattern: '\bssh\b.*\S+@\S+\s+\S+'
     reason: SSH remote command execution
@@ -89,7 +105,7 @@ bashToolPatterns:
     ask: true
 
   # ---------------------------------------------------------------------------
-  # ENCRYPTION / SIGNING REQUIRING CONFIRMATION (ask: true)
+  # Encryption / signing
   # ---------------------------------------------------------------------------
   - pattern: '\bgpg\s+--(encrypt|sign|clearsign|detach-sign)\b'
     reason: GPG encryption/signing operation
@@ -100,14 +116,12 @@ bashToolPatterns:
     ask: true
 
   # ---------------------------------------------------------------------------
-  # DATA TRANSFER / EXFILTRATION
+  # Data transfer (remote)
   # ---------------------------------------------------------------------------
-  - pattern: '\brclone\s+(delete|purge)\b'
-    reason: rclone delete/purge (destroys remote data)
+  - pattern: '\bscp\b.*\S+:\S+'
+    reason: scp to remote host (potential data exfiltration)
+    ask: true
 
-  # ---------------------------------------------------------------------------
-  # DATA TRANSFER / EXFILTRATION REQUIRING CONFIRMATION (ask: true)
-  # ---------------------------------------------------------------------------
   - pattern: '\brsync\s+.*\S+:\S+'
     reason: rsync to/from remote host
     ask: true
@@ -119,9 +133,6 @@ bashToolPatterns:
   - pattern: '\b(ftp|tftp)\b'
     reason: Unencrypted file transfer protocol
     ask: true
-
-  - pattern: '\bsocat\b.*(LISTEN|listen)'
-    reason: socat listen mode (potential reverse shell)
 
   - pattern: '\bsocat\b'
     reason: socat (bidirectional data relay)

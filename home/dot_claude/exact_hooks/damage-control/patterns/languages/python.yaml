@@ -3,11 +3,8 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   # PYTHON - EXPANDED PATTERNS
   # ---------------------------------------------------------------------------
-  - pattern: '\bpython3?\s+-c\s+.*\b(exec|eval|compile)\b'
-    reason: Python one-liner with exec/eval (arbitrary code execution)
-
-  - pattern: '\bpython3?\s+-c\s+.*\b(__import__)\b'
-    reason: Python one-liner with dynamic import (common RCE pattern)
+  - pattern: '\bpython3?\s+-c\s+.*\b(exec|eval|compile|__import__)\b'
+    reason: Python one-liner with exec/eval/compile/__import__ (arbitrary code execution)
 
   - pattern: '\bpipx\s+uninstall-all\b'
     reason: pipx uninstall-all (removes ALL globally installed Python apps)
@@ -16,14 +13,11 @@ bashToolPatterns:
     reason: pipx install/uninstall (manages globally installed Python apps)
     ask: true
 
-  - pattern: '\bconda\s+env\s+remove\b'
-    reason: conda env remove (deletes entire conda environment)
+  - pattern: '\b(conda|mamba)\s+env\s+remove\b'
+    reason: conda/mamba env remove (deletes entire conda environment)
 
   - pattern: '\bconda\s+clean\s+.*(-a|--all)\b'
     reason: conda clean --all (removes all cached packages)
-
-  - pattern: '\bmamba\s+env\s+remove\b'
-    reason: mamba env remove (deletes conda environment)
 
   - pattern: '\bconda\s+(remove|uninstall)\b'
     reason: conda remove/uninstall (removes packages from environment)
