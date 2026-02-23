@@ -1,0 +1,18 @@
+name: Setup shellcheck
+description: Download and install shellcheck
+inputs:
+  version:
+    description: shellcheck version
+    # renovate: datasource=github-releases depName=koalaman/shellcheck extractVersion=^v(?<version>.*)$
+    default: '0.11.0'
+runs:
+  using: composite
+  steps:
+    - run: |
+        curl -sSL "https://github.com/koalaman/shellcheck/releases/download/v${VERSION}/shellcheck-v${VERSION}.linux.x86_64.tar.xz" -o shellcheck.tar.xz
+        tar -xJf shellcheck.tar.xz
+        mv "shellcheck-v${VERSION}/shellcheck" /usr/local/bin/shellcheck
+        rm -rf shellcheck.tar.xz "shellcheck-v${VERSION}"
+      shell: bash
+      env:
+        VERSION: ${{ inputs.version }}

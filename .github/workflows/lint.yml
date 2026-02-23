@@ -17,39 +17,32 @@ jobs:
         with:
           persist-credentials: false
 
+      - uses: ./.github/actions/setup-shellcheck
       - name: Run shellcheck
         run: find . -name '*.sh' -not -path './.git/*' -exec shellcheck {} +
 
+      - uses: ./.github/actions/setup-shfmt
       - name: Run shfmt
-        run: |
-          go install mvdan.cc/sh/v3/cmd/shfmt@v3.12.0
-          GOPATH="$(go env GOPATH)"
-          export PATH="$GOPATH/bin:$PATH"
-          find . -name '*.sh' -not -path './.git/*' -exec shfmt -d {} +
+        run: find . -name '*.sh' -not -path './.git/*' -exec shfmt -d {} +
 
+      - uses: ./.github/actions/setup-actionlint
       - name: Run actionlint
-        shell: bash
-        run: |
-          bash <(curl -sSL https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
-          ./actionlint
+        run: actionlint
 
+      - uses: ./.github/actions/setup-ruff
       - name: Run ruff
         run: |
-          pip install ruff
           ruff check .
           ruff format --check .
 
+      - uses: ./.github/actions/setup-selene
       - name: Run selene
-        run: |
-          curl -sSL https://github.com/Kampfkarren/selene/releases/download/0.30.0/selene-light-0.30.0-linux-amd64.zip -o selene.zip
-          unzip selene.zip
-          ./selene .
+        run: selene .
 
+      - uses: ./.github/actions/setup-stylua
       - name: Run stylua
-        run: |
-          curl -sSL https://github.com/JohnnyMorganz/StyLua/releases/download/v2.3.1/stylua-linux-x86_64.zip -o stylua.zip
-          unzip stylua.zip
-          ./stylua --check .
+        run: stylua --check .
 
+      - uses: ./.github/actions/setup-markdownlint
       - name: Run markdownlint
-        run: npx markdownlint-cli2
+        run: markdownlint-cli2
