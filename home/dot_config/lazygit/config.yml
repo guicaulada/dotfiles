@@ -18,7 +18,9 @@ git:
       pager: delta --dark --paging=never
   autoFetch: true
   autoRefresh: true
-  branchLogCmd: git log --graph --color=always --abbrev-commit --decorate --date=relative --pretty=medium {{branchName}} --
+  branchLogCmd: >-
+    git log --graph --color=always --abbrev-commit
+    --decorate --date=relative --pretty=medium {{branchName}} --
 os:
   editPreset: nvim
 keybinding:
