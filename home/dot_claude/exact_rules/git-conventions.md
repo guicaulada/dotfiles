@@ -42,6 +42,11 @@ Consistent commit messages make history readable, enable automated changelogs, a
 - Reference issues: `Closes #123`, `Fixes #456`
 - Note breaking changes: `BREAKING CHANGE: description`
 
+## Skills
+
+- Always use the `/commit` skill when creating commits
+- Always use the `/create-pr` skill when creating pull requests
+
 ## Principles
 
 - Keep commits atomic — one logical change per commit

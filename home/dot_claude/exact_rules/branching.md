@@ -4,14 +4,14 @@ Clear branch naming and short-lived branches reduce merge conflicts, simplify co
 
 ## Branch Naming
 
-Use the format: `<type>/<short-description>`
+Use the format: `gc/<type>/<short-description>`
 
 Examples:
-- `feat/user-auth`
-- `fix/login-redirect`
-- `refactor/api-client`
-- `docs/setup-guide`
-- `chore/upgrade-deps`
+- `gc/feat/user-auth`
+- `gc/fix/login-redirect`
+- `gc/refactor/api-client`
+- `gc/docs/setup-guide`
+- `gc/chore/upgrade-deps`
 
 ## Guidelines
 
