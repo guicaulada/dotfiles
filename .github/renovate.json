@@ -27,7 +27,8 @@
         "/\\.github/actions/.*/action\\.yml$/"
       ],
       "matchStrings": [
-        "#\\s*renovate:\\s*datasource=(?<datasource>\\S+)\\s+depName=(?<depName>\\S+)(?:\\s+extractVersion=(?<extractVersion>\\S+))?\\n\\s+default:\\s*['\"]?(?<currentValue>[^'\"\\s]+)['\"]?"
+        "#\\s*renovate:\\s*datasource=(?<datasource>github-releases)\\s+depName=(?<depName>\\S+)\\n\\s+default:\\s*'(?<currentDigest>[a-f0-9]{40})'\\s*#\\s*(?<currentValue>\\S+)",
+        "#\\s*renovate:\\s*datasource=(?<datasource>npm)\\s+depName=(?<depName>\\S+)\\n\\s+default:\\s*'(?<currentValue>[^']+)'"
       ]
     }
   ]

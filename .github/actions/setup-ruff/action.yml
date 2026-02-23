@@ -4,12 +4,17 @@ inputs:
   version:
     description: ruff version
     # renovate: datasource=github-releases depName=astral-sh/ruff
-    default: '0.11.6'
+    default: 'fcd50a0496d725f773c6da149035f98bd90b6a30' # 0.11.6
 runs:
   using: composite
   steps:
     - run: |
-        curl -sSL "https://github.com/astral-sh/ruff/releases/download/${VERSION}/ruff-x86_64-unknown-linux-gnu.tar.gz" -o ruff.tar.gz
+        TAG=$(git ls-remote --tags https://github.com/astral-sh/ruff.git | grep "^${VERSION}" | head -1 | sed 's/.*refs\/tags\//;s/\^{}//')
+        if [ -z "$TAG" ]; then
+          echo "::error::No tag found for SHA ${VERSION} in astral-sh/ruff"
+          exit 1
+        fi
+        curl -sSL "https://github.com/astral-sh/ruff/releases/download/${TAG}/ruff-x86_64-unknown-linux-gnu.tar.gz" -o ruff.tar.gz
         tar -xzf ruff.tar.gz
         mv ruff-x86_64-unknown-linux-gnu/ruff /usr/local/bin/ruff
         rm -rf ruff.tar.gz ruff-x86_64-unknown-linux-gnu

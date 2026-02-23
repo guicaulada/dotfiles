@@ -3,16 +3,21 @@ description: Download and install shellcheck
 inputs:
   version:
     description: shellcheck version
-    # renovate: datasource=github-releases depName=koalaman/shellcheck extractVersion=^v(?<version>.*)$
-    default: '0.11.0'
+    # renovate: datasource=github-releases depName=koalaman/shellcheck
+    default: 'b12c2a6a0834a5b8c12b1c0eb36704f698de5bac' # v0.11.0
 runs:
   using: composite
   steps:
     - run: |
-        curl -sSL "https://github.com/koalaman/shellcheck/releases/download/v${VERSION}/shellcheck-v${VERSION}.linux.x86_64.tar.xz" -o shellcheck.tar.xz
+        TAG=$(git ls-remote --tags https://github.com/koalaman/shellcheck.git | grep "^${VERSION}" | head -1 | sed 's/.*refs\/tags\//;s/\^{}//')
+        if [ -z "$TAG" ]; then
+          echo "::error::No tag found for SHA ${VERSION} in koalaman/shellcheck"
+          exit 1
+        fi
+        curl -sSL "https://github.com/koalaman/shellcheck/releases/download/${TAG}/shellcheck-${TAG}.linux.x86_64.tar.xz" -o shellcheck.tar.xz
         tar -xJf shellcheck.tar.xz
-        mv "shellcheck-v${VERSION}/shellcheck" /usr/local/bin/shellcheck
-        rm -rf shellcheck.tar.xz "shellcheck-v${VERSION}"
+        mv "shellcheck-${TAG}/shellcheck" /usr/local/bin/shellcheck
+        rm -rf shellcheck.tar.xz "shellcheck-${TAG}"
       shell: bash
       env:
         VERSION: ${{ inputs.version }}

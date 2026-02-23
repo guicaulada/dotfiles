@@ -3,13 +3,19 @@ description: Download and install actionlint
 inputs:
   version:
     description: actionlint version
-    # renovate: datasource=github-releases depName=rhysd/actionlint extractVersion=^v(?<version>.*)$
-    default: '1.7.11'
+    # renovate: datasource=github-releases depName=rhysd/actionlint
+    default: '393031adb9afb225ee52ae2ccd7a5af5525e03e8' # v1.7.11
 runs:
   using: composite
   steps:
     - run: |
-        curl -sSL "https://github.com/rhysd/actionlint/releases/download/v${VERSION}/actionlint_${VERSION}_linux_amd64.tar.gz" -o actionlint.tar.gz
+        TAG=$(git ls-remote --tags https://github.com/rhysd/actionlint.git | grep "^${VERSION}" | head -1 | sed 's/.*refs\/tags\//;s/\^{}//')
+        if [ -z "$TAG" ]; then
+          echo "::error::No tag found for SHA ${VERSION} in rhysd/actionlint"
+          exit 1
+        fi
+        VER="${TAG#v}"
+        curl -sSL "https://github.com/rhysd/actionlint/releases/download/${TAG}/actionlint_${VER}_linux_amd64.tar.gz" -o actionlint.tar.gz
         tar -xzf actionlint.tar.gz actionlint
         mv actionlint /usr/local/bin/actionlint
         rm -f actionlint.tar.gz
