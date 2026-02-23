@@ -3,13 +3,18 @@ description: Download and install shfmt
 inputs:
   version:
     description: shfmt version
-    # renovate: datasource=github-releases depName=mvdan/sh extractVersion=^v(?<version>.*)$
-    default: '3.12.0'
+    # renovate: datasource=github-releases depName=mvdan/sh
+    default: 'c7ffdf2b043f2edc3ec101db215f07cdf09cd09b' # v3.12.0
 runs:
   using: composite
   steps:
     - run: |
-        curl -sSL "https://github.com/mvdan/sh/releases/download/v${VERSION}/shfmt_v${VERSION}_linux_amd64" -o /usr/local/bin/shfmt
+        TAG=$(git ls-remote --tags https://github.com/mvdan/sh.git | grep "^${VERSION}" | head -1 | sed 's/.*refs\/tags\//;s/\^{}//')
+        if [ -z "$TAG" ]; then
+          echo "::error::No tag found for SHA ${VERSION} in mvdan/sh"
+          exit 1
+        fi
+        curl -sSL "https://github.com/mvdan/sh/releases/download/${TAG}/shfmt_${TAG}_linux_amd64" -o /usr/local/bin/shfmt
         chmod +x /usr/local/bin/shfmt
       shell: bash
       env:

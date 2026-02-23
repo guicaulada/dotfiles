@@ -4,12 +4,17 @@ inputs:
   version:
     description: selene version
     # renovate: datasource=github-releases depName=Kampfkarren/selene
-    default: '0.30.0'
+    default: '33a77154d008506b3443be363d4d8c265e01b104' # 0.30.0
 runs:
   using: composite
   steps:
     - run: |
-        curl -sSL "https://github.com/Kampfkarren/selene/releases/download/${VERSION}/selene-light-${VERSION}-linux.zip" -o selene.zip
+        TAG=$(git ls-remote --tags https://github.com/Kampfkarren/selene.git | grep "^${VERSION}" | head -1 | sed 's/.*refs\/tags\//;s/\^{}//')
+        if [ -z "$TAG" ]; then
+          echo "::error::No tag found for SHA ${VERSION} in Kampfkarren/selene"
+          exit 1
+        fi
+        curl -sSL "https://github.com/Kampfkarren/selene/releases/download/${TAG}/selene-light-${TAG}-linux.zip" -o selene.zip
         unzip -o selene.zip -d selene-bin
         mv selene-bin/selene /usr/local/bin/selene
         chmod +x /usr/local/bin/selene

@@ -3,13 +3,18 @@ description: Download and install stylua
 inputs:
   version:
     description: stylua version
-    # renovate: datasource=github-releases depName=JohnnyMorganz/StyLua extractVersion=^v(?<version>.*)$
-    default: '2.3.1'
+    # renovate: datasource=github-releases depName=JohnnyMorganz/StyLua
+    default: '3701d2cb65198ec748d3a593628625be9f91fe27' # v2.3.1
 runs:
   using: composite
   steps:
     - run: |
-        curl -sSL "https://github.com/JohnnyMorganz/StyLua/releases/download/v${VERSION}/stylua-linux-x86_64.zip" -o stylua.zip
+        TAG=$(git ls-remote --tags https://github.com/JohnnyMorganz/StyLua.git | grep "^${VERSION}" | head -1 | sed 's/.*refs\/tags\//;s/\^{}//')
+        if [ -z "$TAG" ]; then
+          echo "::error::No tag found for SHA ${VERSION} in JohnnyMorganz/StyLua"
+          exit 1
+        fi
+        curl -sSL "https://github.com/JohnnyMorganz/StyLua/releases/download/${TAG}/stylua-linux-x86_64.zip" -o stylua.zip
         unzip -o stylua.zip stylua
         mv stylua /usr/local/bin/stylua
         chmod +x /usr/local/bin/stylua
