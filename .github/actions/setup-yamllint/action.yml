@@ -1,0 +1,14 @@
+name: Setup yamllint
+description: Install yamllint via pip
+inputs:
+  version:
+    description: yamllint version
+    # renovate: datasource=pypi depName=yamllint
+    default: '1.38.0'
+runs:
+  using: composite
+  steps:
+    - run: pip install "yamllint==${VERSION}"
+      shell: bash
+      env:
+        VERSION: ${{ inputs.version }}

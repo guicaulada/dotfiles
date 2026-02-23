@@ -44,6 +44,10 @@ jobs:
       - name: Run stylua
         run: stylua --check .
 
+      - uses: ./.github/actions/setup-yamllint
+      - name: Run yamllint
+        run: yamllint --strict .
+
       - uses: ./.github/actions/setup-markdownlint
       - name: Run markdownlint
         run: markdownlint-cli2
