@@ -21,7 +21,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run ~/.claude/hooks/damage-control/damage-control.py",
+            "command": "uv run ~/.claude/hooks/damage-control/damage_control.py",
             "timeout": 5
           }
         ]
