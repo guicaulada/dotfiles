@@ -2,7 +2,6 @@
 name: review-pr
 description: Reviews pull requests with detailed code analysis and feedback. Use when user mentions review pr, pr review, review pull request, check pr, analyze pr, code review, review prs, batch review.
 allowed-tools: Read, Bash(gh *), Bash(git *), Bash(mktemp *), Bash(rm -rf /tmp/pr-review-*), Grep, Glob, Task
-disable-model-invocation: true
 argument-hint: [pr-number or url...]
 ---
 

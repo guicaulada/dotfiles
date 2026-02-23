@@ -2,7 +2,6 @@
 name: commit
 description: Creates well-formatted git commits following conventional commit standards. Use when user mentions commit, create commit, make a commit, amend commit, fix last commit, help me write a commit, conventional commits, or interactive commit.
 allowed-tools: Read, Bash(git *)
-disable-model-invocation: true
 argument-hint: [create|amend|interactive]
 ---
 

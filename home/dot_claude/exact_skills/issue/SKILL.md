@@ -2,7 +2,6 @@
 name: issue
 description: Creates GitHub issues by interviewing the user to clarify the problem before submitting. Use when user mentions create issue, new issue, open issue, file issue, report bug, submit issue, github issue, report issue.
 allowed-tools: Bash(gh *)
-disable-model-invocation: true
 argument-hint: [brief description of the problem]
 ---
 
