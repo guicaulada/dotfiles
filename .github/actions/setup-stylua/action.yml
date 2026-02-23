@@ -12,6 +12,7 @@ runs:
         curl -sSL "https://github.com/JohnnyMorganz/StyLua/releases/download/v${VERSION}/stylua-linux-x86_64.zip" -o stylua.zip
         unzip -o stylua.zip stylua
         mv stylua /usr/local/bin/stylua
+        chmod +x /usr/local/bin/stylua
         rm -f stylua.zip
       shell: bash
       env:
