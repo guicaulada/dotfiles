@@ -44,10 +44,12 @@ jobs:
       - name: Run stylua
         run: stylua --check .
 
-      - uses: ./.github/actions/setup-yamllint
-      - name: Run yamllint
-        run: yamllint --strict .
-
-      - uses: ./.github/actions/setup-markdownlint
-      - name: Run markdownlint
-        run: markdownlint-cli2
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - name: Run eslint
+        run: npx eslint .
+      - name: Run prettier
+        run: npx prettier --check .
