@@ -49,18 +49,19 @@ repos:
         pass_filenames: false
         files: ^home/dot_claude/exact_hooks/damage-control/
 
+      - id: eslint
+        name: eslint
+        entry: npx eslint --fix
+        language: system
+        types_or: [json, yaml, markdown]
+
+      - id: prettier
+        name: prettier
+        entry: npx prettier --write --list-different
+        language: system
+        types_or: [json, yaml, markdown]
+
   - repo: https://github.com/JohnnyMorganz/StyLua
     rev: v2.3.1
     hooks:
       - id: stylua-github
-
-  - repo: https://github.com/adrienverge/yamllint
-    rev: v1.38.0
-    hooks:
-      - id: yamllint
-        args: [--strict]
-
-  - repo: https://github.com/DavidAnson/markdownlint-cli2
-    rev: v0.21.0
-    hooks:
-      - id: markdownlint-cli2
