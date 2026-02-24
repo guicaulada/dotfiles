@@ -30,7 +30,7 @@ REPOSITORY_GIT_DIFF_DISABLE_ERRORS: true
 
 SPELL_LYCHEE_CONFIG_FILE: .lychee.toml
 
-MARKDOWN_MARKDOWNLINT_FILTER_REGEX_EXCLUDE: '(home/dot_claude/)'
+MARKDOWN_MARKDOWNLINT_FILTER_REGEX_EXCLUDE: "(home/dot_claude/)"
 
 FILTER_REGEX_EXCLUDE: '(\.git/|node_modules/|\.pytest_cache/|\.ruff_cache/|\.tmpl$|home/dot_config/nvim/lazy-lock\.json)'
 

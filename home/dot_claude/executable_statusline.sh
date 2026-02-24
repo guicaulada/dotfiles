@@ -21,57 +21,57 @@ eval "$(echo "$input" | jq -r '
   @sh "agent_name=\(.agent.name // "")",
   @sh "cwd=\(.workspace.current_dir // "")"
 ' 2>/dev/null)" || {
-	model="Unknown"
-	context_total=0
-	context_percentage=0
-	input_tokens=0
-	output_tokens=0
-	cache_write=0
-	cache_read=0
-	cost=0
-	duration_ms=0
-	api_duration_ms=0
-	lines_added=0
-	lines_removed=0
-	vim_mode=""
-	agent_name=""
-	cwd=""
+  model="Unknown"
+  context_total=0
+  context_percentage=0
+  input_tokens=0
+  output_tokens=0
+  cache_write=0
+  cache_read=0
+  cost=0
+  duration_ms=0
+  api_duration_ms=0
+  lines_added=0
+  lines_removed=0
+  vim_mode=""
+  agent_name=""
+  cwd=""
 }
 total_tokens=$((input_tokens + output_tokens))
 
 # Format cost display
 if [ "$(echo "$cost >= 1" | bc)" -eq 1 ]; then
-	cost_formatted=$(printf "\$%.2f" "$cost")
+  cost_formatted=$(printf "\$%.2f" "$cost")
 else
-	cost_formatted=$(printf "\$%.4f" "$cost")
+  cost_formatted=$(printf "\$%.4f" "$cost")
 fi
 
 # Format duration (ms to Xh Xm Xs)
 format_duration() {
-	local ms=$1
-	local total_s=$((ms / 1000))
-	local h=$((total_s / 3600))
-	local m=$(((total_s % 3600) / 60))
-	local s=$((total_s % 60))
-	if [ "$h" -gt 0 ]; then
-		printf "%dh %dm" "$h" "$m"
-	elif [ "$m" -gt 0 ]; then
-		printf "%dm %ds" "$m" "$s"
-	else
-		printf "%ds" "$s"
-	fi
+  local ms=$1
+  local total_s=$((ms / 1000))
+  local h=$((total_s / 3600))
+  local m=$(((total_s % 3600) / 60))
+  local s=$((total_s % 60))
+  if [ "$h" -gt 0 ]; then
+    printf "%dh %dm" "$h" "$m"
+  elif [ "$m" -gt 0 ]; then
+    printf "%dm %ds" "$m" "$s"
+  else
+    printf "%ds" "$s"
+  fi
 }
 
 # Format token counts with K/M suffixes
 format_tokens() {
-	local tokens=$1
-	if [ "$tokens" -ge 1000000 ]; then
-		printf "%.1fM" "$(echo "scale=1; $tokens / 1000000" | bc)"
-	elif [ "$tokens" -ge 1000 ]; then
-		printf "%.1fK" "$(echo "scale=1; $tokens / 1000" | bc)"
-	else
-		echo "$tokens"
-	fi
+  local tokens=$1
+  if [ "$tokens" -ge 1000000 ]; then
+    printf "%.1fM" "$(echo "scale=1; $tokens / 1000000" | bc)"
+  elif [ "$tokens" -ge 1000 ]; then
+    printf "%.1fK" "$(echo "scale=1; $tokens / 1000" | bc)"
+  else
+    echo "$tokens"
+  fi
 }
 
 # Git information (with caching for performance)
@@ -79,40 +79,40 @@ cache_file="/tmp/claude_statusline_git_$(echo "$cwd" | shasum 2>/dev/null | cut 
 cache_ttl=5
 
 get_git_info() {
-	if [ -f "$cache_file" ]; then
-		cache_age=$(($(date +%s) - $(stat -f %m "$cache_file" 2>/dev/null || stat -c %Y "$cache_file" 2>/dev/null || echo 0)))
-		if [ "$cache_age" -lt "$cache_ttl" ]; then
-			cat "$cache_file"
-			return
-		fi
-	fi
+  if [ -f "$cache_file" ]; then
+    cache_age=$(($(date +%s) - $(stat -f %m "$cache_file" 2>/dev/null || stat -c %Y "$cache_file" 2>/dev/null || echo 0)))
+    if [ "$cache_age" -lt "$cache_ttl" ]; then
+      cat "$cache_file"
+      return
+    fi
+  fi
 
-	if [ -n "$cwd" ] && [ -d "$cwd/.git" ]; then
-		cd "$cwd" 2>/dev/null || return
+  if [ -n "$cwd" ] && [ -d "$cwd/.git" ]; then
+    cd "$cwd" 2>/dev/null || return
 
-		git_branch=$(git --no-optional-locks rev-parse --abbrev-ref HEAD 2>/dev/null || echo "detached")
-		git_remote=$(git --no-optional-locks config --get remote.origin.url 2>/dev/null || echo "")
+    git_branch=$(git --no-optional-locks rev-parse --abbrev-ref HEAD 2>/dev/null || echo "detached")
+    git_remote=$(git --no-optional-locks config --get remote.origin.url 2>/dev/null || echo "")
 
-		if [[ "$git_remote" =~ github.com[:/]([^/]+)/(.+)(\.git)?$ ]]; then
-			repo_name="${BASH_REMATCH[2]}"
-			repo_name="${repo_name%.git}"
-			repo_info="${BASH_REMATCH[1]}/${repo_name}"
-		else
-			repo_info="local"
-		fi
+    if [[ "$git_remote" =~ github.com[:/]([^/]+)/(.+)(\.git)?$ ]]; then
+      repo_name="${BASH_REMATCH[2]}"
+      repo_name="${repo_name%.git}"
+      repo_info="${BASH_REMATCH[1]}/${repo_name}"
+    else
+      repo_info="local"
+    fi
 
-		status_output=$(git --no-optional-locks status --porcelain 2>/dev/null || echo "")
-		added=$(echo "$status_output" | grep -cE "^A" || true)
-		modified=$(echo "$status_output" | grep -cE "^.M|^M." || true)
-		deleted=$(echo "$status_output" | grep -cE "^.D|^D." || true)
-		untracked=$(echo "$status_output" | grep -c "^??" || true)
+    status_output=$(git --no-optional-locks status --porcelain 2>/dev/null || echo "")
+    added=$(echo "$status_output" | grep -cE "^A" || true)
+    modified=$(echo "$status_output" | grep -cE "^.M|^M." || true)
+    deleted=$(echo "$status_output" | grep -cE "^.D|^D." || true)
+    untracked=$(echo "$status_output" | grep -c "^??" || true)
 
-		echo "${git_branch}|${repo_info}|${added}|${modified}|${deleted}|${untracked}" >"$cache_file"
-		echo "${git_branch}|${repo_info}|${added}|${modified}|${deleted}|${untracked}"
-	else
-		echo "|||||" >"$cache_file"
-		echo "|||||"
-	fi
+    echo "${git_branch}|${repo_info}|${added}|${modified}|${deleted}|${untracked}" >"$cache_file"
+    echo "${git_branch}|${repo_info}|${added}|${modified}|${deleted}|${untracked}"
+  else
+    echo "|||||" >"$cache_file"
+    echo "|||||"
+  fi
 }
 
 git_info=$(get_git_info)
@@ -144,20 +144,20 @@ blue="\033[34m"
 
 # Context color
 if [ "$(echo "$context_percentage < 50" | bc)" -eq 1 ]; then
-	ctx_color="$green"
+  ctx_color="$green"
 elif [ "$(echo "$context_percentage < 80" | bc)" -eq 1 ]; then
-	ctx_color="$yellow"
+  ctx_color="$yellow"
 else
-	ctx_color="$red"
+  ctx_color="$red"
 fi
 
 # Cost color
 if [ "$(echo "$cost < 0.5" | bc)" -eq 1 ]; then
-	cost_color="$green"
+  cost_color="$green"
 elif [ "$(echo "$cost < 2" | bc)" -eq 1 ]; then
-	cost_color="$yellow"
+  cost_color="$yellow"
 else
-	cost_color="$red"
+  cost_color="$red"
 fi
 
 # Build progress bar (20 chars)
@@ -172,13 +172,13 @@ for ((i = 0; i < empty; i++)); do bar+="▯"; done
 changes=""
 total_changes=$((g_added + g_modified + g_deleted + g_untracked))
 if [ "$total_changes" -eq 0 ]; then
-	changes="${green}✓${reset}"
+  changes="${green}✓${reset}"
 else
-	[ "$g_added" -gt 0 ] && changes+="${green}+${g_added}${reset} "
-	[ "$g_modified" -gt 0 ] && changes+="${yellow}~${g_modified}${reset} "
-	[ "$g_deleted" -gt 0 ] && changes+="${red}-${g_deleted}${reset} "
-	[ "$g_untracked" -gt 0 ] && changes+="${dim}?${g_untracked}${reset} "
-	changes="${changes% }"
+  [ "$g_added" -gt 0 ] && changes+="${green}+${g_added}${reset} "
+  [ "$g_modified" -gt 0 ] && changes+="${yellow}~${g_modified}${reset} "
+  [ "$g_deleted" -gt 0 ] && changes+="${red}-${g_deleted}${reset} "
+  [ "$g_untracked" -gt 0 ] && changes+="${dim}?${g_untracked}${reset} "
+  changes="${changes% }"
 fi
 
 # Line 1 (Session): Model  Cost  Duration (api)  Lines  VIM  Agent
@@ -187,9 +187,9 @@ line1+="  ${cost_color}${cost_formatted}${reset}"
 line1+="  ${dim}${duration_fmt}${reset} ${dim}(api ${api_duration_fmt})${reset}"
 total_lines=$((lines_added + lines_removed))
 if [ "$total_lines" -gt 0 ]; then
-	line1+="  ${green}+${lines_added}${reset}"
-	line1+=" ${red}-${lines_removed}${reset}"
-	line1+=" ${dim}lines${reset}"
+  line1+="  ${green}+${lines_added}${reset}"
+  line1+=" ${red}-${lines_removed}${reset}"
+  line1+=" ${dim}lines${reset}"
 fi
 [ -n "$vim_mode" ] && line1+="  ${bold}${blue}${vim_mode}${reset}"
 [ -n "$agent_name" ] && line1+="  ${bold}${cyan}${agent_name}${reset}"
@@ -203,9 +203,9 @@ line2+=" ${dim}(${ctx_used_fmt} / ${ctx_total_fmt})${reset}"
 # Line 3 (Git): Repo Branch Changes
 line3=""
 if [ -n "$repo_info" ]; then
-	line3+="${cyan}${repo_info}${reset}"
-	line3+="  ${magenta}${git_branch}${reset}"
-	line3+="  ${changes}"
+  line3+="${cyan}${repo_info}${reset}"
+  line3+="  ${magenta}${git_branch}${reset}"
+  line3+="  ${changes}"
 fi
 
 # Line 4 (Tokens): in out total cached ↑w ↓r
@@ -214,9 +214,9 @@ line4+="  ${dim}out${reset} ${white}${output_fmt}${reset}"
 line4+="  ${dim}total${reset} ${white}${total_fmt}${reset}"
 cache_total=$((cache_write + cache_read))
 if [ "$cache_total" -gt 0 ]; then
-	line4+="  ${dim}cached${reset}"
-	line4+=" ${dim}↑${reset}${white}${cache_write_fmt}${reset}"
-	line4+=" ${dim}↓${reset}${white}${cache_read_fmt}${reset}"
+  line4+="  ${dim}cached${reset}"
+  line4+=" ${dim}↑${reset}${white}${cache_write_fmt}${reset}"
+  line4+=" ${dim}↓${reset}${white}${cache_read_fmt}${reset}"
 fi
 
 # Output
