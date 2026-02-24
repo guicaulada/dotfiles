@@ -3,9 +3,9 @@ repos:
     rev: v9.3.0
     hooks:
       - id: megalinter-incremental
-        stages: [commit]
+        stages: [pre-commit]
       - id: megalinter-full
-        stages: [push]
+        stages: [pre-push]
 
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
     rev: v1.22.0
