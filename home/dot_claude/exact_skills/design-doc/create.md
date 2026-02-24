@@ -213,11 +213,11 @@ Present a summary after generating the design document:
 **Status:** Ready for Review
 
 ### Proposals
-| # | Title | Effort | Recommendation |
-|---|-------|--------|----------------|
-| 0 | Do nothing | - | Baseline |
-| 1 | [TITLE] | [EFFORT] | [RECOMMENDED?] |
-| 2 | [TITLE] | [EFFORT] | |
+| # | Title      | Effort   | Recommendation |
+|---|------------|----------|----------------|
+| 0 | Do nothing | -        | Baseline       |
+| 1 | [TITLE]    | [EFFORT] | [RECOMMENDED?] |
+| 2 | [TITLE]    | [EFFORT] |                |
 
 ### Artifacts
 - [PROJECT_DIR]/rough-idea.md

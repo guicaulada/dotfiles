@@ -12,7 +12,7 @@ Create structured, task-based implementation plans using Prompt-Driven Developme
 ## Plan Structure
 
 | Section            | Purpose                                               |
-| ------------------ | ----------------------------------------------------- |
+|--------------------|-------------------------------------------------------|
 | Overview           | Sets context and defines the goal                     |
 | Requirements       | Consolidated requirements from clarification          |
 | Architecture Notes | Key technical decisions informing the plan            |

@@ -166,7 +166,7 @@ Organize findings by priority:
 Determine verdict:
 
 | Condition                                     | Verdict             |
-| --------------------------------------------- | ------------------- |
+|-----------------------------------------------|---------------------|
 | No blocking issues, code is solid             | **Approve**         |
 | Feedback provided, no strong opinion on merge | **Comment**         |
 | Blocking issues that must be addressed        | **Request changes** |
@@ -223,12 +223,12 @@ Status: [STATE] | CI: [CHECKS_STATUS]
 
 ### Review Summary
 
-| Severity | Count |
-|----------|-------|
-| Blocking | [N] |
-| Suggestions | [N] |
-| Questions | [N] |
-| Nitpicks | [N] |
+| Severity    | Count |
+|-------------|-------|
+| Blocking    | [N]   |
+| Suggestions | [N]   |
+| Questions   | [N]   |
+| Nitpicks    | [N]   |
 
 ---
 
@@ -309,7 +309,7 @@ Adds retry logic when refresh tokens expire during API calls. Previously, expire
 ### Review Summary
 
 | Severity    | Count |
-| ----------- | ----- |
+|-------------|-------|
 | Blocking    | 0     |
 | Suggestions | 2     |
 | Questions   | 1     |

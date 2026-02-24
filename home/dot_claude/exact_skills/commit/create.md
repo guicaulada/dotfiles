@@ -128,8 +128,8 @@ Run `git log --oneline [DEFAULT_BRANCH]..HEAD` to show branch commits.
 ```
 ## Commits Created
 
-| # | Hash | Message |
-|---|------|---------|
+| # | Hash   | Message   |
+|---|--------|-----------|
 | 1 | [HASH] | [MESSAGE] |
 | 2 | [HASH] | [MESSAGE] |
 
@@ -200,10 +200,10 @@ Reason: Documentation is a separate concern from implementation
 
 ## Commits Created
 
-| #   | Hash    | Message                                  |
-| --- | ------- | ---------------------------------------- |
-| 1   | d4e5f6a | feat(api): add user preferences endpoint |
-| 2   | b7c8d9e | docs(readme): add preferences API usage  |
+| # | Hash    | Message                                  |
+|---|---------|------------------------------------------|
+| 1 | d4e5f6a | feat(api): add user preferences endpoint |
+| 2 | b7c8d9e | docs(readme): add preferences API usage  |
 
 ### Next Steps
 

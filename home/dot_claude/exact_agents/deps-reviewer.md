@@ -91,7 +91,7 @@ rm -rf "$WORK_DIR"
 ## Step 6: Determine Verdict
 
 | Condition                                     | Verdict                      |
-| --------------------------------------------- | ---------------------------- |
+|-----------------------------------------------|------------------------------|
 | Patch/minor, no security issues, CI passing   | **approve**                  |
 | Security fix (any bump type)                  | **approve** (flag as urgent) |
 | Major bump with migration guide followed      | **comment**                  |

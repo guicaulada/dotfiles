@@ -12,7 +12,7 @@ Create structured design documents using Prompt-Driven Development (PDD). Guides
 ## Document Structure
 
 | Section    | Purpose                                 |
-| ---------- | --------------------------------------- |
+|------------|-----------------------------------------|
 | Background | Sets context in 1-2 paragraphs          |
 | Problem    | Explains why action is needed now       |
 | Goals      | Defines success criteria and priorities |
