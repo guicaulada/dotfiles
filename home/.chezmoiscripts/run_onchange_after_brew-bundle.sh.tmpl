@@ -1,6 +1,6 @@
 {{- if eq .chezmoi.os "darwin" -}}
 #!/bin/bash
-# Brewfile hash: {{ include "../Brewfile" | sha256sum }}
+# Brewfile hash: {{ include "Brewfile" | sha256sum }}
 set -euo pipefail
 
 if ! command -v brew &>/dev/null; then
@@ -10,5 +10,5 @@ if ! command -v brew &>/dev/null; then
 fi
 
 echo "==> Brewfile changed, running brew bundle..."
-brew bundle --file="{{ .chezmoi.sourceDir }}/../Brewfile"
+brew bundle --file="{{ .chezmoi.sourceDir }}/Brewfile"
 {{ end -}}
