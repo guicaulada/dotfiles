@@ -23,8 +23,8 @@ bashToolPatterns:
     reason: Changes Azure Web App/Function App state
     ask: true
 
-  - pattern: '\baz\s+aks\s+upgrade\b'
-    reason: Upgrades AKS cluster (potential downtime)
+  - pattern: '\baz\s+aks\s+upgrade\b' # codespell:ignore aks
+    reason: Upgrades AKS cluster (potential downtime) # codespell:ignore aks
     ask: true
 
   - pattern: '\baz\s+keyvault\s+secret\s+set\b'

@@ -2,3 +2,4 @@
 skip = .git,megalinter-reports,*.tmpl,home/dot_config/nvim/lazy-lock.json,node_modules
 check-filenames =
 check-hidden =
+exclude-file = .github/linters/.codespellexcludes
