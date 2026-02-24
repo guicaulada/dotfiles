@@ -2,4 +2,10 @@ exclude = [
   "github\\.com/acme/",
   "^op://",
   "\\{\\{\\{",
+  "%7B%7B%7B",
+  "^https://raw/$",
+]
+
+exclude_path = [
+  ".github/renovate.json",
 ]
