@@ -60,6 +60,9 @@ yarn-error.log*
 chezmoi.toml
 .gitleaks.toml
 
+# Worktrees
+.worktrees/
+
 # Misc
 .terraform/
 .terraform.lock.hcl
