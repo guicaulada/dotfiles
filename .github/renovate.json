@@ -1,9 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:recommended",
-    "helpers:pinGitHubActionDigests"
-  ],
+  "extends": ["config:recommended", "helpers:pinGitHubActionDigests"],
   "schedule": ["before 9am every day"],
   "minimumReleaseAge": "7 days",
   "pre-commit": {
@@ -12,9 +9,7 @@
   "customManagers": [
     {
       "customType": "regex",
-      "managerFilePatterns": [
-        "/home/\\.chezmoiexternal\\.toml$/"
-      ],
+      "managerFilePatterns": ["/home/\\.chezmoiexternal\\.toml$/"],
       "matchStrings": [
         "url\\s*=\\s*\"https://raw\\.githubusercontent\\.com/(?<depName>[^/]+/[^/]+)/(?<currentDigest>[a-f0-9]{40})/[^\"]+\"\\s*#\\s*(?<currentValue>\\S+)"
       ],
@@ -23,9 +18,7 @@
     },
     {
       "customType": "regex",
-      "managerFilePatterns": [
-        "/\\.github/actions/.*/action\\.yml$/"
-      ],
+      "managerFilePatterns": ["/\\.github/actions/.*/action\\.yml$/"],
       "matchStrings": [
         "#\\s*renovate:\\s*datasource=(?<datasource>github-releases)\\s+depName=(?<depName>\\S+)\\n\\s+default:\\s*'(?<currentDigest>[a-f0-9]{40})'\\s*#\\s*(?<currentValue>\\S+)",
         "#\\s*renovate:\\s*datasource=(?<datasource>npm)\\s+depName=(?<depName>\\S+)\\n\\s+default:\\s*'(?<currentValue>[^']+)'"

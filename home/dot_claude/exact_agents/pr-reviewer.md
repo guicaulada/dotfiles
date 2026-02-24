@@ -16,6 +16,7 @@ You receive a PR number or URL (and optionally a repository in owner/repo format
 ## Step 1: Parse Input
 
 Extract PR number and repository from the input:
+
 - **URL** (`https://github.com/owner/repo/pull/123`): extract `owner/repo` and `123`
 - **Number** (`123`): use provided REPO or current repository
 
@@ -36,9 +37,11 @@ gh pr checks PR_NUMBER [-R REPO] 2>/dev/null || echo "No checks configured"
 If PR not found, return the error output format immediately.
 
 Check if the repository is archived:
+
 ```bash
 gh repo view REPO --json isArchived -q .isArchived
 ```
+
 If archived, return the error output format with message "Repository is archived — PRs cannot be merged."
 
 ## Step 3: Checkout Repository for Context
@@ -46,12 +49,14 @@ If archived, return the error output format with message "Repository is archived
 Clone the repository to a unique temp directory for full codebase analysis. This avoids affecting the user's working directory and prevents conflicts when multiple agents run in parallel.
 
 **3a. Create temp directory and clone:**
+
 ```bash
 WORK_DIR=$(mktemp -d /tmp/pr-review-XXXXXX)
 gh repo clone REPO "$WORK_DIR" -- --depth=1 --single-branch
 ```
 
 **3b. Checkout the PR branch:**
+
 ```bash
 cd "$WORK_DIR" && gh pr checkout PR_NUMBER [-R REPO]
 ```
@@ -82,10 +87,10 @@ Include `file:line` references for every issue found. Use Read, Grep, and Glob o
 
 ## Step 6: Determine Verdict
 
-| Condition | Verdict |
-|-----------|---------|
-| No blocking issues, code is solid | **approve** |
-| Has feedback, no strong opinion | **comment** |
+| Condition                          | Verdict             |
+| ---------------------------------- | ------------------- |
+| No blocking issues, code is solid  | **approve**         |
+| Has feedback, no strong opinion    | **comment**         |
 | Blocking issues that must be fixed | **request_changes** |
 
 **Blocking** = security vulnerabilities, logic bugs, breaking changes without migration, missing required functionality, test failures.
@@ -156,6 +161,7 @@ If PR not found or error:
 ### Error
 {error message}
 ```
+
 </output>
 
 <rules>

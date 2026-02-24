@@ -234,18 +234,21 @@ If revisions are requested, apply changes and re-validate before presenting agai
 **Auto-trigger:** no
 
 ### Files
-| File | Purpose | Lines |
-|------|---------|-------|
-| SKILL.md | Entry point with format reference and workflow index | 40 |
-| generate.md | Generates changelog from git history | 80 |
+
+| File        | Purpose                                              | Lines |
+| ----------- | ---------------------------------------------------- | ----- |
+| SKILL.md    | Entry point with format reference and workflow index | 40    |
+| generate.md | Generates changelog from git history                 | 80    |
 
 ### Workflows
-| Workflow | Trigger | File |
-|----------|---------|------|
+
+| Workflow | Trigger                                         | File        |
+| -------- | ----------------------------------------------- | ----------- |
 | Generate | "changelog", "release notes", "version history" | generate.md |
 
 ### Metadata
-- Tools: Read, Bash(git *)
+
+- Tools: Read, Bash(git \*)
 - Model invocation: disabled (pushes tags and writes release files)
 - User invocable: yes
 
@@ -264,16 +267,19 @@ If revisions are requested, apply changes and re-validate before presenting agai
 **Auto-trigger:** yes
 
 ### Files
-| File | Purpose | Lines |
-|------|---------|-------|
-| SKILL.md | API naming, error format, and auth patterns | 90 |
+
+| File     | Purpose                                     | Lines |
+| -------- | ------------------------------------------- | ----- |
+| SKILL.md | API naming, error format, and auth patterns | 90    |
 
 ### Workflows
-| Workflow | Trigger | File |
-|----------|---------|------|
-| (reference only) | Auto-loads for API and endpoint design | — |
+
+| Workflow         | Trigger                                | File |
+| ---------------- | -------------------------------------- | ---- |
+| (reference only) | Auto-loads for API and endpoint design | —    |
 
 ### Metadata
+
 - Tools: Read
 - Model invocation: enabled (reference content only, no side effects)
 - User invocable: yes

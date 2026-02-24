@@ -4,7 +4,7 @@ inputs:
   version:
     description: markdownlint-cli2 version
     # renovate: datasource=npm depName=markdownlint-cli2
-    default: '0.21.0'
+    default: "0.21.0"
 runs:
   using: composite
   steps:

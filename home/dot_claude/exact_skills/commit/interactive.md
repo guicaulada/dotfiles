@@ -13,12 +13,14 @@ Walk the user through creating a commit step-by-step using AskUserQuestion at ea
 Run `git status` and `git diff --staged --stat`.
 
 If nothing is staged, ask with AskUserQuestion:
+
 - "No changes are staged. What would you like to do?"
 - Options: "Stage all changes", "Let me stage manually", "Cancel"
 
 ## Step 2: Show Changes Summary
 
 Display staged changes:
+
 ```
 Staged for commit:
 - [FILE1] (modified)
@@ -29,10 +31,12 @@ Staged for commit:
 ## Step 3: Select Commit Type
 
 Ask with AskUserQuestion:
+
 - "What type of change is this?"
 - Options: "feat — New feature", "fix — Bug fix", "refactor — Restructuring"
 
 If none fit, follow up with:
+
 - Options: "docs — Documentation", "style — Formatting", "test — Tests", "chore — Maintenance"
 
 ## Step 4: Define Scope
@@ -40,12 +44,14 @@ If none fit, follow up with:
 Analyze staged files and suggest scopes based on file paths.
 
 Ask with AskUserQuestion:
+
 - "What's the scope of this change? (optional)"
 - Options: "[SUGGESTED_SCOPE_1]", "[SUGGESTED_SCOPE_2]", "No scope"
 
 ## Step 5: Check for Breaking Changes
 
 Ask with AskUserQuestion:
+
 - "Is this a breaking change?"
 - Options: "No", "Yes — adds ! and BREAKING CHANGE footer"
 
@@ -54,6 +60,7 @@ Ask with AskUserQuestion:
 Analyze the diff and suggest 2-3 subject lines.
 
 Ask with AskUserQuestion:
+
 - "Choose or write the commit subject (max 50 chars):"
 - Options: "[SUGGESTION_1]", "[SUGGESTION_2]"
 
@@ -62,6 +69,7 @@ Validate: max 50 characters, imperative mood, no trailing period.
 ## Step 7: Add Body (Optional)
 
 Ask with AskUserQuestion:
+
 - "Add a commit body to explain what and why?"
 - Options: "No body needed", "Yes, add explanation"
 
@@ -70,6 +78,7 @@ If adding a body: collect the content, wrap at 72 characters.
 ## Step 8: Reference Issues (Optional)
 
 Ask with AskUserQuestion:
+
 - "Reference any issues?"
 - Options: "No", "Closes #", "Refs #"
 
@@ -78,6 +87,7 @@ If referencing: ask for the issue number.
 ## Step 9: Preview and Confirm
 
 Build and display the complete message:
+
 ```
 [TYPE]([SCOPE])[!]: [SUBJECT]
 
@@ -88,6 +98,7 @@ Build and display the complete message:
 ```
 
 Ask with AskUserQuestion:
+
 - "Create this commit?"
 - Options: "Yes, commit", "Edit", "Cancel"
 
@@ -113,14 +124,18 @@ Run `git log -1` to show the result.
 **Breaking**: [YES/NO]
 
 ### Message
+
 [FULL_COMMIT_MESSAGE]
 
 ### Files Committed
+
 [FILE_LIST]
 
 ### Next Steps
+
 - Push: `git push`
 - View history: `git log --oneline`
+
 ```
 </output>
 
@@ -171,3 +186,4 @@ Closes #89
 </example>
 
 </examples>
+```

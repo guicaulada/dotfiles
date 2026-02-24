@@ -27,12 +27,14 @@ Review Progress:
 ## Step 1: Capture Idea
 
 Get the rough idea from the user. Support multiple input methods:
+
 - **Direct text** provided in conversation
 - **File path** to a local file containing the idea
 - **URL** to a resource describing the idea
 - **Design document** from a previous `/design-doc` session
 
 Ask for all required parameters upfront in a single prompt:
+
 - `ROUGH_IDEA` (required) — the initial concept or design document
 - `PROJECT_DIR` (optional, default: `.impl-plans/[slug]`) — directory for artifacts
 
@@ -55,6 +57,7 @@ Save the rough idea to `{PROJECT_DIR}/rough-idea.md`.
 ## Step 3: Initial Process Planning
 
 Ask the user their preferred starting point:
+
 - **Requirements clarification** (default) — refine the idea through questions
 - **Preliminary research** — investigate specific topics first
 - **Provide additional context** — share more information before proceeding
@@ -96,6 +99,7 @@ Conduct targeted research to inform the implementation plan:
 ## Step 6: Iteration Checkpoint
 
 Summarize current state of requirements and research. Ask the user:
+
 - **Proceed to planning** — requirements and research are sufficient
 - **Return to clarification** — new questions emerged from research
 - **More research** — additional topics need investigation
@@ -105,6 +109,7 @@ Support iterating between clarification and research as many times as needed. Do
 ## Step 7: Generate Implementation Plan
 
 Create `{PROJECT_DIR}/plan/implementation-plan.md` using the template below. The plan must:
+
 - Break work into discrete, independently implementable tasks
 - Order tasks so each builds incrementally on previous work
 - Ensure core end-to-end functionality is available as early as possible
@@ -127,18 +132,22 @@ Reference the rough idea and key decisions from requirements clarification.]
 [Consolidated requirements from idea-honing. Organized by category.]
 
 ### Functional Requirements
+
 - [REQUIREMENT_1]
 - [REQUIREMENT_2]
 
 ### Non-Functional Requirements
+
 - [REQUIREMENT_1]
 - [REQUIREMENT_2]
 
 ### Constraints
+
 - [CONSTRAINT_1]
 - [CONSTRAINT_2]
 
 ### Out of Scope
+
 - [NON_GOAL_1]
 - [NON_GOAL_2]
 
@@ -155,10 +164,12 @@ Reference research findings where applicable.]
 **Objective:** [What this task accomplishes]
 
 **Details:**
+
 - [Implementation guidance]
 - [Key considerations]
 
 **Acceptance Criteria:**
+
 - [ ] [TESTABLE_CRITERION_1]
 - [ ] [TESTABLE_CRITERION_2]
 
@@ -173,10 +184,12 @@ Reference research findings where applicable.]
 **Objective:** [What this task accomplishes]
 
 **Details:**
+
 - [Implementation guidance]
 - [Key considerations]
 
 **Acceptance Criteria:**
+
 - [ ] [TESTABLE_CRITERION_1]
 - [ ] [TESTABLE_CRITERION_2]
 
@@ -191,16 +204,16 @@ Reference research findings where applicable.]
 ## Dependency Map
 
 | Task | Depends On | Blocks |
-|------|-----------|--------|
-| 1 | — | 2, 3 |
-| 2 | 1 | 4 |
-| 3 | 1 | 4 |
-| 4 | 2, 3 | — |
+| ---- | ---------- | ------ |
+| 1    | —          | 2, 3   |
+| 2    | 1          | 4      |
+| 3    | 1          | 4      |
+| 4    | 2, 3       | —      |
 
 ## Risk Register
 
-| Risk | Likelihood | Impact | Mitigation |
-|------|-----------|--------|------------|
+| Risk     | Likelihood      | Impact          | Mitigation   |
+| -------- | --------------- | --------------- | ------------ |
 | [RISK_1] | Low/Medium/High | Low/Medium/High | [MITIGATION] |
 | [RISK_2] | Low/Medium/High | Low/Medium/High | [MITIGATION] |
 
@@ -217,6 +230,7 @@ Review the plan with the user and iterate based on feedback.
 ## Step 8: Refine
 
 Iterate with the user until the implementation plan is approved:
+
 - Accept feedback on any section
 - Add, remove, split, or merge tasks as requested
 - Adjust task ordering and dependencies
@@ -293,6 +307,7 @@ Present a summary after generating the implementation plan:
 I've saved your idea and created the project structure at `.impl-plans/api-rate-limiting/`.
 
 Before we dive into refining the requirements, how would you like to start?
+
 - **Requirements clarification** — I'll ask you questions one at a time to flesh out the details
 - **Preliminary research** — I can investigate rate limiting patterns, middleware options, or your existing API code first
 - **Provide additional context** — Share more details about the API or constraints before we begin
@@ -311,19 +326,23 @@ algorithm with Redis-backed storage for distributed rate tracking.
 ## Requirements Summary
 
 ### Functional Requirements
+
 - Rate limit by API key with configurable limits per endpoint
 - Return standard 429 responses with Retry-After header
 - Support burst allowance above steady-state rate
 
 ### Non-Functional Requirements
+
 - Sub-5ms overhead per request at p99
 - Graceful degradation if Redis is unavailable (allow traffic)
 
 ### Constraints
+
 - Must work with the existing Express middleware stack
 - Redis 7.x already available in infrastructure
 
 ### Out of Scope
+
 - Per-user rate limiting (only per API key)
 - Rate limit dashboard or analytics
 
@@ -335,11 +354,13 @@ algorithm with Redis-backed storage for distributed rate tracking.
 with in-memory storage.
 
 **Details:**
+
 - Create `src/rate-limit/token-bucket.ts` with configurable rate and burst
 - Use a storage interface to decouple algorithm from backing store
 - Include time-based token replenishment logic
 
 **Acceptance Criteria:**
+
 - [ ] Token bucket correctly limits requests at the configured rate
 - [ ] Burst allowance permits short spikes above steady-state
 - [ ] Unit tests cover steady-state, burst, and exhaustion scenarios
@@ -357,11 +378,13 @@ then rejected, then allowed again after replenishment.
 rate tracking across API instances.
 
 **Details:**
+
 - Create `src/rate-limit/redis-store.ts` implementing the storage interface
 - Use Lua scripts for atomic check-and-decrement operations
 - Add fallback to allow-all when Redis is unreachable
 
 **Acceptance Criteria:**
+
 - [ ] Rate state is shared across multiple API instances
 - [ ] Atomic operations prevent race conditions under concurrent load
 - [ ] Graceful degradation allows all traffic when Redis is down
@@ -379,11 +402,13 @@ Disconnect Redis, show requests continue to be served.
 with per-endpoint configuration.
 
 **Details:**
+
 - Create `src/middleware/rate-limit.ts` that reads API key from headers
 - Load per-endpoint limits from configuration
 - Set 429 status and Retry-After header on rejection
 
 **Acceptance Criteria:**
+
 - [ ] Middleware extracts API key and applies correct per-endpoint limits
 - [ ] 429 response includes accurate Retry-After header
 - [ ] Integration tests verify end-to-end rate limiting behavior
@@ -396,17 +421,17 @@ response with Retry-After header.
 ## Dependency Map
 
 | Task | Depends On | Blocks |
-|------|-----------|--------|
-| 1 | — | 2, 3 |
-| 2 | 1 | 3 |
-| 3 | 1, 2 | — |
+| ---- | ---------- | ------ |
+| 1    | —          | 2, 3   |
+| 2    | 1          | 3      |
+| 3    | 1, 2       | —      |
 
 ## Risk Register
 
-| Risk | Likelihood | Impact | Mitigation |
-|------|-----------|--------|------------|
-| Redis latency adds unacceptable overhead | Low | High | Benchmark in staging; local cache fallback if needed |
-| Lua script compatibility across Redis versions | Low | Medium | Test against Redis 7.x in CI |
+| Risk                                           | Likelihood | Impact | Mitigation                                           |
+| ---------------------------------------------- | ---------- | ------ | ---------------------------------------------------- |
+| Redis latency adds unacceptable overhead       | Low        | High   | Benchmark in staging; local cache fallback if needed |
+| Lua script compatibility across Redis versions | Low        | Medium | Test against Redis 7.x in CI                         |
 
 ## Progress Checklist
 
@@ -426,6 +451,7 @@ response with Retry-After header.
 I've read your design document and saved it to `.impl-plans/notification-system/rough-idea.md`.
 
 The design doc covers a notification system with email, push, and in-app channels. Before we plan the implementation, how would you like to start?
+
 - **Requirements clarification** — I'll ask questions one at a time to fill in implementation details the design doc doesn't cover
 - **Preliminary research** — I can investigate notification libraries, queue systems, or your existing infrastructure first
 - **Provide additional context** — Share more about current systems or constraints
@@ -444,19 +470,23 @@ with a message queue for reliable delivery and per-channel adapters.
 ## Requirements Summary
 
 ### Functional Requirements
+
 - Send notifications via email, push, and in-app channels
 - Support user notification preferences (opt-in/out per channel)
 - Retry failed deliveries with exponential backoff
 
 ### Non-Functional Requirements
+
 - Process notifications within 30 seconds of trigger event
 - Handle 1000 notifications/minute at peak
 
 ### Constraints
+
 - Use existing RabbitMQ infrastructure for message queuing
 - Email via SendGrid API (already configured)
 
 ### Out of Scope
+
 - SMS channel (future phase)
 - Notification templates editor UI
 
@@ -468,11 +498,13 @@ with a message queue for reliable delivery and per-channel adapters.
 RabbitMQ queues for routing notifications to channel processors.
 
 **Details:**
+
 - Define TypeScript interfaces for notification events
 - Create RabbitMQ exchange with routing keys per channel
 - Set up dead-letter queue for failed deliveries
 
 **Acceptance Criteria:**
+
 - [ ] Notification event schema validates required fields
 - [ ] Messages route to correct channel queue based on routing key
 - [ ] Failed messages land in dead-letter queue after max retries
@@ -490,11 +522,13 @@ correct channel queue. Publish a malformed event, show it rejected.
 establishing the adapter pattern for other channels.
 
 **Details:**
+
 - Create channel adapter interface that all channels implement
 - Implement in-app adapter storing notifications in the database
 - Add REST endpoint for fetching user notifications
 
 **Acceptance Criteria:**
+
 - [ ] In-app adapter implements the channel adapter interface
 - [ ] Notifications persisted to database with read/unread status
 - [ ] GET endpoint returns paginated notifications for a user
@@ -506,16 +540,16 @@ establishing the adapter pattern for other channels.
 ## Dependency Map
 
 | Task | Depends On | Blocks |
-|------|-----------|--------|
-| 1 | — | 2 |
-| 2 | 1 | — |
+| ---- | ---------- | ------ |
+| 1    | —          | 2      |
+| 2    | 1          | —      |
 
 ## Risk Register
 
-| Risk | Likelihood | Impact | Mitigation |
-|------|-----------|--------|------------|
-| RabbitMQ message ordering not guaranteed | Medium | Medium | Design consumers to be idempotent; use message timestamps |
-| SendGrid rate limits during peak | Low | High | Implement send queue with rate limiting; monitor quota usage |
+| Risk                                     | Likelihood | Impact | Mitigation                                                   |
+| ---------------------------------------- | ---------- | ------ | ------------------------------------------------------------ |
+| RabbitMQ message ordering not guaranteed | Medium     | Medium | Design consumers to be idempotent; use message timestamps    |
+| SendGrid rate limits during peak         | Low        | High   | Implement send queue with rate limiting; monitor quota usage |
 
 ## Progress Checklist
 

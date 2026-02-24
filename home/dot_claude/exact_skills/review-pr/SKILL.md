@@ -11,20 +11,20 @@ Review pull requests with comprehensive code analysis. Fetches PR details, analy
 
 ## Severity Levels
 
-| Level | Description |
-|-------|-------------|
-| `blocking` | Must be addressed before merge |
-| `suggestion` | Recommended improvement |
-| `nitpick` | Minor style or preference |
-| `question` | Clarification needed from author |
+| Level        | Description                      |
+| ------------ | -------------------------------- |
+| `blocking`   | Must be addressed before merge   |
+| `suggestion` | Recommended improvement          |
+| `nitpick`    | Minor style or preference        |
+| `question`   | Clarification needed from author |
 
 ## Review Verdicts
 
-| Verdict | When to Use |
-|---------|-------------|
-| **Approve** | No blocking issues, code is ready to merge |
-| **Comment** | Feedback provided, no explicit approval or change request |
-| **Request changes** | Blocking issues that must be addressed before merge |
+| Verdict             | When to Use                                               |
+| ------------------- | --------------------------------------------------------- |
+| **Approve**         | No blocking issues, code is ready to merge                |
+| **Comment**         | Feedback provided, no explicit approval or change request |
+| **Request changes** | Blocking issues that must be addressed before merge       |
 
 ## Workflows
 

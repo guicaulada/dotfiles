@@ -11,14 +11,14 @@ Create structured, task-based implementation plans using Prompt-Driven Developme
 
 ## Plan Structure
 
-| Section | Purpose |
-|---------|---------|
-| Overview | Sets context and defines the goal |
-| Requirements | Consolidated requirements from clarification |
-| Architecture Notes | Key technical decisions informing the plan |
-| Task Breakdown | Ordered tasks with objectives and acceptance criteria |
-| Dependency Map | Task dependencies and critical path |
-| Risk Register | Identified risks and mitigations |
+| Section            | Purpose                                               |
+| ------------------ | ----------------------------------------------------- |
+| Overview           | Sets context and defines the goal                     |
+| Requirements       | Consolidated requirements from clarification          |
+| Architecture Notes | Key technical decisions informing the plan            |
+| Task Breakdown     | Ordered tasks with objectives and acceptance criteria |
+| Dependency Map     | Task dependencies and critical path                   |
+| Risk Register      | Identified risks and mitigations                      |
 
 ## PDD Methodology
 

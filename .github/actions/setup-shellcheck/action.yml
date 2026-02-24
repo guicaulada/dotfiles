@@ -4,7 +4,7 @@ inputs:
   version:
     description: shellcheck version
     # renovate: datasource=github-releases depName=koalaman/shellcheck
-    default: 'aac0823e6b58f8a499e856e93738082691cbf212' # v0.11.0
+    default: "aac0823e6b58f8a499e856e93738082691cbf212" # v0.11.0
 runs:
   using: composite
   steps:

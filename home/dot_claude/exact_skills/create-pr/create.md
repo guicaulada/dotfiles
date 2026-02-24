@@ -32,6 +32,7 @@ Create PR Progress:
 ## Step 1: Gather Repository Context
 
 Run in parallel:
+
 - `git remote show origin | grep "HEAD branch" | cut -d: -f2 | xargs` — default branch
 - `git branch --show-current` — current branch name
 - `git status -sb` — check if branch tracks remote and is up to date
@@ -39,75 +40,93 @@ Run in parallel:
 ## Step 2: Validate Branch State
 
 **If on default branch:**
+
 - Inform user they need to be on a feature branch
 - Exit workflow
 
 **If branch has no remote tracking:**
+
 - Note that branch will need to be pushed
 - Continue with analysis
 
 **If branch is behind remote:**
+
 - Warn user about unpushed/unpulled changes
 - Ask if they want to continue
 
 ## Step 3: Analyze Branch Commits
 
 Run to understand the branch changes:
+
 - `git log [DEFAULT_BRANCH]..HEAD --oneline` — all commits on branch
 - `git log [DEFAULT_BRANCH]..HEAD --format="%h %s%n%b%n---"` — full commit messages
 - `git log [DEFAULT_BRANCH]..HEAD --stat` — files changed per commit
 
 **If no commits found:**
+
 - Inform user there are no commits to create a PR for
 - Exit workflow
 
 ## Step 4: Analyze Full Diff
 
 Run to understand the complete scope:
+
 - `git diff [DEFAULT_BRANCH]...HEAD --stat` — summary of all changes
 - `git diff [DEFAULT_BRANCH]...HEAD` — full diff for context
 
 ## Step 5: Discover Related Issues
 
 **5a. Extract issue references from commits:**
+
 - Parse commit messages for patterns: `#123`, `fixes #123`, `closes #123`, `resolves #123`
 
 **5b. Extract issue numbers from branch name:**
+
 - Parse for patterns: `feat/123-description`, `fix/GH-456`, `issue-789`
 
 **5c. Fetch details for referenced issues:**
+
 ```bash
 gh issue view [ISSUE_NUMBER] --json number,title,state,labels,body
 ```
 
 **5d. Search for potentially related issues:**
+
 ```bash
 gh issue list --state open --limit 10 --json number,title,labels
 ```
+
 Filter by relevance: matching labels, similar keywords in titles.
 
 ## Step 6: Discover Related PRs
 
 **6a. Find PRs linked to the same issues:**
+
 ```bash
 gh pr list --search "linked:issue:[ISSUE_NUMBER]" --state all --limit 5 --json number,title,state,url
 ```
 
 **6b. Find PRs that modified the same files:**
+
 ```bash
 git diff [DEFAULT_BRANCH]...HEAD --name-only
 gh pr list --state merged --limit 10 --json number,title,mergedAt
 ```
+
 For relevant PRs, fetch file details individually:
+
 ```bash
 gh pr view [NUMBER] --json files
 ```
+
 Filter to PRs that touched the same significant files (not config/tests).
 
 **6c. Find open PRs to the same base branch:**
+
 ```bash
 gh pr list --base [DEFAULT_BRANCH] --state open --limit 10 --json number,title,headRefName
 ```
+
 Check for potential conflicts or overlap.
 
 ## Step 7: Check for Uncommitted Changes
@@ -116,6 +135,7 @@ Run `git status --porcelain` to check for uncommitted changes.
 
 **If uncommitted changes exist:**
 Use AskUserQuestion:
+
 - "You have uncommitted changes. How would you like to proceed?"
 - Options: "Continue without them", "Cancel"
 
@@ -134,11 +154,13 @@ Title must be max 72 characters, conventional commit format when appropriate.
 Write a minimal, readable PR body. Adapt to the complexity of the change.
 
 Simple change:
+
 ```
 Brief description of what changed and why. Closes #123.
 ```
 
 Moderate change:
+
 ```
 Description of what this PR accomplishes.
 
@@ -149,6 +171,7 @@ Closes #123. Related to #456.
 ```
 
 Complex change:
+
 ```
 Overview of the change and motivation.
 
@@ -186,6 +209,7 @@ Display the generated PR:
 ```
 
 Use AskUserQuestion:
+
 - "How would you like to proceed?"
 - Options: "Open in browser", "Edit title", "Edit body", "Cancel"
 
@@ -198,6 +222,7 @@ Use AskUserQuestion:
 ## Step 12: Push Branch if Needed
 
 Check if branch needs to be pushed:
+
 - `git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null` — check tracking
 - `git status -sb` — check if ahead of remote
 
@@ -274,6 +299,7 @@ Closes #89.
 **Commits**: 1 commit(s)
 
 ### Discovered Context
+
 **Referenced Issues**: #89 — "Login page redirect loop with expired session"
 **Related Issues**: None
 **Related PRs**: #85 (merged) — "feat(auth): add session timeout handler"
@@ -288,14 +314,17 @@ The PR has been opened in your browser for final review.
 **Commits**: 1 commit(s)
 
 ### Generated Title
+
 fix(auth): handle expired session redirect
 
 ### Generated Body
+
 Handle the case where an expired session cookie causes an infinite redirect loop on the login page. Now detects stale sessions and clears them before redirecting.
 
 Closes #89.
 
 ### Next Steps
+
 - Review the PR in your browser
 - Add reviewers if needed
 - Click "Create pull request" when ready
@@ -316,6 +345,7 @@ Closes #89.
 Add a new `/api/users/:id/preferences` endpoint for reading and updating user display preferences (theme, language, timezone).
 
 Key changes:
+
 - New `preferences` model with validation
 - CRUD routes with auth middleware
 - Integration tests for all preference operations
@@ -327,6 +357,7 @@ Related to #142. Closes #138.
 **Commits**: 4 commit(s)
 
 ### Discovered Context
+
 **Referenced Issues**: #138 — "Add user preferences API"
 **Related Issues**: #142 — "User settings page frontend" (open)
 **Related PRs**: #130 (merged) — "refactor(api): standardize route handlers"

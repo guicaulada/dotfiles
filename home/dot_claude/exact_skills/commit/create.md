@@ -11,6 +11,7 @@ Analyze all changes (staged, unstaged, and committed on branch) against the defa
 ## Step 1: Gather Context
 
 Run in parallel:
+
 - `git remote show origin | grep "HEAD branch" | cut -d: -f2 | xargs` — default branch
 - `git status` — current changes
 - `git log --oneline -5` — recent commit style
@@ -19,18 +20,22 @@ Run in parallel:
 ## Step 2: Analyze Changes
 
 Run to understand full scope:
+
 - `git diff --stat` — all uncommitted changes
 - `git diff --staged --stat` — staged changes
 
 If on a feature branch:
+
 - `git diff [DEFAULT_BRANCH]...HEAD --stat` — branch commits
 
 If on the default branch:
+
 - Only analyze uncommitted changes
 
 ## Step 3: Identify Logical Groups
 
 Analyze changes and group by:
+
 1. **Concern** — Do changes touch different features? (auth + UI = 2 commits)
 2. **Type** — Are there different change types? (fix + feat + docs = 3 commits)
 3. **Scope** — Do changes affect different areas? (api/ + web/ = 2 commits)
@@ -57,12 +62,14 @@ Reason: [WHY_SEPARATE]
 ```
 
 Ask the user with AskUserQuestion:
+
 - "How would you like to proceed?"
 - Options: "Create all commits", "Single commit instead", "Modify plan"
 
 ## Step 5: Execute Multi-Commit Plan
 
 For each commit in the plan:
+
 1. Reset staging: `git reset HEAD`
 2. Stage specific files: `git add [FILES]`
 3. Create commit using HEREDOC:
@@ -81,6 +88,7 @@ If no staged changes, ask which files to stage via AskUserQuestion.
 Determine type, scope, subject, and optional body from the diff. Present the message and confirm with AskUserQuestion before committing.
 
 Create using HEREDOC:
+
 ```bash
 git commit -m "$(cat <<'EOF'
 [COMMIT_MESSAGE]
@@ -98,6 +106,7 @@ Run `git log --oneline [DEFAULT_BRANCH]..HEAD` to show branch commits.
 <output>
 
 ### Single Commit
+
 ```
 ## Commit Created
 
@@ -113,6 +122,7 @@ Run `git log --oneline [DEFAULT_BRANCH]..HEAD` to show branch commits.
 ```
 
 ### Multiple Commits
+
 ```
 ## Commits Created
 
@@ -153,10 +163,12 @@ Run `git log --oneline [DEFAULT_BRANCH]..HEAD` to show branch commits.
 **Message**: fix(auth): handle expired session redirect
 
 ### Files Changed
+
 - src/auth/middleware.ts (modified)
 - src/auth/session.ts (modified)
 
 ### Next Steps
+
 - Push: `git push`
 - Create PR: `gh pr create`
 
@@ -173,10 +185,12 @@ Run `git log --oneline [DEFAULT_BRANCH]..HEAD` to show branch commits.
 Splitting into 2 commits:
 
 ### Commit 1: feat(api): add user preferences endpoint
+
 Files: api/routes/preferences.ts, api/models/preferences.ts
 Reason: New feature in a distinct module
 
 ### Commit 2: docs(readme): add preferences API usage
+
 Files: docs/README.md
 Reason: Documentation is a separate concern from implementation
 
@@ -184,12 +198,13 @@ Reason: Documentation is a separate concern from implementation
 
 ## Commits Created
 
-| # | Hash | Message |
-|---|------|---------|
-| 1 | d4e5f6a | feat(api): add user preferences endpoint |
-| 2 | b7c8d9e | docs(readme): add preferences API usage |
+| #   | Hash    | Message                                  |
+| --- | ------- | ---------------------------------------- |
+| 1   | d4e5f6a | feat(api): add user preferences endpoint |
+| 2   | b7c8d9e | docs(readme): add preferences API usage  |
 
 ### Next Steps
+
 - Review: `git log --oneline main..HEAD`
 - Push: `git push`
 - Create PR: `gh pr create`

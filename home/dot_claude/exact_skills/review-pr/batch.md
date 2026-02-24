@@ -65,6 +65,7 @@ done | jq -s '.'
 **If arguments provided:**
 
 Parse arguments to extract PR list:
+
 1. Split on spaces and commas
 2. For each item:
    - Full URL: extract repo and PR number
@@ -76,6 +77,7 @@ Build a list of `{repo, pr_number, title}` tuples.
 ## Step 3: Show Review Plan
 
 **From notifications:**
+
 ```
 Found {N} PRs awaiting your review:
 
@@ -88,6 +90,7 @@ Spawning {N} parallel review agents...
 ```
 
 **From arguments:**
+
 ```
 Reviewing {N} PRs:
 - {repo}#{pr1}
@@ -102,6 +105,7 @@ Spawning {N} parallel review agents...
 For each PR, spawn a pr-reviewer agent using the Task tool. Use a single message with multiple Task calls to run all reviews concurrently.
 
 Prompt template per agent:
+
 ```
 Review PR #{pr_number} in repository {repo}
 
@@ -112,6 +116,7 @@ Analyze this PR and return a structured review report.
 ```
 
 Example:
+
 ```
 Task(prompt="Review PR #123 in repository owner/repo...", subagent_type="pr-reviewer", model="sonnet")
 Task(prompt="Review PR #456 in repository owner/repo...", subagent_type="pr-reviewer", model="sonnet")
@@ -122,6 +127,7 @@ All agents run concurrently. Task tool blocks until all complete.
 ## Step 5: Collect Results
 
 Gather all reports from pr-reviewer agents. Parse each to extract:
+
 - PR number and repo
 - Verdict (approve/comment/request_changes)
 - Blocking issues count
@@ -137,6 +143,7 @@ Create the summary report using the output format below.
 ## Step 7: Offer Next Steps
 
 Ask user what they want to do:
+
 - View full report for a specific PR
 - Post reviews to GitHub
 - Export report to file
@@ -189,6 +196,7 @@ Include the full report for each PR, separated by horizontal rules.
 ```
 
 If no PRs found in notifications:
+
 ```
 No human-created PRs found awaiting your review.
 
@@ -221,11 +229,11 @@ To review specific PRs, provide them as arguments:
 
 Found 3 PRs awaiting your review:
 
-| # | Repository | PR | Title |
-|---|------------|-----|-------|
-| 1 | acme/api | #142 | fix(auth): handle expired refresh tokens gracefully |
-| 2 | acme/api | #145 | feat(users): add bulk user import endpoint |
-| 3 | acme/web | #78 | refactor(nav): extract sidebar into standalone component |
+| #   | Repository | PR   | Title                                                    |
+| --- | ---------- | ---- | -------------------------------------------------------- |
+| 1   | acme/api   | #142 | fix(auth): handle expired refresh tokens gracefully      |
+| 2   | acme/api   | #145 | feat(users): add bulk user import endpoint               |
+| 3   | acme/web   | #78  | refactor(nav): extract sidebar into standalone component |
 
 Spawning 3 parallel review agents...
 
@@ -239,11 +247,11 @@ Spawning 3 parallel review agents...
 
 ### Overview
 
-| PR | Repository | Title | Verdict | Blocking | Risk |
-|----|------------|-------|---------|----------|------|
-| [#142](https://github.com/acme/api/pull/142) | acme/api | fix(auth): handle expired refresh tokens | Approve | 0 | low |
-| [#145](https://github.com/acme/api/pull/145) | acme/api | feat(users): add bulk user import endpoint | Request changes | 2 | high |
-| [#78](https://github.com/acme/web/pull/78) | acme/web | refactor(nav): extract sidebar component | Approve | 0 | low |
+| PR                                           | Repository | Title                                      | Verdict         | Blocking | Risk |
+| -------------------------------------------- | ---------- | ------------------------------------------ | --------------- | -------- | ---- |
+| [#142](https://github.com/acme/api/pull/142) | acme/api   | fix(auth): handle expired refresh tokens   | Approve         | 0        | low  |
+| [#145](https://github.com/acme/api/pull/145) | acme/api   | feat(users): add bulk user import endpoint | Request changes | 2        | high |
+| [#78](https://github.com/acme/web/pull/78)   | acme/web   | refactor(nav): extract sidebar component   | Approve         | 0        | low  |
 
 ### Summary by Verdict
 
@@ -256,21 +264,23 @@ Spawning 3 parallel review agents...
 #### PRs Needing Changes
 
 **[#145](https://github.com/acme/api/pull/145) - feat(users): add bulk user import endpoint**
+
 - Missing input validation on CSV upload allows arbitrary file sizes
 - SQL injection risk in dynamic column mapping from CSV headers
 
 #### High Risk PRs
 
 **[#145](https://github.com/acme/api/pull/145) - feat(users): add bulk user import endpoint**
+
 - Risk: security - Unvalidated user input flows directly into database queries
 
 ### Quick Takes
 
-| PR | Recommendation |
-|----|----------------|
+| PR                                           | Recommendation                                              |
+| -------------------------------------------- | ----------------------------------------------------------- |
 | [#142](https://github.com/acme/api/pull/142) | Solid fix, minor race condition suggestion but not blocking |
-| [#145](https://github.com/acme/api/pull/145) | Security issues must be addressed before merge |
-| [#78](https://github.com/acme/web/pull/78) | Clean refactor, well-tested, ready to merge |
+| [#145](https://github.com/acme/api/pull/145) | Security issues must be addressed before merge              |
+| [#78](https://github.com/acme/web/pull/78)   | Clean refactor, well-tested, ready to merge                 |
 
 </example>
 
@@ -281,6 +291,7 @@ Spawning 3 parallel review agents...
 **Step 3 output**:
 
 Reviewing 2 PRs:
+
 - acme/api#150
 - acme/api#153
 
@@ -296,10 +307,10 @@ Spawning 2 parallel review agents...
 
 ### Overview
 
-| PR | Repository | Title | Verdict | Blocking | Risk |
-|----|------------|-------|---------|----------|------|
-| [#150](https://github.com/acme/api/pull/150) | acme/api | feat(billing): add invoice PDF generation | Comment | 0 | medium |
-| [#153](https://github.com/acme/api/pull/153) | acme/api | fix(rate-limit): reset counters at window boundary | Approve | 0 | low |
+| PR                                           | Repository | Title                                              | Verdict | Blocking | Risk   |
+| -------------------------------------------- | ---------- | -------------------------------------------------- | ------- | -------- | ------ |
+| [#150](https://github.com/acme/api/pull/150) | acme/api   | feat(billing): add invoice PDF generation          | Comment | 0        | medium |
+| [#153](https://github.com/acme/api/pull/153) | acme/api   | fix(rate-limit): reset counters at window boundary | Approve | 0        | low    |
 
 ### Summary by Verdict
 
@@ -319,10 +330,10 @@ No high-risk PRs.
 
 ### Quick Takes
 
-| PR | Recommendation |
-|----|----------------|
+| PR                                           | Recommendation                                                              |
+| -------------------------------------------- | --------------------------------------------------------------------------- |
 | [#150](https://github.com/acme/api/pull/150) | Good implementation, needs clarification on memory usage for large invoices |
-| [#153](https://github.com/acme/api/pull/153) | Clean fix with good test coverage, ready to merge |
+| [#153](https://github.com/acme/api/pull/153) | Clean fix with good test coverage, ready to merge                           |
 
 </example>
 

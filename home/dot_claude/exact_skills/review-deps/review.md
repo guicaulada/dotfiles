@@ -13,15 +13,18 @@ Fetch dependency bump PR details from GitHub, analyze version changes for securi
 Parse the user's input to extract the PR number and optionally the repository.
 
 **URL format** (e.g., `https://github.com/owner/repo/pull/123`):
+
 - Extract `owner/repo` as REPO
 - Extract `123` as PR_NUMBER
 - Use `-R [REPO]` flag on all subsequent gh commands
 
 **Number format** (e.g., `123`):
+
 - Set PR_NUMBER to the number
 - REPO is empty (use current repository)
 
 **Invalid format:**
+
 - Inform user of expected formats and exit
 
 ## Step 2: Validate PR and Repository
@@ -61,6 +64,7 @@ From the PR title, body, and diff:
 
 **4b. Parse version changes from the diff:**
 For each dependency being updated, extract:
+
 - Package name
 - Previous version (from removed lines)
 - New version (from added lines)
@@ -98,10 +102,12 @@ gh api graphql -f query='
 
 **5b. Search for security information:**
 Use WebSearch to look up:
+
 - `"{package_name}" {new_version} CVE security advisory`
 - `"{package_name}" vulnerability {old_version}`
 
 **5c. Check if update IS a security fix:**
+
 - Look for "security", "CVE", "vulnerability", "advisory" in PR body
 - Check if the bot labels include security-related tags
 - Flag security fixes prominently in the report
@@ -109,15 +115,18 @@ Use WebSearch to look up:
 ## Step 6: Research Compatibility
 
 **6a. For major version bumps, search for:**
+
 - Migration guides: `"{package_name}" migration guide {old_major} to {new_major}`
 - Breaking changes: `"{package_name}" {new_version} breaking changes changelog`
 - Release notes: `"{package_name}" {new_version} release notes`
 
 **6b. For minor/patch bumps, check:**
+
 - Any unexpected breaking changes reported
 - Known regressions in the new version
 
 **6c. Analyze the diff for red flags:**
+
 - Lock file changes that seem disproportionate to the update
 - Unexpected transitive dependency changes
 - Peer dependency warnings in bot's PR description
@@ -127,6 +136,7 @@ Use WebSearch to look up:
 Clone the repository to a unique temp directory for codebase analysis. This ensures the user's working directory is unaffected and avoids conflicts when reviewing PRs from different repos.
 
 **7a. Create temp directory and clone:**
+
 ```bash
 WORK_DIR=$(mktemp -d /tmp/deps-review-XXXXXX)
 gh repo clone [REPO] "$WORK_DIR" -- --depth=1 --single-branch
@@ -139,6 +149,7 @@ Use Grep to search for imports/requires of the package across the cloned codebas
 Cross-reference any breaking changes found in Step 6 with actual usage in the codebase.
 
 **7d. Clean up temp directory:**
+
 ```bash
 rm -rf "$WORK_DIR"
 ```
@@ -146,29 +157,31 @@ rm -rf "$WORK_DIR"
 ## Step 8: Check CI Status
 
 Review the CI/checks status:
+
 - Are all checks passing?
 - Any test failures related to the dependency?
 - Did the bot run compatibility tests?
 
 ## Step 9: Determine Verdict
 
-| Condition | Verdict |
-|-----------|---------|
-| Patch update, no issues, CI passing | **Approve** |
-| Minor update, backward-compatible, CI passing | **Approve** |
-| Security fix (any bump type) | **Approve** (urgent) |
-| Major update, no obvious breaking changes in project | **Comment** |
-| Major update, needs investigation | **Comment** |
-| Known vulnerability in new version | **Request changes** |
-| Breaking changes affecting project code | **Request changes** |
-| CI failing | **Request changes** |
-| Suspicious lock file changes | **Request changes** |
+| Condition                                            | Verdict              |
+| ---------------------------------------------------- | -------------------- |
+| Patch update, no issues, CI passing                  | **Approve**          |
+| Minor update, backward-compatible, CI passing        | **Approve**          |
+| Security fix (any bump type)                         | **Approve** (urgent) |
+| Major update, no obvious breaking changes in project | **Comment**          |
+| Major update, needs investigation                    | **Comment**          |
+| Known vulnerability in new version                   | **Request changes**  |
+| Breaking changes affecting project code              | **Request changes**  |
+| CI failing                                           | **Request changes**  |
+| Suspicious lock file changes                         | **Request changes**  |
 
 ## Step 10: Present Review
 
 Display the full review using the output format below.
 
 Use AskUserQuestion:
+
 - "How would you like to proceed with this dependency review?"
 - Options: "Post as PR comment", "Approve on GitHub", "Request changes on GitHub", "Done"
 
@@ -272,21 +285,23 @@ CI: passing
 
 ### Dependencies Updated
 
-| Package | From | To | Bump | Risk |
-|---------|------|----|------|------|
-| axios | 1.6.2 | 1.7.4 | minor | low |
+| Package | From  | To    | Bump  | Risk |
+| ------- | ----- | ----- | ----- | ---- |
+| axios   | 1.6.2 | 1.7.4 | minor | low  |
 
 ---
 
 ### Security Assessment
 
 **CVEs Fixed by This Update:**
+
 - CVE-2024-39338: SSRF vulnerability in axios <= 1.7.3 where relative URL paths could bypass proxy configuration. Fixed in 1.7.4.
 
 **New Vulnerabilities Introduced:**
 None
 
 **Security Advisories:**
+
 - GitHub Advisory GHSA-wf5p-g6vw-rhxx (Moderate)
 
 ---

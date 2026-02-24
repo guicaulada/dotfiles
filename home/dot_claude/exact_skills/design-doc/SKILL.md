@@ -11,14 +11,14 @@ Create structured design documents using Prompt-Driven Development (PDD). Guides
 
 ## Document Structure
 
-| Section | Purpose |
-|---------|---------|
-| Background | Sets context in 1-2 paragraphs |
-| Problem | Explains why action is needed now |
-| Goals | Defines success criteria and priorities |
-| Proposals | At least 2-3 options with trade-offs |
-| Do Nothing | Always included as Proposal 0 baseline |
-| Consensus | Documents decision and participants |
+| Section    | Purpose                                 |
+| ---------- | --------------------------------------- |
+| Background | Sets context in 1-2 paragraphs          |
+| Problem    | Explains why action is needed now       |
+| Goals      | Defines success criteria and priorities |
+| Proposals  | At least 2-3 options with trade-offs    |
+| Do Nothing | Always included as Proposal 0 baseline  |
+| Consensus  | Documents decision and participants     |
 
 ## PDD Methodology
 

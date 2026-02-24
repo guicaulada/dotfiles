@@ -11,6 +11,7 @@ Modify the most recent commit by adding staged changes, updating the commit mess
 ## Step 1: Check Current State
 
 Run in parallel:
+
 - `git log -1 --format="%H%n%s%n%b"` — current commit details
 - `git status` — staged and unstaged changes
 - `git branch -vv` — remote tracking status
@@ -18,6 +19,7 @@ Run in parallel:
 ## Step 2: Safety Check
 
 If the commit has been pushed to a remote:
+
 - Warn: "This commit has already been pushed. Amending requires a force push."
 - Ask with AskUserQuestion: "Continue with amend?"
 - Options: "Yes, I understand", "Cancel"
@@ -26,6 +28,7 @@ If the commit has been pushed to a remote:
 ## Step 3: Determine Amend Type
 
 Ask with AskUserQuestion:
+
 - "What would you like to amend?"
 - Options: "Message only", "Add staged changes", "Both"
 
@@ -34,6 +37,7 @@ Ask with AskUserQuestion:
 If amending the message ("Message only" or "Both"):
 
 Show the current message, then ask with AskUserQuestion:
+
 - "How would you like to update the message?"
 - Options: "Write new message", "Fix typo", "Add details"
 
@@ -51,6 +55,7 @@ If amending with changes ("Add staged changes" or "Both"):
 ## Step 6: Execute Amend
 
 Message only:
+
 ```bash
 git commit --amend -m "$(cat <<'EOF'
 [NEW_MESSAGE]
@@ -59,11 +64,13 @@ EOF
 ```
 
 Changes only (keep message):
+
 ```bash
 git commit --amend --no-edit
 ```
 
 Both:
+
 ```bash
 git commit --amend -m "$(cat <<'EOF'
 [NEW_MESSAGE]
@@ -77,6 +84,7 @@ Run `git log -1` to show the amended commit.
 Run `git status` to confirm state.
 
 If the original commit was pushed, remind about force push:
+
 ```
 You'll need to force push: git push --force-with-lease
 ```
@@ -92,10 +100,13 @@ You'll need to force push: git push --force-with-lease
 **Message**: [COMMIT_MESSAGE]
 
 ### What Changed
+
 - [AMEND_DESCRIPTION]
 
 ### Next Steps
+
 [Force push instructions if applicable]
+
 ```
 </output>
 
@@ -154,3 +165,4 @@ You'll need to force push: git push --force-with-lease
 </example>
 
 </examples>
+```

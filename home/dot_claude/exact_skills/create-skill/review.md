@@ -37,13 +37,13 @@ Read every file in the skill directory. Build a map of what the skill does, its 
 
 Check each frontmatter field against the reference table in SKILL.md:
 
-| Field | Check |
-|-------|-------|
-| `name` | Kebab-case, under 64 chars, no `anthropic`/`claude`, suggests purpose |
-| `description` | Third person, specific, includes trigger terms, under 1024 chars |
-| `allowed-tools` | Minimum required, Bash scoped with glob patterns |
-| `disable-model-invocation` | `true` for shared-state side effects |
-| `user-invocable` | `false` only for pure background knowledge |
+| Field                      | Check                                                                 |
+| -------------------------- | --------------------------------------------------------------------- |
+| `name`                     | Kebab-case, under 64 chars, no `anthropic`/`claude`, suggests purpose |
+| `description`              | Third person, specific, includes trigger terms, under 1024 chars      |
+| `allowed-tools`            | Minimum required, Bash scoped with glob patterns                      |
+| `disable-model-invocation` | `true` for shared-state side effects                                  |
+| `user-invocable`           | `false` only for pure background knowledge                            |
 
 Flag any deviation.
 
@@ -102,20 +102,20 @@ Flag unclear, incomplete, inconsistent, or miscalibrated content.
 
 Classify each finding by severity:
 
-| Severity | Meaning |
-|----------|---------|
-| `blocking` | Prevents correct operation or violates a core best practice |
-| `suggestion` | Meaningful quality improvement |
-| `nitpick` | Minor polish |
+| Severity     | Meaning                                                     |
+| ------------ | ----------------------------------------------------------- |
+| `blocking`   | Prevents correct operation or violates a core best practice |
+| `suggestion` | Meaningful quality improvement                              |
+| `nitpick`    | Minor polish                                                |
 
 Determine verdict:
 
-| Condition | Verdict |
-|-----------|---------|
-| No blocking findings, follows best practices | **Excellent** |
-| No blocking findings, some suggestions | **Good** |
-| Blocking findings, easy to fix | **Needs Work** |
-| Fundamental structure or approach issues | **Rework** |
+| Condition                                    | Verdict        |
+| -------------------------------------------- | -------------- |
+| No blocking findings, follows best practices | **Excellent**  |
+| No blocking findings, some suggestions       | **Good**       |
+| Blocking findings, easy to fix               | **Needs Work** |
+| Fundamental structure or approach issues     | **Rework**     |
 
 Present the review using the output template.
 
@@ -214,11 +214,11 @@ After applying all fixes, re-validate from Step 2 to confirm no regressions. If 
 
 ### Summary
 
-| Severity | Count |
-|----------|-------|
-| Blocking | 1 |
-| Suggestions | 2 |
-| Nitpicks | 0 |
+| Severity    | Count |
+| ----------- | ----- |
+| Blocking    | 1     |
+| Suggestions | 2     |
+| Nitpicks    | 0     |
 
 ---
 
@@ -271,11 +271,11 @@ Good structure and workflow separation. Fix the imperative description first (bl
 
 ### Summary
 
-| Severity | Count |
-|----------|-------|
-| Blocking | 2 |
-| Suggestions | 1 |
-| Nitpicks | 0 |
+| Severity    | Count |
+| ----------- | ----- |
+| Blocking    | 2     |
+| Suggestions | 1     |
+| Nitpicks    | 0     |
 
 ---
 

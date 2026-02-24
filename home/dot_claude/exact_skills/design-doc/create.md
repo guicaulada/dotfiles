@@ -11,11 +11,13 @@ Transform a rough idea into a structured design document using Prompt-Driven Dev
 ## Step 1: Capture Idea
 
 Get the rough idea from the user. Support multiple input methods:
+
 - **Direct text** provided in conversation
 - **File path** to a local file containing the idea
 - **URL** to a resource describing the idea
 
 Ask for all required parameters upfront in a single prompt:
+
 - `ROUGH_IDEA` (required) — the initial concept
 - `PROJECT_DIR` (optional, default: `.design-docs/[slug]`) — directory for artifacts
 
@@ -39,6 +41,7 @@ Save the rough idea to `{PROJECT_DIR}/rough-idea.md`.
 ## Step 3: Initial Process Planning
 
 Ask the user their preferred starting point:
+
 - **Requirements clarification** (default) — refine the idea through questions
 - **Preliminary research** — investigate specific topics first
 - **Provide additional context** — share more information before proceeding
@@ -81,6 +84,7 @@ Conduct targeted research to inform the design:
 ## Step 6: Iteration Checkpoint
 
 Summarize current state of requirements and research. Ask the user:
+
 - **Proceed to design** — requirements and research are sufficient
 - **Return to clarification** — new questions emerged from research
 - **More research** — additional topics need investigation
@@ -90,6 +94,7 @@ Support iterating between clarification and research as many times as needed. Do
 ## Step 7: Generate Design Document
 
 Create `{PROJECT_DIR}/design/design-doc.md` using the template below. The document must:
+
 - Stand alone — readable without other project files
 - Include at least Proposal 0 (Do nothing) plus 2 real alternatives
 - Each proposal must have benefits AND trade-offs
@@ -123,10 +128,12 @@ future. Make the case for why action is needed.]
 [Describe what happens if we take no action. This establishes the baseline.]
 
 **Impact:**
+
 - [CONSEQUENCE_1]
 - [CONSEQUENCE_2]
 
 **When this makes sense:**
+
 - [CONDITION_WHERE_INACTION_IS_OK]
 
 ### Proposal 1: [TITLE]
@@ -134,14 +141,17 @@ future. Make the case for why action is needed.]
 [Describe the proposal and how it addresses the problem.]
 
 **Approach:**
+
 - [KEY_ELEMENT_1]
 - [KEY_ELEMENT_2]
 
 **Benefits:**
+
 - [BENEFIT_1]
 - [BENEFIT_2]
 
 **Trade-offs:**
+
 - [TRADEOFF_1]
 - [TRADEOFF_2]
 
@@ -160,17 +170,21 @@ future. Make the case for why action is needed.]
 **Decision:** [TO_BE_FILLED]
 
 **Participants:**
+
 - [TO_BE_FILLED]
 
 **Discussion notes:**
+
 - [TO_BE_FILLED_AFTER_REVIEW]
 
 ## Other Notes
 
 ### References
+
 - [RELEVANT_LINK_1]
 
 ### Open Questions
+
 - [QUESTION_1]
 ```
 
@@ -179,6 +193,7 @@ Review the document with the user and iterate based on feedback.
 ## Step 8: Refine
 
 Iterate with the user until the design document is approved:
+
 - Accept feedback on any section
 - Add or modify proposals as requested
 - Update trade-off analysis based on discussion
@@ -245,6 +260,7 @@ Present a summary after generating the design document:
 I've saved your idea and created the project structure at `.design-docs/notification-system/`.
 
 Before we dive into refining the requirements, how would you like to start?
+
 - **Requirements clarification** — I'll ask you questions one at a time to flesh out the details
 - **Preliminary research** — I can investigate notification patterns, delivery mechanisms, or your existing dashboard code first
 - **Provide additional context** — Share more details about the dashboard or constraints before we begin
@@ -279,10 +295,12 @@ three occasions in the past quarter.
 Continue with the current manual-check workflow.
 
 **Impact:**
+
 - Missed alerts continue at current rate
 - Team relies on ad-hoc Slack messages for urgent items
 
 **When this makes sense:**
+
 - Dashboard usage is declining or being replaced
 
 ### Proposal 1: Browser Push Notifications
@@ -290,15 +308,18 @@ Continue with the current manual-check workflow.
 Use the Web Push API to deliver native browser notifications.
 
 **Approach:**
+
 - Register a service worker for push subscription management
 - Add notification preferences UI to user settings
 - Create a server-side event dispatcher for triggered alerts
 
 **Benefits:**
+
 - Works even when the dashboard tab is in the background
 - Native OS integration (notification center, sounds)
 
 **Trade-offs:**
+
 - Requires browser permission grant from each user
 - Limited formatting options in notification payload
 
@@ -309,15 +330,18 @@ Use the Web Push API to deliver native browser notifications.
 Add a notification panel within the dashboard with a bell icon and unread count.
 
 **Approach:**
+
 - Server-Sent Events (SSE) connection for real-time delivery
 - Notification center component with read/unread state
 - Persistent storage for notification history
 
 **Benefits:**
+
 - Works without browser permissions
 - Rich formatting and actionable notifications
 
 **Trade-offs:**
+
 - Only visible when the dashboard tab is active
 - Adds persistent connection overhead per user
 
@@ -341,6 +365,7 @@ problem of missed alerts even when the dashboard is not in focus.
 I've saved your idea and created the project structure at `.design-docs/monolith-migration/`.
 
 Before we dive into refining the requirements, how would you like to start?
+
 - **Requirements clarification** — I'll ask you questions one at a time to flesh out the details
 - **Preliminary research** — I can investigate migration patterns, service boundaries, or your existing architecture first
 - **Provide additional context** — Share more details about the monolith or constraints before we begin
@@ -353,6 +378,7 @@ I've documented my findings in `.design-docs/monolith-migration/research/`:
 - `service-boundaries.md` — Domain analysis of your codebase identifying candidate service boundaries
 
 Key findings:
+
 - The authentication module has the cleanest boundaries and fewest cross-dependencies — strongest candidate for first extraction
 - The reporting module shares database tables with three other modules — high coupling makes it a poor early candidate
 
@@ -367,6 +393,7 @@ Here's where we stand:
 **Research completed:** Migration patterns, service boundary analysis, team case studies
 
 Ready to proceed? Options:
+
 - **Proceed to design** — requirements and research are sufficient
 - **Return to clarification** — new questions emerged from research
 - **More research** — additional topics need investigation

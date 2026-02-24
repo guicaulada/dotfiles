@@ -13,15 +13,18 @@ Fetch PR details from GitHub, analyze the changes comprehensively, and provide s
 Parse the user's input to extract the PR number and optionally the repository.
 
 **URL format** (e.g., `https://github.com/owner/repo/pull/123`):
+
 - Extract `owner/repo` as REPO
 - Extract `123` as PR_NUMBER
 - Use `-R [REPO]` flag on all subsequent gh commands
 
 **Number format** (e.g., `123`):
+
 - Set PR_NUMBER to the number
 - REPO is empty (use current repository)
 
 **Invalid format:**
+
 - Inform user of expected formats and exit
 
 ## Step 2: Validate PR and Repository
@@ -64,12 +67,14 @@ gh pr checks [PR_NUMBER] [-R REPO] 2>/dev/null || echo "No checks configured"
 Clone the repository to a unique temp directory so subsequent analysis steps can read full file context beyond the diff. This enables checking callers of modified functions, verifying test coverage, and understanding surrounding code.
 
 **4a. Create temp directory and clone:**
+
 ```bash
 WORK_DIR=$(mktemp -d /tmp/pr-review-XXXXXX)
 gh repo clone [REPO] "$WORK_DIR" -- --depth=1 --single-branch
 ```
 
 **4b. Checkout the PR branch:**
+
 ```bash
 cd "$WORK_DIR" && gh pr checkout [PR_NUMBER] [-R REPO]
 ```
@@ -85,6 +90,7 @@ Assess overall scope and complexity:
 - **Risk**: breaking changes, security-sensitive, performance-critical
 
 Size classification:
+
 - Small: < 100 lines changed, < 5 files
 - Medium: 100-500 lines, 5-15 files
 - Large: > 500 lines or > 15 files (flag as potentially needing split)
@@ -96,26 +102,32 @@ For large diffs (>300 lines), first extract and quote the most critical code sec
 Analyze the diff systematically, using the checked-out code in `$WORK_DIR` to read surrounding context when needed:
 
 **6a. Logic and Correctness:**
+
 - Off-by-one errors, null/undefined handling, edge cases
 - Incorrect conditional logic, race conditions in async code
 
 **6b. Security Concerns:**
+
 - Input validation gaps, injection risks (SQL, XSS)
 - Hardcoded secrets, improper auth, sensitive data exposure
 
 **6c. Performance Issues:**
+
 - N+1 query patterns, unnecessary loops, missing caching
 - Large memory allocations, blocking operations
 
 **6d. Code Quality:**
+
 - Unclear naming, excessive complexity, duplication
 - Missing error handling, inconsistent patterns
 
 **6e. Maintainability:**
+
 - Tight coupling, missing documentation for public APIs
 - Test coverage gaps, breaking changes without migration
 
 For each finding, note:
+
 - File and line number(s)
 - Severity: blocking, suggestion, nitpick, question
 - Description of the issue
@@ -144,6 +156,7 @@ Use Read, Grep, and Glob on `$WORK_DIR` to inspect full files, check callers of 
 ## Step 10: Compile Review
 
 Organize findings by priority:
+
 1. Blocking issues (must fix)
 2. Important suggestions (should fix)
 3. Minor suggestions (nice to fix)
@@ -152,11 +165,11 @@ Organize findings by priority:
 
 Determine verdict:
 
-| Condition | Verdict |
-|-----------|---------|
-| No blocking issues, code is solid | **Approve** |
-| Feedback provided, no strong opinion on merge | **Comment** |
-| Blocking issues that must be addressed | **Request changes** |
+| Condition                                     | Verdict             |
+| --------------------------------------------- | ------------------- |
+| No blocking issues, code is solid             | **Approve**         |
+| Feedback provided, no strong opinion on merge | **Comment**         |
+| Blocking issues that must be addressed        | **Request changes** |
 
 Compose a friendly, professional verdict message that acknowledges the author's work, summarizes key points, and states next steps.
 
@@ -171,12 +184,14 @@ rm -rf "$WORK_DIR"
 Display the full review using the output format below.
 
 Use AskUserQuestion:
+
 - "How would you like to proceed?"
 - Options: "Post as PR comment", "Copy to clipboard", "Done"
 
 ## Step 13: Handle Review Posting
 
 If posting to GitHub, use AskUserQuestion to confirm review type:
+
 - Options: "Comment", "Approve", "Request changes"
 
 ```bash
@@ -293,12 +308,12 @@ Adds retry logic when refresh tokens expire during API calls. Previously, expire
 
 ### Review Summary
 
-| Severity | Count |
-|----------|-------|
-| Blocking | 0 |
-| Suggestions | 2 |
-| Questions | 1 |
-| Nitpicks | 0 |
+| Severity    | Count |
+| ----------- | ----- |
+| Blocking    | 0     |
+| Suggestions | 2     |
+| Questions   | 1     |
+| Nitpicks    | 0     |
 
 ---
 

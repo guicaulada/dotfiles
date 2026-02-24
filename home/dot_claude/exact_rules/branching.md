@@ -7,6 +7,7 @@ Clear branch naming and short-lived branches reduce merge conflicts, simplify co
 Use the format: `gc/<type>/<short-description>`
 
 Examples:
+
 - `gc/feat/user-auth`
 - `gc/fix/login-redirect`
 - `gc/refactor/api-client`
