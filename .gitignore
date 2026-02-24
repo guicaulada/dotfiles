@@ -60,9 +60,6 @@ yarn-error.log*
 chezmoi.toml
 .github/linters/.gitleaks.toml
 
-# MegaLinter
-megalinter-reports/
-
 # Worktrees
 .worktrees/
 
