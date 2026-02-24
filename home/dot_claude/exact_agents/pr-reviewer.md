@@ -88,7 +88,7 @@ Include `file:line` references for every issue found. Use Read, Grep, and Glob o
 ## Step 6: Determine Verdict
 
 | Condition                          | Verdict             |
-| ---------------------------------- | ------------------- |
+|------------------------------------|---------------------|
 | No blocking issues, code is solid  | **approve**         |
 | Has feedback, no strong opinion    | **comment**         |
 | Blocking issues that must be fixed | **request_changes** |

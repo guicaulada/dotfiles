@@ -81,9 +81,9 @@ Build a list of `{repo, pr_number, title}` tuples.
 ```
 Found {N} PRs awaiting your review:
 
-| # | Repository | PR | Title |
-|---|------------|-----|-------|
-| 1 | {repo} | #{pr} | {title} |
+| # | Repository | PR    | Title   |
+|---|------------|-------|---------|
+| 1 | {repo}     | #{pr} | {title} |
 ...
 
 Spawning {N} parallel review agents...
@@ -162,9 +162,9 @@ Ask user what they want to do:
 
 ### Overview
 
-| PR | Repository | Title | Verdict | Blocking | Risk |
-|----|------------|-------|---------|----------|------|
-| [#PR_NUMBER](URL) | [REPO] | [TITLE] | [VERDICT] | [COUNT] | [RISK] |
+| PR                | Repository | Title   | Verdict   | Blocking | Risk   |
+|-------------------|------------|---------|-----------|----------|--------|
+| [#PR_NUMBER](URL) | [REPO]     | [TITLE] | [VERDICT] | [COUNT]  | [RISK] |
 
 ### Summary by Verdict
 
@@ -184,9 +184,9 @@ List each high-risk PR with risk type and reason. If none: "No high-risk PRs."
 
 ### Quick Takes
 
-| PR | Recommendation |
-|----|----------------|
-| [#PR_NUMBER](URL) | [QUICK_TAKE] |
+| PR                | Recommendation |
+|-------------------|----------------|
+| [#PR_NUMBER](URL) | [QUICK_TAKE]   |
 
 ---
 
@@ -229,11 +229,11 @@ To review specific PRs, provide them as arguments:
 
 Found 3 PRs awaiting your review:
 
-| #   | Repository | PR   | Title                                                    |
-| --- | ---------- | ---- | -------------------------------------------------------- |
-| 1   | acme/api   | #142 | fix(auth): handle expired refresh tokens gracefully      |
-| 2   | acme/api   | #145 | feat(users): add bulk user import endpoint               |
-| 3   | acme/web   | #78  | refactor(nav): extract sidebar into standalone component |
+| # | Repository | PR   | Title                                                    |
+|---|------------|------|----------------------------------------------------------|
+| 1 | acme/api   | #142 | fix(auth): handle expired refresh tokens gracefully      |
+| 2 | acme/api   | #145 | feat(users): add bulk user import endpoint               |
+| 3 | acme/web   | #78  | refactor(nav): extract sidebar into standalone component |
 
 Spawning 3 parallel review agents...
 
@@ -248,7 +248,7 @@ Spawning 3 parallel review agents...
 ### Overview
 
 | PR                                           | Repository | Title                                      | Verdict         | Blocking | Risk |
-| -------------------------------------------- | ---------- | ------------------------------------------ | --------------- | -------- | ---- |
+|----------------------------------------------|------------|--------------------------------------------|-----------------|----------|------|
 | [#142](https://github.com/acme/api/pull/142) | acme/api   | fix(auth): handle expired refresh tokens   | Approve         | 0        | low  |
 | [#145](https://github.com/acme/api/pull/145) | acme/api   | feat(users): add bulk user import endpoint | Request changes | 2        | high |
 | [#78](https://github.com/acme/web/pull/78)   | acme/web   | refactor(nav): extract sidebar component   | Approve         | 0        | low  |
@@ -277,7 +277,7 @@ Spawning 3 parallel review agents...
 ### Quick Takes
 
 | PR                                           | Recommendation                                              |
-| -------------------------------------------- | ----------------------------------------------------------- |
+|----------------------------------------------|-------------------------------------------------------------|
 | [#142](https://github.com/acme/api/pull/142) | Solid fix, minor race condition suggestion but not blocking |
 | [#145](https://github.com/acme/api/pull/145) | Security issues must be addressed before merge              |
 | [#78](https://github.com/acme/web/pull/78)   | Clean refactor, well-tested, ready to merge                 |
@@ -308,7 +308,7 @@ Spawning 2 parallel review agents...
 ### Overview
 
 | PR                                           | Repository | Title                                              | Verdict | Blocking | Risk   |
-| -------------------------------------------- | ---------- | -------------------------------------------------- | ------- | -------- | ------ |
+|----------------------------------------------|------------|----------------------------------------------------|---------|----------|--------|
 | [#150](https://github.com/acme/api/pull/150) | acme/api   | feat(billing): add invoice PDF generation          | Comment | 0        | medium |
 | [#153](https://github.com/acme/api/pull/153) | acme/api   | fix(rate-limit): reset counters at window boundary | Approve | 0        | low    |
 
@@ -331,7 +331,7 @@ No high-risk PRs.
 ### Quick Takes
 
 | PR                                           | Recommendation                                                              |
-| -------------------------------------------- | --------------------------------------------------------------------------- |
+|----------------------------------------------|-----------------------------------------------------------------------------|
 | [#150](https://github.com/acme/api/pull/150) | Good implementation, needs clarification on memory usage for large invoices |
 | [#153](https://github.com/acme/api/pull/153) | Clean fix with good test coverage, ready to merge                           |
 

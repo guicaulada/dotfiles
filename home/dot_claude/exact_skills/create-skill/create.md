@@ -182,15 +182,15 @@ If revisions are requested, apply changes and re-validate before presenting agai
 **Auto-trigger:** [yes/no]
 
 ### Files
-| File | Purpose | Lines |
-|------|---------|-------|
-| SKILL.md | [PURPOSE] | [N] |
-| [WORKFLOW].md | [PURPOSE] | [N] |
+| File          | Purpose   | Lines |
+|---------------|-----------|-------|
+| SKILL.md      | [PURPOSE] | [N]   |
+| [WORKFLOW].md | [PURPOSE] | [N]   |
 
 ### Workflows
-| Workflow | Trigger | File |
-|----------|---------|------|
-| [NAME] | "[PHRASES]" | [FILE].md |
+| Workflow | Trigger     | File      |
+|----------|-------------|-----------|
+| [NAME]   | "[PHRASES]" | [FILE].md |
 
 ### Metadata
 - Tools: [ALLOWED-TOOLS]
@@ -236,14 +236,14 @@ If revisions are requested, apply changes and re-validate before presenting agai
 ### Files
 
 | File        | Purpose                                              | Lines |
-| ----------- | ---------------------------------------------------- | ----- |
+|-------------|------------------------------------------------------|-------|
 | SKILL.md    | Entry point with format reference and workflow index | 40    |
 | generate.md | Generates changelog from git history                 | 80    |
 
 ### Workflows
 
 | Workflow | Trigger                                         | File        |
-| -------- | ----------------------------------------------- | ----------- |
+|----------|-------------------------------------------------|-------------|
 | Generate | "changelog", "release notes", "version history" | generate.md |
 
 ### Metadata
@@ -269,13 +269,13 @@ If revisions are requested, apply changes and re-validate before presenting agai
 ### Files
 
 | File     | Purpose                                     | Lines |
-| -------- | ------------------------------------------- | ----- |
+|----------|---------------------------------------------|-------|
 | SKILL.md | API naming, error format, and auth patterns | 90    |
 
 ### Workflows
 
 | Workflow         | Trigger                                | File |
-| ---------------- | -------------------------------------- | ---- |
+|------------------|----------------------------------------|------|
 | (reference only) | Auto-loads for API and endpoint design | —    |
 
 ### Metadata

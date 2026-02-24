@@ -81,9 +81,9 @@ Build a list of `{repo, pr_number, title}` tuples.
 ```
 Found {N} dependency PRs awaiting your review:
 
-| # | Repository | PR | Title | Bot |
-|---|------------|-----|-------|-----|
-| 1 | {repo} | #{pr} | {title} | {author} |
+| # | Repository | PR    | Title   | Bot      |
+|---|------------|-------|---------|----------|
+| 1 | {repo}     | #{pr} | {title} | {author} |
 ...
 
 Spawning {N} parallel dependency review agents...
@@ -161,9 +161,9 @@ Ask user what they want to do:
 
 ### Overview
 
-| PR | Repository | Package | From | To | Bump | Verdict | Risk |
-|----|------------|---------|------|----|------|---------|------|
-| [#PR_NUMBER](URL) | [REPO] | [PKG] | [OLD] | [NEW] | [TYPE] | [VERDICT] | [RISK] |
+| PR                | Repository | Package | From  | To    | Bump   | Verdict   | Risk   |
+|-------------------|------------|---------|-------|-------|--------|-----------|--------|
+| [#PR_NUMBER](URL) | [REPO]     | [PKG]   | [OLD] | [NEW] | [TYPE] | [VERDICT] | [RISK] |
 
 ### Summary by Verdict
 
@@ -183,17 +183,17 @@ List each PR with compatibility issues. If none: "No compatibility issues detect
 
 PRs that appear safe to merge immediately:
 
-| PR | Package | Reason |
-|----|---------|--------|
-| [#PR_NUMBER](URL) | [PKG] | [REASON] |
+| PR                | Package | Reason   |
+|-------------------|---------|----------|
+| [#PR_NUMBER](URL) | [PKG]   | [REASON] |
 
 ### Needs Attention
 
 PRs requiring manual review or action:
 
-| PR | Package | Concern |
-|----|---------|---------|
-| [#PR_NUMBER](URL) | [PKG] | [CONCERN] |
+| PR                | Package | Concern   |
+|-------------------|---------|-----------|
+| [#PR_NUMBER](URL) | [PKG]   | [CONCERN] |
 
 ---
 
@@ -238,11 +238,11 @@ To review specific dependency PRs, provide them as arguments:
 
 Found 3 dependency PRs awaiting your review:
 
-| #   | Repository | PR   | Title                               | Bot             |
-| --- | ---------- | ---- | ----------------------------------- | --------------- |
-| 1   | acme/api   | #201 | Bump express from 4.18.2 to 4.21.0  | dependabot[bot] |
-| 2   | acme/api   | #203 | Bump lodash from 4.17.20 to 4.17.21 | dependabot[bot] |
-| 3   | acme/web   | #89  | Bump axios from 1.6.2 to 1.7.4      | dependabot[bot] |
+| # | Repository | PR   | Title                               | Bot             |
+|---|------------|------|-------------------------------------|-----------------|
+| 1 | acme/api   | #201 | Bump express from 4.18.2 to 4.21.0  | dependabot[bot] |
+| 2 | acme/api   | #203 | Bump lodash from 4.17.20 to 4.17.21 | dependabot[bot] |
+| 3 | acme/web   | #89  | Bump axios from 1.6.2 to 1.7.4      | dependabot[bot] |
 
 Spawning 3 parallel dependency review agents...
 
@@ -257,7 +257,7 @@ Spawning 3 parallel dependency review agents...
 ### Overview
 
 | PR                                           | Repository | Package | From    | To      | Bump  | Verdict | Risk   |
-| -------------------------------------------- | ---------- | ------- | ------- | ------- | ----- | ------- | ------ |
+|----------------------------------------------|------------|---------|---------|---------|-------|---------|--------|
 | [#201](https://github.com/acme/api/pull/201) | acme/api   | express | 4.18.2  | 4.21.0  | minor | Comment | medium |
 | [#203](https://github.com/acme/api/pull/203) | acme/api   | lodash  | 4.17.20 | 4.17.21 | patch | Approve | low    |
 | [#89](https://github.com/acme/web/pull/89)   | acme/web   | axios   | 1.6.2   | 1.7.4   | minor | Approve | low    |
@@ -283,14 +283,14 @@ Spawning 3 parallel dependency review agents...
 ### Quick Approvals
 
 | PR                                           | Package | Reason                                |
-| -------------------------------------------- | ------- | ------------------------------------- |
+|----------------------------------------------|---------|---------------------------------------|
 | [#203](https://github.com/acme/api/pull/203) | lodash  | Patch bump, CI passing, no advisories |
 | [#89](https://github.com/acme/web/pull/89)   | axios   | Security fix, minor bump, CI passing  |
 
 ### Needs Attention
 
 | PR                                           | Package | Concern                                                   |
-| -------------------------------------------- | ------- | --------------------------------------------------------- |
+|----------------------------------------------|---------|-----------------------------------------------------------|
 | [#201](https://github.com/acme/api/pull/201) | express | Minor bump spanning 3 releases, verify deprecation impact |
 
 </example>

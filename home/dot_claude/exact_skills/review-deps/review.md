@@ -165,7 +165,7 @@ Review the CI/checks status:
 ## Step 9: Determine Verdict
 
 | Condition                                            | Verdict              |
-| ---------------------------------------------------- | -------------------- |
+|------------------------------------------------------|----------------------|
 | Patch update, no issues, CI passing                  | **Approve**          |
 | Minor update, backward-compatible, CI passing        | **Approve**          |
 | Security fix (any bump type)                         | **Approve** (urgent) |
@@ -211,9 +211,9 @@ CI: [CHECKS_STATUS]
 
 ### Dependencies Updated
 
-| Package | From | To | Bump | Risk |
-|---------|------|----|------|------|
-| [PKG] | [OLD] | [NEW] | [major/minor/patch] | [low/medium/high/critical] |
+| Package | From  | To    | Bump                | Risk                       |
+|---------|-------|-------|---------------------|----------------------------|
+| [PKG]   | [OLD] | [NEW] | [major/minor/patch] | [low/medium/high/critical] |
 
 ---
 
@@ -286,7 +286,7 @@ CI: passing
 ### Dependencies Updated
 
 | Package | From  | To    | Bump  | Risk |
-| ------- | ----- | ----- | ----- | ---- |
+|---------|-------|-------|-------|------|
 | axios   | 1.6.2 | 1.7.4 | minor | low  |
 
 ---

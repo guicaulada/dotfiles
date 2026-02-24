@@ -204,7 +204,7 @@ Reference research findings where applicable.]
 ## Dependency Map
 
 | Task | Depends On | Blocks |
-| ---- | ---------- | ------ |
+|------|------------|--------|
 | 1    | —          | 2, 3   |
 | 2    | 1          | 4      |
 | 3    | 1          | 4      |
@@ -213,7 +213,7 @@ Reference research findings where applicable.]
 ## Risk Register
 
 | Risk     | Likelihood      | Impact          | Mitigation   |
-| -------- | --------------- | --------------- | ------------ |
+|----------|-----------------|-----------------|--------------|
 | [RISK_1] | Low/Medium/High | Low/Medium/High | [MITIGATION] |
 | [RISK_2] | Low/Medium/High | Low/Medium/High | [MITIGATION] |
 
@@ -251,12 +251,12 @@ Present a summary after generating the implementation plan:
 **Status:** Ready for Review
 
 ### Tasks
-| # | Title | Depends On | Demo |
-|---|-------|-----------|------|
-| 1 | [TITLE] | — | [BRIEF_DEMO] |
-| 2 | [TITLE] | 1 | [BRIEF_DEMO] |
-| 3 | [TITLE] | 1 | [BRIEF_DEMO] |
-| ... | ... | ... | ... |
+| #   | Title   | Depends On | Demo         |
+|-----|---------|------------|--------------|
+| 1   | [TITLE] | —          | [BRIEF_DEMO] |
+| 2   | [TITLE] | 1          | [BRIEF_DEMO] |
+| 3   | [TITLE] | 1          | [BRIEF_DEMO] |
+| ... | ...     | ...        | ...          |
 
 ### Risks
 - [TOP_RISK_1]: [MITIGATION]
@@ -421,7 +421,7 @@ response with Retry-After header.
 ## Dependency Map
 
 | Task | Depends On | Blocks |
-| ---- | ---------- | ------ |
+|------|------------|--------|
 | 1    | —          | 2, 3   |
 | 2    | 1          | 3      |
 | 3    | 1, 2       | —      |
@@ -429,7 +429,7 @@ response with Retry-After header.
 ## Risk Register
 
 | Risk                                           | Likelihood | Impact | Mitigation                                           |
-| ---------------------------------------------- | ---------- | ------ | ---------------------------------------------------- |
+|------------------------------------------------|------------|--------|------------------------------------------------------|
 | Redis latency adds unacceptable overhead       | Low        | High   | Benchmark in staging; local cache fallback if needed |
 | Lua script compatibility across Redis versions | Low        | Medium | Test against Redis 7.x in CI                         |
 
@@ -540,14 +540,14 @@ establishing the adapter pattern for other channels.
 ## Dependency Map
 
 | Task | Depends On | Blocks |
-| ---- | ---------- | ------ |
+|------|------------|--------|
 | 1    | —          | 2      |
 | 2    | 1          | —      |
 
 ## Risk Register
 
 | Risk                                     | Likelihood | Impact | Mitigation                                                   |
-| ---------------------------------------- | ---------- | ------ | ------------------------------------------------------------ |
+|------------------------------------------|------------|--------|--------------------------------------------------------------|
 | RabbitMQ message ordering not guaranteed | Medium     | Medium | Design consumers to be idempotent; use message timestamps    |
 | SendGrid rate limits during peak         | Low        | High   | Implement send queue with rate limiting; monitor quota usage |
 

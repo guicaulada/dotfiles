@@ -5,7 +5,7 @@ Language shapes understanding. Using inclusive, precise terminology makes code a
 ## Preferred Terms
 
 | Use                   | Instead of                                   |
-| --------------------- | -------------------------------------------- |
+|-----------------------|----------------------------------------------|
 | allowlist             | whitelist                                    |
 | blocklist             | blacklist                                    |
 | primary / replica     | master / slave                               |
