@@ -73,12 +73,14 @@ For each commit in the plan:
 1. Reset staging: `git reset HEAD`
 2. Stage specific files: `git add [FILES]`
 3. Create commit using HEREDOC:
+
    ```bash
    git commit -m "$(cat <<'EOF'
    [COMMIT_MESSAGE]
    EOF
    )"
    ```
+
 4. Verify: `git log -1 --oneline`
 
 ## Step 6: Create Single Commit
