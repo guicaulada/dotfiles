@@ -16,40 +16,9 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
+          fetch-depth: 0
           persist-credentials: false
 
-      - uses: ./.github/actions/setup-shellcheck
-      - name: Run shellcheck
-        run: find . -name '*.sh' -not -path './.git/*' -exec shellcheck {} +
-
-      - uses: ./.github/actions/setup-shfmt
-      - name: Run shfmt
-        run: find . -name '*.sh' -not -path './.git/*' -exec shfmt -d {} +
-
-      - uses: ./.github/actions/setup-actionlint
-      - name: Run actionlint
-        run: actionlint
-
-      - uses: ./.github/actions/setup-ruff
-      - name: Run ruff
-        run: |
-          ruff check .
-          ruff format --check .
-
-      - uses: ./.github/actions/setup-selene
-      - name: Run selene
-        run: selene .
-
-      - uses: ./.github/actions/setup-stylua
-      - name: Run stylua
-        run: stylua --check .
-
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
-        with:
-          node-version-file: .node-version
-          cache: npm
-      - run: npm ci
-      - name: Run eslint
-        run: npx eslint .
-      - name: Run prettier
-        run: npx prettier --check .
+      - uses: oxsecurity/megalinter@v9
+        env:
+          VALIDATE_ALL_CODEBASE: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
