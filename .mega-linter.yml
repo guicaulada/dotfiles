@@ -3,18 +3,18 @@ ENABLE_LINTERS:
   - BASH_SHELLCHECK
   - BASH_SHFMT
   - EDITORCONFIG_EDITORCONFIG_CHECKER
-  - JSON_JSONLINT
   - JSON_PRETTIER
   - JSON_V8R
   - LUA_SELENE
   - LUA_STYLUA
+  - MARKDOWN_MARKDOWN_TABLE_FORMATTER
   - MARKDOWN_MARKDOWNLINT
   - PYTHON_RUFF
-  - REPOSITORY_DEVSKIM
   - REPOSITORY_GIT_DIFF
   - REPOSITORY_GITLEAKS
-  - REPOSITORY_TRIVY
-  - REPOSITORY_TRUFFLEHOG
+  - REPOSITORY_LS_LINT
+  - REPOSITORY_SEMGREP
+  - SPELL_CODESPELL
   - SPELL_LYCHEE
   - YAML_PRETTIER
   - YAML_V8R
@@ -23,18 +23,28 @@ ENABLE_LINTERS:
 APPLY_FIXES: all
 LINTER_RULES_PATH: .github/linters
 FLAVOR_SUGGESTIONS: false
-
-LUA_STYLUA_CONFIG_FILE: .stylua.toml
-
-EDITORCONFIG_EDITORCONFIG_CHECKER_FILTER_REGEX_EXCLUDE: '(\.chezmoiroot|\.chezmoiversion|\.chezmoitemplates/|home/dot_claude/)'
-
-REPOSITORY_GIT_DIFF_DISABLE_ERRORS: true
-
-SPELL_LYCHEE_CONFIG_FILE: .lychee.toml
-
-FILTER_REGEX_EXCLUDE: '(\.git/|node_modules/|\.pytest_cache/|\.ruff_cache/|\.tmpl$|home/dot_config/nvim/lazy-lock\.json)'
-
+FAIL_IF_UPDATED_SOURCES: true
+CLEAR_REPORT_FOLDER: true
 SHOW_ELAPSED_TIME: true
 PRINT_ALL_FILES: false
 
-REPORT_OUTPUT_FOLDER: none
+CONSOLE_REPORTER: true
+TEXT_REPORTER: true
+SARIF_REPORTER: true
+MARKDOWN_SUMMARY_REPORTER: true
+UPDATED_SOURCES_REPORTER: true
+TAP_REPORTER: false
+JSON_REPORTER: false
+CONFIG_REPORTER: false
+
+REPOSITORY_SEMGREP_RULESETS:
+  - p/default
+  - p/owasp-top-ten
+  - p/python
+
+LUA_STYLUA_CONFIG_FILE: .stylua.toml
+SPELL_LYCHEE_CONFIG_FILE: .lychee.toml
+
+EDITORCONFIG_EDITORCONFIG_CHECKER_FILTER_REGEX_EXCLUDE: '(\.chezmoiroot|\.chezmoiversion|\.chezmoitemplates/|home/dot_claude/)'
+
+FILTER_REGEX_EXCLUDE: '(\.git/|node_modules/|\.pytest_cache/|\.ruff_cache/|\.tmpl$|home/dot_config/nvim/lazy-lock\.json)'
