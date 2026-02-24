@@ -4,7 +4,7 @@ inputs:
   version:
     description: selene version
     # renovate: datasource=github-releases depName=Kampfkarren/selene
-    default: '33a77154d008506b3443be363d4d8c265e01b104' # 0.30.0
+    default: "33a77154d008506b3443be363d4d8c265e01b104" # 0.30.0
 runs:
   using: composite
   steps:

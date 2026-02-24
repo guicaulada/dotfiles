@@ -16,6 +16,7 @@ You receive a PR number or URL (and optionally a repository in owner/repo format
 ## Step 1: Parse Input
 
 Extract PR number and repository from the input:
+
 - **URL** (`https://github.com/owner/repo/pull/123`): extract `owner/repo` and `123`
 - **Number** (`123`): use provided REPO or current repository
 
@@ -35,9 +36,11 @@ gh pr checks PR_NUMBER [-R REPO] 2>/dev/null || echo "No checks configured"
 If PR not found, return the error output format immediately.
 
 Check if the repository is archived:
+
 ```bash
 gh repo view REPO --json isArchived -q .isArchived
 ```
+
 If archived, return the error output format with message "Repository is archived — PRs cannot be merged."
 
 ## Step 3: Extract Dependency Changes
@@ -47,6 +50,7 @@ From the title, body, and diff, identify:
 **Package manager** — npm/yarn/pnpm (package.json, lock files), pip/poetry (requirements.txt, pyproject.toml), go (go.mod), cargo (Cargo.toml), maven/gradle (pom.xml, build.gradle), bundler (Gemfile), composer (composer.json), or other manifest/lock files.
 
 **For each dependency updated**, extract:
+
 - Package name, previous version, new version
 - Bump type: **major** (breaking changes expected, HIGH attention), **minor** (backward-compatible features, MEDIUM attention), **patch** (bug fixes, LOW attention)
 
@@ -65,6 +69,7 @@ For each dependency:
 Clone the repository to a unique temp directory for codebase analysis. This avoids affecting the user's working directory and prevents conflicts when multiple agents run in parallel.
 
 **5a. Create temp directory and clone:**
+
 ```bash
 WORK_DIR=$(mktemp -d /tmp/deps-review-XXXXXX)
 gh repo clone REPO "$WORK_DIR" -- --depth=1 --single-branch
@@ -72,27 +77,29 @@ gh repo clone REPO "$WORK_DIR" -- --depth=1 --single-branch
 
 **5b. Analyze usage in the codebase:**
 Search `$WORK_DIR` for imports/requires of the dependency to evaluate:
+
 - Does the project use APIs that changed in the new version?
 - Are there peer dependency conflicts?
 - Does the lock file update cleanly (no unrelated changes)?
 
 **5c. Clean up temp directory:**
+
 ```bash
 rm -rf "$WORK_DIR"
 ```
 
 ## Step 6: Determine Verdict
 
-| Condition | Verdict |
-|-----------|---------|
-| Patch/minor, no security issues, CI passing | **approve** |
-| Security fix (any bump type) | **approve** (flag as urgent) |
-| Major bump with migration guide followed | **comment** |
-| Major bump, unclear if breaking changes apply | **comment** |
-| Known vulnerability in new version | **request_changes** |
-| Breaking changes affecting project code | **request_changes** |
-| CI failing | **request_changes** |
-| Suspicious unrelated lock file changes | **request_changes** |
+| Condition                                     | Verdict                      |
+| --------------------------------------------- | ---------------------------- |
+| Patch/minor, no security issues, CI passing   | **approve**                  |
+| Security fix (any bump type)                  | **approve** (flag as urgent) |
+| Major bump with migration guide followed      | **comment**                  |
+| Major bump, unclear if breaking changes apply | **comment**                  |
+| Known vulnerability in new version            | **request_changes**          |
+| Breaking changes affecting project code       | **request_changes**          |
+| CI failing                                    | **request_changes**          |
+| Suspicious unrelated lock file changes        | **request_changes**          |
 
 ## Step 7: Return Report
 
@@ -157,6 +164,7 @@ If PR not found or error:
 ### Error
 {error message}
 ```
+
 </output>
 
 <rules>

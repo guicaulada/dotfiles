@@ -20,17 +20,17 @@ Apply these when authoring or reviewing skills:
 
 ## Frontmatter Reference
 
-| Field | Constraints | Notes |
-|-------|------------|-------|
-| `name` | Kebab-case, max 64 chars, no `anthropic`/`claude` | Becomes the `/name` command. Consider gerund form (e.g., `reviewing-code`) |
-| `description` | Max 1024 chars, third person, non-empty | Include what it does + when to use it with trigger terms |
-| `allowed-tools` | Comma-separated | Scope Bash: `Bash(git *)` not `Bash` |
-| `disable-model-invocation` | Boolean | `true` for side effects on shared state (git push, API calls, deployments) |
-| `user-invocable` | Boolean | `false` only for pure background knowledge |
-| `argument-hint` | String | Autocomplete hint shown in UI: `[issue-number]` |
-| `context` | `fork` | Run in an isolated subagent |
-| `agent` | String | Subagent type when `context: fork`: `Explore`, `Plan`, `general-purpose` |
-| `model` | `opus`, `sonnet`, `haiku` | Model override |
+| Field                      | Constraints                                       | Notes                                                                      |
+| -------------------------- | ------------------------------------------------- | -------------------------------------------------------------------------- |
+| `name`                     | Kebab-case, max 64 chars, no `anthropic`/`claude` | Becomes the `/name` command. Consider gerund form (e.g., `reviewing-code`) |
+| `description`              | Max 1024 chars, third person, non-empty           | Include what it does + when to use it with trigger terms                   |
+| `allowed-tools`            | Comma-separated                                   | Scope Bash: `Bash(git *)` not `Bash`                                       |
+| `disable-model-invocation` | Boolean                                           | `true` for side effects on shared state (git push, API calls, deployments) |
+| `user-invocable`           | Boolean                                           | `false` only for pure background knowledge                                 |
+| `argument-hint`            | String                                            | Autocomplete hint shown in UI: `[issue-number]`                            |
+| `context`                  | `fork`                                            | Run in an isolated subagent                                                |
+| `agent`                    | String                                            | Subagent type when `context: fork`: `Explore`, `Plan`, `general-purpose`   |
+| `model`                    | `opus`, `sonnet`, `haiku`                         | Model override                                                             |
 
 ## File Organization
 

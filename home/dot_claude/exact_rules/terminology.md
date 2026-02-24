@@ -4,15 +4,15 @@ Language shapes understanding. Using inclusive, precise terminology makes code a
 
 ## Preferred Terms
 
-| Use | Instead of |
-|-----|-----------|
-| allowlist | whitelist |
-| blocklist | blacklist |
-| primary / replica | master / slave |
-| main (branch) | master (branch) |
-| placeholder / example | dummy |
+| Use                   | Instead of                                   |
+| --------------------- | -------------------------------------------- |
+| allowlist             | whitelist                                    |
+| blocklist             | blacklist                                    |
+| primary / replica     | master / slave                               |
+| main (branch)         | master (branch)                              |
+| placeholder / example | dummy                                        |
 | concurrent / parallel | N/A (use the precise term for the situation) |
-| conflict-free | clean (when describing merge state) |
+| conflict-free         | clean (when describing merge state)          |
 
 ## Guidelines
 

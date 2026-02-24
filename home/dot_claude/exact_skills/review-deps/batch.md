@@ -65,6 +65,7 @@ done | jq -s '.'
 **If arguments provided:**
 
 Parse arguments to extract PR list (no bot filtering when PRs are explicitly provided):
+
 1. Split on spaces and commas
 2. For each item:
    - Full URL: extract repo and PR number
@@ -76,6 +77,7 @@ Build a list of `{repo, pr_number, title}` tuples.
 ## Step 3: Show Review Plan
 
 **From notifications:**
+
 ```
 Found {N} dependency PRs awaiting your review:
 
@@ -88,6 +90,7 @@ Spawning {N} parallel dependency review agents...
 ```
 
 **From arguments:**
+
 ```
 Reviewing {N} dependency PRs:
 - {repo}#{pr1}
@@ -102,6 +105,7 @@ Spawning {N} parallel dependency review agents...
 For each PR, spawn a deps-reviewer agent using the Task tool. Use a single message with multiple Task calls to run all reviews concurrently.
 
 Prompt template per agent:
+
 ```
 Review dependency bump PR #{pr_number} in repository {repo}
 
@@ -112,6 +116,7 @@ Analyze this dependency update for compatibility and security issues and return 
 ```
 
 Example:
+
 ```
 Task(prompt="Review dependency bump PR #123 in repository owner/repo...", subagent_type="deps-reviewer", model="sonnet")
 Task(prompt="Review dependency bump PR #456 in repository owner/repo...", subagent_type="deps-reviewer", model="sonnet")
@@ -122,6 +127,7 @@ All agents run concurrently. Task tool blocks until all complete.
 ## Step 5: Collect Results
 
 Gather all reports from deps-reviewer agents. Parse each to extract:
+
 - PR number and repo
 - Packages updated (name, from, to, bump type)
 - Verdict (approve/comment/request_changes)
@@ -136,6 +142,7 @@ Create the summary report using the output format below.
 ## Step 7: Offer Next Steps
 
 Ask user what they want to do:
+
 - View full report for a specific dependency PR
 - Batch approve all low-risk PRs on GitHub
 - Post reviews to GitHub
@@ -196,6 +203,7 @@ Include the full report for each PR, separated by horizontal rules.
 ```
 
 If no dependency PRs found in notifications:
+
 ```
 No dependency bump PRs found awaiting your review.
 
@@ -230,11 +238,11 @@ To review specific dependency PRs, provide them as arguments:
 
 Found 3 dependency PRs awaiting your review:
 
-| # | Repository | PR | Title | Bot |
-|---|------------|-----|-------|-----|
-| 1 | acme/api | #201 | Bump express from 4.18.2 to 4.21.0 | dependabot[bot] |
-| 2 | acme/api | #203 | Bump lodash from 4.17.20 to 4.17.21 | dependabot[bot] |
-| 3 | acme/web | #89 | Bump axios from 1.6.2 to 1.7.4 | dependabot[bot] |
+| #   | Repository | PR   | Title                               | Bot             |
+| --- | ---------- | ---- | ----------------------------------- | --------------- |
+| 1   | acme/api   | #201 | Bump express from 4.18.2 to 4.21.0  | dependabot[bot] |
+| 2   | acme/api   | #203 | Bump lodash from 4.17.20 to 4.17.21 | dependabot[bot] |
+| 3   | acme/web   | #89  | Bump axios from 1.6.2 to 1.7.4      | dependabot[bot] |
 
 Spawning 3 parallel dependency review agents...
 
@@ -248,11 +256,11 @@ Spawning 3 parallel dependency review agents...
 
 ### Overview
 
-| PR | Repository | Package | From | To | Bump | Verdict | Risk |
-|----|------------|---------|------|----|------|---------|------|
-| [#201](https://github.com/acme/api/pull/201) | acme/api | express | 4.18.2 | 4.21.0 | minor | Comment | medium |
-| [#203](https://github.com/acme/api/pull/203) | acme/api | lodash | 4.17.20 | 4.17.21 | patch | Approve | low |
-| [#89](https://github.com/acme/web/pull/89) | acme/web | axios | 1.6.2 | 1.7.4 | minor | Approve | low |
+| PR                                           | Repository | Package | From    | To      | Bump  | Verdict | Risk   |
+| -------------------------------------------- | ---------- | ------- | ------- | ------- | ----- | ------- | ------ |
+| [#201](https://github.com/acme/api/pull/201) | acme/api   | express | 4.18.2  | 4.21.0  | minor | Comment | medium |
+| [#203](https://github.com/acme/api/pull/203) | acme/api   | lodash  | 4.17.20 | 4.17.21 | patch | Approve | low    |
+| [#89](https://github.com/acme/web/pull/89)   | acme/web   | axios   | 1.6.2   | 1.7.4   | minor | Approve | low    |
 
 ### Summary by Verdict
 
@@ -263,24 +271,26 @@ Spawning 3 parallel dependency review agents...
 ### Security Alerts
 
 **[#89](https://github.com/acme/web/pull/89) - axios 1.6.2 -> 1.7.4**
+
 - CVE-2024-39338: SSRF vulnerability fixed in 1.7.4
 
 ### Compatibility Concerns
 
 **[#201](https://github.com/acme/api/pull/201) - express 4.18.2 -> 4.21.0**
+
 - Minor version jump spans 3 releases; review changelog for deprecation notices
 
 ### Quick Approvals
 
-| PR | Package | Reason |
-|----|---------|--------|
-| [#203](https://github.com/acme/api/pull/203) | lodash | Patch bump, CI passing, no advisories |
-| [#89](https://github.com/acme/web/pull/89) | axios | Security fix, minor bump, CI passing |
+| PR                                           | Package | Reason                                |
+| -------------------------------------------- | ------- | ------------------------------------- |
+| [#203](https://github.com/acme/api/pull/203) | lodash  | Patch bump, CI passing, no advisories |
+| [#89](https://github.com/acme/web/pull/89)   | axios   | Security fix, minor bump, CI passing  |
 
 ### Needs Attention
 
-| PR | Package | Concern |
-|----|---------|---------|
+| PR                                           | Package | Concern                                                   |
+| -------------------------------------------- | ------- | --------------------------------------------------------- |
 | [#201](https://github.com/acme/api/pull/201) | express | Minor bump spanning 3 releases, verify deprecation impact |
 
 </example>

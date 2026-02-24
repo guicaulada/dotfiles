@@ -11,19 +11,19 @@ Review automated dependency bump pull requests with focus on compatibility and s
 
 ## Risk Levels
 
-| Level | Description |
-|-------|-------------|
-| `critical` | Known security vulnerability, must act immediately |
-| `high` | Major version bump with breaking changes, or CI failing |
-| `medium` | Major bump without obvious issues, or package health concerns |
-| `low` | Patch/minor bump, CI passing, no advisories |
+| Level      | Description                                                   |
+| ---------- | ------------------------------------------------------------- |
+| `critical` | Known security vulnerability, must act immediately            |
+| `high`     | Major version bump with breaking changes, or CI failing       |
+| `medium`   | Major bump without obvious issues, or package health concerns |
+| `low`      | Patch/minor bump, CI passing, no advisories                   |
 
 ## Review Verdicts
 
-| Verdict | When to Use |
-|---------|-------------|
-| **Approve** | Patch/minor bump with no issues, or security fix |
-| **Comment** | Major bump needing further review, unclear impact |
+| Verdict             | When to Use                                          |
+| ------------------- | ---------------------------------------------------- |
+| **Approve**         | Patch/minor bump with no issues, or security fix     |
+| **Comment**         | Major bump needing further review, unclear impact    |
 | **Request changes** | Known vulnerabilities, breaking changes, CI failures |
 
 ## Workflows

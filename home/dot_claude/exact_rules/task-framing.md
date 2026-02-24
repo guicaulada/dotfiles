@@ -7,18 +7,23 @@ Clear task framing reduces ambiguity, prevents wasted effort, and ensures the im
 Clarify these dimensions before starting implementation:
 
 ### Goal
+
 What should be accomplished? Define the desired outcome in concrete terms.
 
 ### Constraints
+
 What boundaries apply? Technology stack, libraries, patterns, performance requirements, or other non-negotiables.
 
 ### Context
+
 What existing code, APIs, data shapes, or systems are relevant? Identify the files and modules that will be affected.
 
 ### Acceptance Criteria
+
 How will success be verified? Define observable, testable conditions that confirm the task is complete.
 
 ### Non-Goals
+
 What is explicitly out of scope? Stating what to avoid prevents scope creep and over-engineering.
 
 ## When to Use

@@ -4,7 +4,7 @@ inputs:
   version:
     description: actionlint version
     # renovate: datasource=github-releases depName=rhysd/actionlint
-    default: '393031adb9afb225ee52ae2ccd7a5af5525e03e8' # v1.7.11
+    default: "393031adb9afb225ee52ae2ccd7a5af5525e03e8" # v1.7.11
 runs:
   using: composite
   steps:
