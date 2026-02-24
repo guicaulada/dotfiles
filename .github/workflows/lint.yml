@@ -12,6 +12,7 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     permissions:
+      actions: read
       contents: read
       pull-requests: read
       security-events: write
