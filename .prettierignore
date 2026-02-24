@@ -1,0 +1,11 @@
+# Handled by other formatters
+*.py
+*.lua
+*.sh
+*.toml
+
+# Chezmoi templates (Go template syntax breaks Prettier)
+*.tmpl
+
+# Generated files
+home/dot_config/nvim/lazy-lock.json
