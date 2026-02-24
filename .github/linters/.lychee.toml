@@ -1,0 +1,5 @@
+exclude = [
+  "github\\.com/acme/",
+  "^op://",
+  "\\{\\{\\{",
+]
