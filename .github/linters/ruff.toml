@@ -16,11 +16,17 @@ select = [
   "TID",  # flake8-tidy-imports
   "TC",   # flake8-type-checking
   "PTH",  # flake8-use-pathlib
+  "S",    # flake8-bandit (security)
 ]
 
 [lint.per-file-ignores]
 "test_*.py" = [
   "E501",  # line too long (test descriptions)
+  "S101",  # assert used (standard in tests)
+  "S108",  # hardcoded /tmp paths (test fixtures)
+  "S404",  # import subprocess (test helpers)
+  "S603",  # subprocess call without shell=True (test code)
+  "S607",  # partial executable path (test code)
 ]
 
 [format]
