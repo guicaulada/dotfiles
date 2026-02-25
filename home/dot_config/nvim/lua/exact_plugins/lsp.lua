@@ -64,7 +64,7 @@ return {
 
       local servers = {
         -- TypeScript/JavaScript
-        ts_ls = {},
+        vtsls = {},
         biome = {},
         -- Rust: handled by rustaceanvim (rust.lua)
         -- Python
@@ -95,12 +95,15 @@ return {
         nixd = {},
         -- Shell
         bashls = {},
+        -- Copilot (LSP-based, used by sidekick.nvim for NES)
+        copilot = {},
       }
 
       local ensure_installed = {
         -- LSP servers (Mason package names)
         'lua-language-server',
-        'typescript-language-server',
+        'vtsls',
+        'copilot-language-server',
         'biome',
         'pyright',
         'gopls',
