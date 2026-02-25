@@ -29,6 +29,7 @@
 
 [rerere]
 	enabled = true
+	autoupdate = true
 
 [diff]
 	algorithm = histogram
@@ -36,9 +37,19 @@
 [merge]
 	conflictstyle = zdiff3
 
+[column]
+	ui = auto
+
+[branch]
+	sort = -committerdate
+
 [core]
 	autocrlf = input
 	pager = delta
+	fsmonitor = true
+
+[maintenance]
+	auto = true
 
 [interactive]
 	diffFilter = delta --color-only
