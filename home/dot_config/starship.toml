@@ -17,12 +17,12 @@ error_symbol = '[❯](bold red)'
 truncation_length = 3
 truncate_to_repo = true
 read_only = " 󰌾"
-style = "fg:#e5c07b"
+style = "bold fg:#e5c07b"
 
 [git_branch]
 symbol = " "
 format = '[$symbol$branch(:$remote_branch)]($style) '
-style = "fg:#61afef"
+style = "bold fg:#61afef"
 
 [git_commit]
 tag_symbol = '  '
