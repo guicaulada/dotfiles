@@ -20,6 +20,9 @@ ohmyzsh/ohmyzsh path:plugins/extract
 # Smart empty-Enter (runs git status in repos, eza otherwise)
 ohmyzsh/ohmyzsh path:plugins/magic-enter
 
+# Eval caching (faster startup by caching tool init output)
+mroth/evalcache
+
 # Deferred plugins (load after prompt for faster startup)
 hlissner/zsh-autopair kind:defer
 wfxr/forgit kind:defer

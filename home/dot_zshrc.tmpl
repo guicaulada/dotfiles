@@ -3,16 +3,16 @@ source "$HOMEBREW_PREFIX/opt/antidote/share/antidote/antidote.zsh"
 antidote load
 
 # zoxide (smarter cd)
-eval "$(zoxide init zsh)"
-
-# mise (runtime version manager — before Starship so PATH is correct)
-eval "$(mise activate zsh)"
+_evalcache zoxide init zsh
 
 # direnv (per-directory environments — before Starship so env is correct)
-eval "$(direnv hook zsh)"
+_evalcache direnv hook zsh
 
-# Starship (prompt — after mise/direnv so first render sees correct environment)
+# Starship (prompt — must init before mise so precmd hooks don't conflict)
 eval "$(starship init zsh)"
+
+# mise (runtime version manager — after Starship so _mise_hook isn't overwritten)
+eval "$(mise activate zsh)"
 
 # thefuck (lazy-loaded for faster startup)
 fuck() {
@@ -20,6 +20,11 @@ fuck() {
   eval "$(thefuck --alias)"
   fuck "$@"
 }
+
+# Autosuggestions tuning
+ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
+ZSH_AUTOSUGGEST_MANUAL_REBIND=1
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 
 # History
 HISTFILE=~/.zsh_history
