@@ -1,40 +1,76 @@
 return {
   {
-    'coder/claudecode.nvim',
-    opts = {},
-    keys = {
-      { '<leader>a', '', desc = '+AI', mode = { 'n', 'v' } },
-      { '<leader>ac', '<cmd>ClaudeCode<cr>', desc = 'Toggle Claude' },
-      { '<leader>af', '<cmd>ClaudeCodeFocus<cr>', desc = 'Focus Claude' },
-      { '<leader>ar', '<cmd>ClaudeCode --resume<cr>', desc = 'Resume Claude' },
-      { '<leader>aR', '<cmd>ClaudeCode --continue<cr>', desc = 'Continue Claude' },
-      { '<leader>ab', '<cmd>ClaudeCodeAdd %<cr>', desc = 'Add current buffer' },
-      { '<leader>as', '<cmd>ClaudeCodeSend<cr>', mode = 'v', desc = 'Send to Claude' },
-      { '<leader>as', '<cmd>ClaudeCodeTreeAdd<cr>', desc = 'Add file', ft = { 'NvimTree', 'neo-tree', 'oil' } },
-      { '<leader>aA', '<cmd>ClaudeCodeDiffAccept<cr>', desc = 'Accept diff' },
-      { '<leader>ad', '<cmd>ClaudeCodeDiffDeny<cr>', desc = 'Deny diff' },
-    },
-  },
-
-  -- Copilot for inline suggestions
-  {
-    'zbirenbaum/copilot.lua',
-    cmd = 'Copilot',
-    event = 'InsertEnter',
+    'folke/sidekick.nvim',
     opts = {
-      suggestion = {
-        enabled = true,
-        auto_trigger = true,
-        keymap = {
-          accept = '<C-y>',
-          accept_word = false,
-          accept_line = false,
-          next = '<M-]>',
-          prev = '<M-[>',
-          dismiss = '<C-\\>',
+      cli = {
+        mux = {
+          enabled = true,
+          backend = 'tmux',
         },
       },
-      panel = { enabled = false },
+    },
+    keys = {
+      {
+        '<c-.>',
+        function()
+          require('sidekick.cli').toggle()
+        end,
+        mode = { 'n', 't', 'i', 'x' },
+        desc = 'Sidekick Toggle',
+      },
+      { '<leader>a', '', desc = '+AI', mode = { 'n', 'v' } },
+      {
+        '<leader>aa',
+        function()
+          require('sidekick.cli').toggle()
+        end,
+        desc = 'Toggle CLI',
+      },
+      {
+        '<leader>as',
+        function()
+          require('sidekick.cli').select()
+        end,
+        desc = 'Select CLI',
+      },
+      {
+        '<leader>ad',
+        function()
+          require('sidekick.cli').close()
+        end,
+        desc = 'Detach CLI session',
+      },
+      {
+        '<leader>at',
+        function()
+          require('sidekick.cli').send({ msg = '{this}' })
+        end,
+        mode = { 'x', 'n' },
+        desc = 'Send this',
+      },
+      {
+        '<leader>af',
+        function()
+          require('sidekick.cli').send({ msg = '{file}' })
+        end,
+        desc = 'Send file',
+      },
+      {
+        '<leader>av',
+        function()
+          require('sidekick.cli').send({ msg = '{selection}' })
+        end,
+        mode = { 'x' },
+        desc = 'Send selection',
+      },
+      {
+        '<leader>ap',
+        function()
+          require('sidekick.cli').prompt()
+        end,
+        mode = { 'n', 'x' },
+        desc = 'Select prompt',
+      },
     },
   },
 }
