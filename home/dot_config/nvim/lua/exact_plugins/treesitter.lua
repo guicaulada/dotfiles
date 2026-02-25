@@ -1,6 +1,7 @@
 return {
   {
     'nvim-treesitter/nvim-treesitter',
+    build = ':TSUpdate',
     dependencies = {
       'nvim-treesitter/nvim-treesitter-textobjects',
     },
@@ -150,5 +151,10 @@ return {
         ts_swap.swap_previous('@function.outer')
       end, { desc = 'Move prev function' })
     end,
+  },
+  {
+    'nvim-treesitter/nvim-treesitter-context',
+    event = 'BufReadPre',
+    opts = { max_lines = 3 },
   },
 }

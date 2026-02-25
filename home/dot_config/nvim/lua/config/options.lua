@@ -1,6 +1,9 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 vim.g.have_nerd_font = true
+vim.g.loaded_perl_provider = 0
+vim.g.loaded_ruby_provider = 0
+vim.g.loaded_node_provider = 0
 
 local opt = vim.opt
 
@@ -28,6 +31,7 @@ opt.sidescrolloff = 10
 opt.confirm = true
 opt.termguicolors = true
 opt.wrap = false
+opt.exrc = true
 
 -- Folds (treesitter-based)
 opt.foldmethod = 'expr'

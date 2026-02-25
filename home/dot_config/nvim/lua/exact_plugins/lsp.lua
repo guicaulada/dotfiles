@@ -16,10 +16,7 @@ return {
             vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
           end
 
-          -- gr* mappings (vim muscle memory)
-          map('grn', vim.lsp.buf.rename, 'Rename')
-          map('gra', vim.lsp.buf.code_action, 'Code action', { 'n', 'x' })
-          map('grD', vim.lsp.buf.declaration, 'Goto declaration')
+          -- grn, gra, grD are Neovim 0.11+ built-in defaults
 
           -- Code group aliases
           map('<leader>ca', vim.lsp.buf.code_action, 'Code action', { 'n', 'x' })
@@ -61,7 +58,9 @@ return {
         end,
       })
 
-      local capabilities = require('blink.cmp').get_lsp_capabilities()
+      vim.lsp.config('*', {
+        capabilities = require('blink.cmp').get_lsp_capabilities(),
+      })
 
       local servers = {
         -- TypeScript/JavaScript
@@ -130,7 +129,6 @@ return {
       require('mason-tool-installer').setup({ ensure_installed = ensure_installed })
 
       for name, server in pairs(servers) do
-        server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
         vim.lsp.config(name, server)
         vim.lsp.enable(name)
       end
