@@ -162,6 +162,25 @@ return {
     end,
   },
 
+  -- Undo tree visualization
+  {
+    'jiaoshijie/undotree',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    keys = {
+      {
+        '<leader>uu',
+        function()
+          require('undotree').toggle()
+        end,
+        desc = 'Toggle undo tree',
+      },
+    },
+    opts = {
+      position = 'right',
+      window = { winblend = 0 },
+    },
+  },
+
   -- Edit files as sudo
   {
     'lambdalisue/vim-suda',
