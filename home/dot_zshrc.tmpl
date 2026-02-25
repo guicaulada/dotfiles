@@ -5,14 +5,14 @@ antidote load
 # zoxide (smarter cd)
 eval "$(zoxide init zsh)"
 
-# Starship (prompt)
-eval "$(starship init zsh)"
-
-# mise (runtime version manager)
+# mise (runtime version manager — before Starship so PATH is correct)
 eval "$(mise activate zsh)"
 
-# direnv (per-directory environments)
+# direnv (per-directory environments — before Starship so env is correct)
 eval "$(direnv hook zsh)"
+
+# Starship (prompt — after mise/direnv so first render sees correct environment)
+eval "$(starship init zsh)"
 
 # thefuck (lazy-loaded for faster startup)
 fuck() {
@@ -40,10 +40,9 @@ setopt EXTENDED_GLOB
 # Prevents EDITOR={{ .editor }} from enabling vi mode
 bindkey -e
 
-# Prevent Starship's zle-keymap-select wrapper from recursing
-# In emacs mode we never switch keymaps, so the vi-mode tracking is unnecessary
-function zle-keymap-select { zle reset-prompt }
-zle -N zle-keymap-select
+# magic-enter (smart empty Enter)
+MAGIC_ENTER_GIT_COMMAND='git status'
+MAGIC_ENTER_OTHER_COMMAND='eza --icons'
 
 # Aliases
 alias vim=nvim
@@ -52,19 +51,21 @@ alias ls='eza --icons'
 alias ll='eza -la --icons --git'
 alias lt='eza --tree --icons --level=2'
 
-# Ghostty tab title
+# Ghostty tab title (skip inside tmux — tmux owns titles via set-titles)
 # Patches Ghostty's internal precmd/preexec hooks (_ghostty_precmd, _ghostty_preexec)
 # to append directory-based title updates. Coupled to Ghostty's hook naming convention;
 # if Ghostty changes these function names in a future version, this will silently break.
-_ghostty_title_hook() {
-  if (( $+functions[_ghostty_precmd] )); then
-    functions[_ghostty_precmd]+='
-      builtin print -Pn "\e]0;%1~\a"'
-    functions[_ghostty_preexec]+='
-      builtin print -Pn "\e]0;%1~\a"'
-    print -Pn "\e]0;%1~\a"
-    add-zsh-hook -d precmd _ghostty_title_hook
-  fi
-}
-autoload -Uz add-zsh-hook
-add-zsh-hook precmd _ghostty_title_hook
+if [[ -z "$TMUX" ]]; then
+  _ghostty_title_hook() {
+    if (( $+functions[_ghostty_precmd] )); then
+      functions[_ghostty_precmd]+='
+        builtin print -Pn "\e]0;%1~\a"'
+      functions[_ghostty_preexec]+='
+        builtin print -Pn "\e]0;%1~\a"'
+      print -Pn "\e]0;%1~\a"
+      add-zsh-hook -d precmd _ghostty_title_hook
+    fi
+  }
+  autoload -Uz add-zsh-hook
+  add-zsh-hook precmd _ghostty_title_hook
+fi
