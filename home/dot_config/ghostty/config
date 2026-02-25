@@ -2,8 +2,8 @@
 theme = light:catppuccin-latte,dark:One Double Dark
 background = 000000
 
-# Font — Hack Nerd Font
-font-family = Hack Nerd Font
+# Font
+font-family = Hack
 font-size = 14
 font-thicken = true
 adjust-cell-height = 1
