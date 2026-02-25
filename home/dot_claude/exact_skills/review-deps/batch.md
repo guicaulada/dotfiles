@@ -218,6 +218,7 @@ To review specific dependency PRs, provide them as arguments:
 </output>
 
 <rules>
+
 - Only review bot-authored dependency PRs — filter to known bot authors (Dependabot, Renovate, Depfu, Snyk, Greenkeeper)
 - Spawn all deps-reviewer agents in parallel using a single message with multiple Task calls
 - Use `--paginate` when fetching from GitHub API to get all results
@@ -226,6 +227,7 @@ To review specific dependency PRs, provide them as arguments:
 - Present the aggregated report before offering next steps
 - Use AskUserQuestion to let user choose next action after presenting results
 - Before batch approving, show the full list of PRs that would be approved and require explicit user consent
+
 </rules>
 
 <examples>

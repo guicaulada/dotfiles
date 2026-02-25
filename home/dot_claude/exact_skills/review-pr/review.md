@@ -270,6 +270,7 @@ Status: [STATE] | CI: [CHECKS_STATUS]
 </output>
 
 <rules>
+
 - Run gh commands in parallel where possible to minimize latency
 - Reference specific file:line for every finding
 - Be constructive — acknowledge good patterns alongside areas for improvement
@@ -281,6 +282,7 @@ Status: [STATE] | CI: [CHECKS_STATUS]
 - Never post a review to GitHub without explicit user confirmation
 - Always clone to a unique `/tmp/pr-review-XXXXXX` directory for codebase analysis
 - Clean up temp directories after analysis completes
+
 </rules>
 
 <examples>

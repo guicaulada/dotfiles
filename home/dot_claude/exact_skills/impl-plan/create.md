@@ -277,6 +277,7 @@ Present a summary after generating the implementation plan:
 </output>
 
 <rules>
+
 - Always ask ONE question at a time during requirements clarification
 - Never proceed to the next phase without explicit user confirmation
 - Every task must have acceptance criteria with testable conditions
@@ -294,6 +295,7 @@ Present a summary after generating the implementation plan:
 - When research hits a dead end, document what is missing and continue with available information
 - When the plan grows too complex, suggest grouping tasks into phases or milestones and prioritizing core functionality
 - When task dependencies are unclear, ask the user about preferred implementation sequence and minimize artificial serialization
+
 </rules>
 
 <examples>

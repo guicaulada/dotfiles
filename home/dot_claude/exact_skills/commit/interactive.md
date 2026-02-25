@@ -140,12 +140,14 @@ Run `git log -1` to show the result.
 </output>
 
 <rules>
+
 - Use AskUserQuestion at every decision point
 - Suggest commit types and scopes based on the actual diff
 - Validate subject line length (max 50 characters)
 - Always preview the full message before committing
 - Use HEREDOC for the final commit command
 - Provide helpful context at each step for users learning the format
+
 </rules>
 
 <examples>

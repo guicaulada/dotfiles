@@ -201,6 +201,7 @@ If revisions are requested, apply changes and re-validate before presenting agai
 </output>
 
 <rules>
+
 - Confirm metadata and file structure with the user before generating content
 - Write descriptions in third person ("Generates..." not "Generate..." or "I generate...")
 - Scope allowed-tools to the minimum required; use `Bash(pattern *)` over bare `Bash`
@@ -217,6 +218,7 @@ If revisions are requested, apply changes and re-validate before presenting agai
 - Name workflow files after their action verb
 - Use consistent terminology throughout (one term per concept)
 - Validate against the full quality checklist before presenting to the user
+
 </rules>
 
 <examples>

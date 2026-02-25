@@ -234,6 +234,7 @@ Present a summary after generating the design document:
 </output>
 
 <rules>
+
 - Always ask ONE question at a time during requirements clarification
 - Never proceed to the next phase without explicit user confirmation
 - Always include "Do nothing" as Proposal 0
@@ -247,6 +248,7 @@ Present a summary after generating the design document:
 - When requirements clarification stalls, suggest moving to a different aspect or conducting research to unblock
 - When research hits a dead end, document what is missing and continue with available information
 - When the design grows too complex, suggest breaking it into smaller components and prioritizing core functionality
+
 </rules>
 
 <examples>

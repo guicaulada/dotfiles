@@ -210,6 +210,7 @@ To review specific PRs, provide them as arguments:
 </output>
 
 <rules>
+
 - Only review human-created PRs — exclude bot authors (Dependabot, Renovate, etc.)
 - Spawn all pr-reviewer agents in parallel using a single message with multiple Task calls
 - Use `--paginate` when fetching from GitHub API to get all results
@@ -217,6 +218,7 @@ To review specific PRs, provide them as arguments:
 - Never fail the entire batch because one PR errored
 - Present the aggregated report before offering next steps
 - Use AskUserQuestion to let user choose next action after presenting results
+
 </rules>
 
 <examples>

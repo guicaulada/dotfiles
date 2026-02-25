@@ -246,6 +246,7 @@ The issue has been opened in your browser for final review.
 </output>
 
 <rules>
+
 - Interview the user before creating — gather enough detail for an actionable issue
 - Skip questions the user already answered in their initial description
 - Limit interview to 2 rounds of AskUserQuestion maximum
@@ -257,6 +258,7 @@ The issue has been opened in your browser for final review.
 - Default to the current repository; use a different one only when the user specifies it
 - Open the created issue in the browser for final review
 - Confirm with user via AskUserQuestion before creating the issue
+
 </rules>
 
 <examples>

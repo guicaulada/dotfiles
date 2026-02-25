@@ -186,6 +186,7 @@ After applying all fixes, re-validate from Step 2 to confirm no regressions. If 
 </output>
 
 <rules>
+
 - Read every file in the skill directory before forming any assessment
 - Reference specific files and content for every finding
 - Provide a concrete fix for every blocking and suggestion finding
@@ -195,6 +196,7 @@ After applying all fixes, re-validate from Step 2 to confirm no regressions. If 
 - Apply fixes only with explicit user confirmation
 - Re-validate after applying fixes; repeat until clean
 - Frame findings constructively as improvements
+
 </rules>
 
 <examples>
