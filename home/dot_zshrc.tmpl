@@ -28,13 +28,18 @@ ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 
 # History
 HISTFILE=~/.zsh_history
-HISTSIZE=50000
-SAVEHIST=50000
+HISTSIZE=1000000
+SAVEHIST=1000000
 setopt HIST_IGNORE_ALL_DUPS
 setopt HIST_FIND_NO_DUPS
 setopt HIST_EXPIRE_DUPS_FIRST
+setopt HIST_IGNORE_SPACE
 setopt SHARE_HISTORY
 setopt HIST_REDUCE_BLANKS
+
+# Completion caching
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path ~/.cache/zsh/completion
 
 # Shell options
 setopt AUTO_CD
