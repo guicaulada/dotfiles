@@ -1,5 +1,5 @@
-# Theme — One Dark (high contrast) on true black background
-theme = One Double Dark
+# Theme — auto-switch with macOS appearance
+theme = light:catppuccin-latte,dark:One Double Dark
 background = 000000
 
 # Font — Hack Nerd Font
@@ -47,11 +47,28 @@ keybind = shift+enter=text:\n
 keybind = cmd+r=prompt_surface_title
 
 # Scrollback
-scrollback-limit = 100000
+scrollback-limit = 10000000
 
 # Safety
 clipboard-paste-protection = true
+clipboard-trim-trailing-spaces = true
+
+# Clipboard (OSC 52 support)
+clipboard-read = allow
+clipboard-write = allow
+
+# Contrast
+minimum-contrast = 1.1
+
+# Quick terminal (drop-down)
+quick-terminal-position = top
+quick-terminal-screen = main
+keybind = global:ctrl+grave_accent=toggle_quick_terminal
+
+# Pass C-j/C-k through to tmux/Neovim
+keybind = ctrl+j=unbind
+keybind = ctrl+k=unbind
 
 # Shell integration
 shell-integration = detect
-shell-integration-features = cursor,sudo,title
+shell-integration-features = sudo,ssh-env,ssh-terminfo
