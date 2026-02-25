@@ -111,11 +111,13 @@ You'll need to force push: git push --force-with-lease
 </output>
 
 <rules>
+
 - Always warn before amending pushed commits
 - Use `--force-with-lease` for safer remote updates
 - Confirm with user before executing the amend
 - Use HEREDOC for commit messages
 - Show before/after comparison of the commit
+
 </rules>
 
 <examples>

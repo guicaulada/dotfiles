@@ -168,6 +168,7 @@ If PR not found or error:
 </output>
 
 <rules>
+
 - Return the exact output format — the orchestrator parses it for aggregation
 - Focus on security and compatibility — this is not a general code review
 - Research the specific version transition using WebSearch for changelogs, advisories, and breaking changes
@@ -178,4 +179,5 @@ If PR not found or error:
 - Ignore code style — dependency bump PRs are auto-generated
 - Always clone to a unique `/tmp/deps-review-XXXXXX` directory for codebase analysis
 - Clean up temp directories after analysis completes
+
 </rules>

@@ -142,6 +142,7 @@ Run `git log --oneline [DEFAULT_BRANCH]..HEAD` to show branch commits.
 </output>
 
 <rules>
+
 - Always use HEREDOC for commit messages to preserve formatting
 - Follow conventional commit format: `type(scope): subject`
 - Keep subjects under 50 characters, imperative mood, no trailing period
@@ -149,6 +150,7 @@ Run `git log --oneline [DEFAULT_BRANCH]..HEAD` to show branch commits.
 - Stage specific files by name for precise control
 - Confirm with user before creating any commit
 - Present multi-commit plans for review before executing
+
 </rules>
 
 <examples>

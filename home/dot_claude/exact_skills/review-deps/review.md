@@ -345,6 +345,7 @@ Security fix for a known SSRF vulnerability. Minor version bump with no breaking
 </examples>
 
 <rules>
+
 - Focus on security and compatibility, not code style — dependency bump PRs are auto-generated
 - Run gh commands in parallel where possible to minimize latency
 - Use WebSearch to research changelogs, CVEs, and breaking changes
@@ -355,4 +356,5 @@ Security fix for a known SSRF vulnerability. Minor version bump with no breaking
 - Never post a review to GitHub without explicit user confirmation
 - Always clone to a unique `/tmp/deps-review-XXXXXX` directory for codebase analysis
 - Clean up temp directories after analysis completes
+
 </rules>

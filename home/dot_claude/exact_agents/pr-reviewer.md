@@ -165,6 +165,7 @@ If PR not found or error:
 </output>
 
 <rules>
+
 - Return the exact output format — the orchestrator parses it for aggregation
 - Include file:line references for all issues found
 - Write "None" for empty sections — never skip a section
@@ -173,4 +174,5 @@ If PR not found or error:
 - Prioritize correctly: blocking = must fix before merge, suggestions = should consider, questions = need clarification
 - Always clone to a unique `/tmp/pr-review-XXXXXX` directory for codebase analysis
 - Clean up temp directories after analysis completes
+
 </rules>

@@ -267,6 +267,7 @@ The PR has been opened in your browser for final review.
 </output>
 
 <rules>
+
 - Always use `gh pr create --web` to open in browser for human review
 - Use HEREDOC for PR body to preserve formatting
 - Follow conventional commit format for titles when appropriate
@@ -276,6 +277,7 @@ The PR has been opened in your browser for final review.
 - Confirm with user via AskUserQuestion before creating PR
 - Verify push is needed before pushing
 - Use `git push -u origin` with the branch name for safe pushes
+
 </rules>
 
 <examples>
