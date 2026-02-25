@@ -1,0 +1,15 @@
+#!/bin/bash
+# tmux config hash: {{ include "dot_config/tmux/tmux.conf" | sha256sum }}
+set -euo pipefail
+
+TPM_DIR="${HOME}/.tmux/plugins/tpm"
+
+if [ ! -d "$TPM_DIR" ]; then
+  echo "==> Installing TPM (Tmux Plugin Manager)..."
+  git clone https://github.com/tmux-plugins/tpm "$TPM_DIR"
+fi
+
+if [ -d "$TPM_DIR" ] && command -v tmux &>/dev/null; then
+  echo "==> Installing/updating tmux plugins..."
+  "$TPM_DIR/bin/install_plugins" || true
+fi
