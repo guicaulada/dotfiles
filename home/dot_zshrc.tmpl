@@ -76,7 +76,7 @@ alias cheatsh='navi --print --cheatsh'
 # if Ghostty changes these function names in a future version, this will silently break.
 if [[ -z "$TMUX" ]]; then
   _ghostty_title_hook() {
-    if (( $+functions[_ghostty_precmd] )); then
+    if [[ -n "${functions[_ghostty_precmd]+1}" ]]; then
       functions[_ghostty_precmd]+='
         builtin print -Pn "\e]0;%1~\a"'
       functions[_ghostty_preexec]+='
