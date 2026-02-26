@@ -138,8 +138,8 @@ return {
       { '<leader>bh', '<cmd>BufferLineCloseLeft<cr>', desc = 'Close buffers to left' },
       { '<leader>bl', '<cmd>BufferLineCloseRight<cr>', desc = 'Close buffers to right' },
       -- Navigation
-      { '<S-h>', '<cmd>BufferLineCyclePrev<cr>', desc = 'Previous buffer' },
-      { '<S-l>', '<cmd>BufferLineCycleNext<cr>', desc = 'Next buffer' },
+      { '<S-Left>', '<cmd>BufferLineCyclePrev<cr>', desc = 'Previous buffer' },
+      { '<S-Right>', '<cmd>BufferLineCycleNext<cr>', desc = 'Next buffer' },
       { '[b', '<cmd>BufferLineCyclePrev<cr>', desc = 'Previous buffer' },
       { ']b', '<cmd>BufferLineCycleNext<cr>', desc = 'Next buffer' },
     },
@@ -507,7 +507,7 @@ return {
       {
         '<leader>E',
         function()
-          Snacks.explorer.open({ win = { style = 'float' } })
+          Snacks.explorer({ layout = { preset = 'default' } })
         end,
         desc = 'File explorer (float)',
       },
