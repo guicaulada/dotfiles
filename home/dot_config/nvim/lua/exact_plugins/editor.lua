@@ -42,12 +42,12 @@ return {
       spec = {
         -- Leader groups
         { '<leader>f', group = 'Find', icon = ' ', mode = { 'n', 'v' } },
-        { '<leader>s', group = 'Stage', icon = ' ', mode = { 'n', 'v' } },
+        { '<leader>h', group = 'Hunk', icon = ' ', mode = { 'n', 'v' } },
         { '<leader>g', group = 'Git', icon = '' },
         { '<leader>t', group = 'Test', icon = ' ' },
         { '<leader>u', group = 'UI', icon = ' ' },
         { '<leader>c', group = 'Code', icon = ' ' },
-        { '<leader>d', group = 'Delete', icon = '󰆴 ' },
+
         { '<leader>o', group = 'Open', icon = ' ' },
         { '<leader>w', group = 'Window', icon = ' ' },
         { '<leader>b', group = 'Buffer', icon = ' ' },
@@ -168,11 +168,11 @@ return {
     dependencies = { 'nvim-lua/plenary.nvim' },
     keys = {
       {
-        '<leader>uu',
+        '<leader>ou',
         function()
           require('undotree').toggle()
         end,
-        desc = 'Toggle undo tree',
+        desc = 'Open undo tree',
       },
     },
     opts = {
