@@ -12,18 +12,6 @@ map('n', '<leader>wc', '<C-w>c', { desc = 'Close window' })
 map('n', '<leader>wo', '<C-w>o', { desc = 'Close other windows' })
 -- <leader>w= handled by windows.nvim (WindowsEqualize)
 
--- Delete operations
-map('n', '<leader>dw', '<C-w>c', { desc = 'Delete window' })
-map('n', '<leader>dW', '<C-w>o', { desc = 'Delete other windows' })
-
--- Diagnostics (panel mappings in trouble.nvim, ]d/[d built-in in 0.11+)
-map('n', '<leader>xn', function()
-  vim.diagnostic.jump({ count = 1 })
-end, { desc = 'Next diagnostic' })
-map('n', '<leader>xp', function()
-  vim.diagnostic.jump({ count = -1 })
-end, { desc = 'Previous diagnostic' })
-
 -- UI/Toggle options
 map('n', '<leader>uw', '<cmd>set wrap!<CR>', { desc = 'Toggle word wrap' })
 -- <leader>un handled by snacks.nvim (dismiss notifications)
@@ -41,9 +29,6 @@ map('v', '<A-k>', ":m '<-2<CR>gv=gv", { desc = 'Move selection up' })
 -- Blank line insertion
 map('n', ']<Space>', 'o<Esc>k', { desc = 'Add blank line below' })
 map('n', '[<Space>', 'O<Esc>j', { desc = 'Add blank line above' })
-
--- Smart join
-map('n', '<leader>j', 'J', { desc = 'Join lines' })
 
 -- Quickfix/location navigation
 map('n', ']q', '<cmd>cnext<CR>zz', { desc = 'Next quickfix' })

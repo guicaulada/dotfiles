@@ -135,9 +135,8 @@ return {
       { '<leader>bp', '<cmd>BufferLinePick<cr>', desc = 'Pick buffer' },
       { '<leader>bc', '<cmd>BufferLinePickClose<cr>', desc = 'Pick buffer to close' },
       { '<leader>bP', '<cmd>BufferLineTogglePin<cr>', desc = 'Toggle pin' },
-      -- Delete operations moved to delete group
-      { '<leader>dl', '<cmd>BufferLineCloseLeft<cr>', desc = 'Delete buffers to left' },
-      { '<leader>dr', '<cmd>BufferLineCloseRight<cr>', desc = 'Delete buffers to right' },
+      { '<leader>bh', '<cmd>BufferLineCloseLeft<cr>', desc = 'Close buffers to left' },
+      { '<leader>bl', '<cmd>BufferLineCloseRight<cr>', desc = 'Close buffers to right' },
       -- Navigation
       { '<S-h>', '<cmd>BufferLineCyclePrev<cr>', desc = 'Previous buffer' },
       { '<S-l>', '<cmd>BufferLineCycleNext<cr>', desc = 'Next buffer' },
@@ -534,16 +533,16 @@ return {
         end,
         desc = 'Toggle dim mode',
       },
-      -- Delete group
+      -- Buffer operations
       {
-        '<leader>db',
+        '<leader>bd',
         function()
           Snacks.bufdelete()
         end,
         desc = 'Delete buffer',
       },
       {
-        '<leader>dB',
+        '<leader>bD',
         function()
           Snacks.bufdelete.other()
         end,
@@ -577,20 +576,6 @@ return {
           Snacks.terminal()
         end,
         desc = 'Open terminal',
-      },
-      {
-        '<leader>oe',
-        function()
-          Snacks.explorer()
-        end,
-        desc = 'Open explorer',
-      },
-      {
-        '<leader>oE',
-        function()
-          Snacks.explorer.open({ win = { style = 'float' } })
-        end,
-        desc = 'Open explorer (float)',
       },
       {
         '<leader>os',
@@ -667,8 +652,6 @@ return {
         end,
         desc = 'Profiler highlight',
       },
-      -- Buffer operations (keep some in buffer group)
-      { '<leader>bp', '<cmd>BufferLinePick<cr>', desc = 'Pick buffer' },
     },
   },
 
