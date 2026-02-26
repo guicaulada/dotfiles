@@ -417,6 +417,20 @@ return {
         end,
         desc = 'Find TODOs',
       },
+      {
+        '<leader>fF',
+        function()
+          Snacks.picker.files({ cwd = vim.fn.expand('%:p:h') })
+        end,
+        desc = 'Find files (current dir)',
+      },
+      {
+        '<leader>fG',
+        function()
+          Snacks.picker.grep({ cwd = vim.fn.expand('%:p:h') })
+        end,
+        desc = 'Find grep (current dir)',
+      },
       -- Git pickers
       {
         '<leader>gc',
