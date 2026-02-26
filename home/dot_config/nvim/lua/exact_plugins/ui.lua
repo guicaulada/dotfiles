@@ -245,10 +245,7 @@ return {
       terminal = { enabled = true },
       toggle = { enabled = true },
       scroll = { enabled = true },
-      statuscolumn = {
-        enabled = true,
-        folds = { open = true },
-      },
+      statuscolumn = { enabled = false },
       image = { enabled = true },
       -- Debug & profiling
       debug = { enabled = true },
