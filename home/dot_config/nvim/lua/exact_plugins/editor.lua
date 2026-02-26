@@ -100,8 +100,8 @@ return {
         { '[[', desc = 'Prev class start' },
         { ']i', desc = 'Next conditional' },
         { '[i', desc = 'Prev conditional' },
-        { ']l', desc = 'Next loop/loclist' },
-        { '[l', desc = 'Prev loop/loclist' },
+        { ']l', desc = 'Next loop' },
+        { '[l', desc = 'Prev loop' },
         { ']r', desc = 'Next reference' },
         { '[r', desc = 'Prev reference' },
 
