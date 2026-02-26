@@ -16,6 +16,16 @@ opt.undofile = true
 opt.ignorecase = true
 opt.smartcase = true
 opt.signcolumn = 'yes'
+
+-- Custom statuscolumn: signs + line numbers in one column (single gutter)
+-- Clicking on a sign opens the diagnostic float
+-- selene: allow(global_usage)
+_G.statuscolumn_click = function(_, _, button, _)
+  if button == 'l' then
+    vim.diagnostic.open_float()
+  end
+end
+opt.statuscolumn = '%@v:lua.statuscolumn_click@%s%T%l '
 opt.updatetime = 250
 opt.timeoutlen = 300
 opt.splitright = true
