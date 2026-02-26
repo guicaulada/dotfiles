@@ -18,7 +18,6 @@ return {
         mode = { 'n', 't', 'i', 'x' },
         desc = 'Sidekick Toggle',
       },
-      { '<leader>a', '', desc = '+AI', mode = { 'n', 'v' } },
       {
         '<leader>aa',
         function()
