@@ -5,6 +5,12 @@ antidote load
 # zoxide (smarter cd)
 _evalcache zoxide init zsh
 
+# atuin (shell history)
+_evalcache atuin init zsh
+
+# navi (interactive cheatsheets — Ctrl+G)
+_evalcache navi widget zsh
+
 # direnv (per-directory environments — before Starship so env is correct)
 _evalcache direnv hook zsh
 
@@ -60,6 +66,9 @@ alias cat='bat --paging=never'
 alias ls='eza --icons'
 alias ll='eza -la --icons --git'
 alias lt='eza --tree --icons --level=2'
+alias rm='trash'
+alias top='btop'
+alias cheatsh='navi --print --cheatsh'
 
 # Ghostty tab title (skip inside tmux — tmux owns titles via set-titles)
 # Patches Ghostty's internal precmd/preexec hooks (_ghostty_precmd, _ghostty_preexec)
