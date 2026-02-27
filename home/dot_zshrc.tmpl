@@ -61,14 +61,12 @@ MAGIC_ENTER_GIT_COMMAND='gst'
 MAGIC_ENTER_OTHER_COMMAND='ls'
 
 # Aliases
-alias vim=nvim
-alias cat='bat --paging=never'
-alias ls='eza --icons'
-alias ll='eza -la --icons --git'
-alias lt='eza --tree --icons --level=2'
-alias top='btop'
-alias cheatsh='navi --print --cheatsh'
-alias eco-init='ml init && sd init && cn init && ov init'
+{{- range $category, $cmds := .aliases }}
+# {{ $category }}
+{{- range $name, $cmd := $cmds }}
+alias {{ $name }}='{{ $cmd }}'
+{{- end }}
+{{- end }}
 
 # Ghostty tab title (skip inside tmux — tmux owns titles via set-titles)
 # Patches Ghostty's internal precmd/preexec hooks (_ghostty_precmd, _ghostty_preexec)
