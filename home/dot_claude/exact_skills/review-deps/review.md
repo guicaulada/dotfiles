@@ -267,6 +267,21 @@ CI: [CHECKS_STATUS]
 
 </output>
 
+<rules>
+
+- Focus on security and compatibility, not code style — dependency bump PRs are auto-generated
+- Run gh commands in parallel where possible to minimize latency
+- Use WebSearch to research changelogs, CVEs, and breaking changes
+- Flag urgent security fixes prominently
+- For major bumps, explain the risk even if approving
+- Be clear about whether it's safe to merge
+- Use HEREDOC when posting review body to preserve formatting
+- Never post a review to GitHub without explicit user confirmation
+- Always clone to a unique `/tmp/deps-review-XXXXXX` directory for codebase analysis
+- Clean up temp directories after analysis completes
+
+</rules>
+
 <examples>
 
 <example>
@@ -342,19 +357,82 @@ Security fix for a known SSRF vulnerability. Minor version bump with no breaking
 
 </example>
 
+<example>
+
+**Input**: `/review-deps https://github.com/acme/api/pull/55`
+
+**Output**:
+
+## Dependency Review: #55
+
+**Bump react from 17.0.2 to 18.3.1**
+Author: @renovate[bot] (Renovate)
+CI: failing
+
+---
+
+### Dependencies Updated
+
+| Package | From   | To     | Bump  | Risk |
+|---------|--------|--------|-------|------|
+| react   | 17.0.2 | 18.3.1 | major | high |
+
+---
+
+### Security Assessment
+
+**CVEs Fixed by This Update:**
+None
+
+**New Vulnerabilities Introduced:**
+None
+
+**Security Advisories:**
+None
+
+---
+
+### Compatibility Assessment
+
+**Breaking Changes:**
+
+- `ReactDOM.render` removed in favor of `createRoot` — used in 3 files (src/index.tsx, src/tests/setup.ts, src/storybook/preview.tsx)
+- Automatic batching changes may alter state update timing in event handlers
+
+**Deprecated APIs Used by Project:**
+
+- `componentWillMount` in src/components/LegacyForm.tsx
+- `componentWillReceiveProps` in src/components/DataGrid.tsx
+
+**Peer Dependency Conflicts:**
+
+- react-router-dom@5.3.4 requires react@^16.8 || ^17.0 (incompatible with react@18)
+
+**Migration Required:**
+Yes — follow the [React 18 upgrade guide](https://react.dev/blog/2022/03/08/react-18-upgrade-guide). Address `createRoot` migration, legacy lifecycle methods, and peer dependency conflicts.
+
+---
+
+### CI Status
+
+2 of 8 checks failing:
+- `test:unit` — 4 failures related to ReactDOM.render removal
+- `test:e2e` — 2 failures from state batching timing changes
+
+---
+
+### Risk Assessment
+
+- **Security:** none - No advisories
+- **Compatibility:** high - Breaking API changes affecting project code, peer dependency conflicts
+- **Scope:** high - React is a core framework dependency used across the entire codebase
+
+---
+
+## Verdict: REQUEST_CHANGES
+
+Major version bump with confirmed breaking changes affecting project code. CI tests are failing due to removed APIs (`ReactDOM.render`) and peer dependency conflicts with react-router-dom. Requires manual migration before merging.
+
+</example>
+
 </examples>
-
-<rules>
-
-- Focus on security and compatibility, not code style — dependency bump PRs are auto-generated
-- Run gh commands in parallel where possible to minimize latency
-- Use WebSearch to research changelogs, CVEs, and breaking changes
-- Flag urgent security fixes prominently
-- For major bumps, explain the risk even if approving
-- Be clear about whether it's safe to merge
-- Use HEREDOC when posting review body to preserve formatting
-- Never post a review to GitHub without explicit user confirmation
-- Always clone to a unique `/tmp/deps-review-XXXXXX` directory for codebase analysis
-- Clean up temp directories after analysis completes
-
-</rules>

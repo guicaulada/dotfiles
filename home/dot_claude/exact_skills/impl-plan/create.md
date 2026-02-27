@@ -13,7 +13,7 @@ Transform a rough idea into a structured, task-based implementation plan using P
 Copy and track progress:
 
 ```
-Review Progress:
+Plan Progress:
 - [ ] Step 1: Capture idea
 - [ ] Step 2: Set up directory
 - [ ] Step 3: Initial process planning

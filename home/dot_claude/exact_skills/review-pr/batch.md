@@ -1,11 +1,11 @@
 ---
-description: Review multiple human-created PRs in parallel by spawning pr-reviewer agents and aggregating results
+description: Review multiple human-created PRs in parallel using Task tool agents and aggregate results
 ---
 
 <purpose>
-Review multiple human-created pull requests in parallel by spawning pr-reviewer agents, then aggregate all individual reports into a comprehensive summary. Excludes automated dependency bump PRs (use /review-deps for those). If no PRs specified, fetches PRs requiring your review from GitHub notifications.
+Review multiple human-created pull requests in parallel by spawning Task tool agents that each follow review.md, then aggregate all individual reports into a comprehensive summary. Excludes automated dependency bump PRs (use /review-deps for those). If no PRs specified, fetches PRs requiring your review from GitHub notifications.
 
-Orchestrator stays lean: parse inputs, spawn agents in parallel, collect results, aggregate.
+Orchestrator stays lean: parse inputs, spawn tasks in parallel, collect results, aggregate.
 </purpose>
 
 <process>
@@ -102,31 +102,24 @@ Spawning {N} parallel review agents...
 
 ## Step 4: Spawn PR Reviewers in Parallel
 
-For each PR, spawn a pr-reviewer agent using the Task tool. Use a single message with multiple Task calls to run all reviews concurrently.
+For each PR, spawn a Task tool call. Use a single message with multiple Task calls to run all reviews concurrently.
 
 Prompt template per agent:
 
 ```
-Review PR #{pr_number} in repository {repo}
+Follow the review-pr skill's review.md workflow to review PR #{pr_number} in repository {repo}.
 
 PR_INPUT: {pr_number or url}
 REPO: {repo}
 
-Analyze this PR and return a structured review report.
+Return the structured review report from the output template.
 ```
 
-Example:
-
-```
-Task(prompt="Review PR #123 in repository owner/repo...", subagent_type="pr-reviewer", model="sonnet")
-Task(prompt="Review PR #456 in repository owner/repo...", subagent_type="pr-reviewer", model="sonnet")
-```
-
-All agents run concurrently. Task tool blocks until all complete.
+Issue all Task calls in a single message so they run concurrently.
 
 ## Step 5: Collect Results
 
-Gather all reports from pr-reviewer agents. Parse each to extract:
+Gather all reports from the Task tool results. Parse each to extract:
 
 - PR number and repo
 - Verdict (approve/comment/request_changes)
@@ -212,7 +205,7 @@ To review specific PRs, provide them as arguments:
 <rules>
 
 - Only review human-created PRs — exclude bot authors (Dependabot, Renovate, etc.)
-- Spawn all pr-reviewer agents in parallel using a single message with multiple Task calls
+- Spawn all review tasks in parallel using a single message with multiple Task calls
 - Use `--paginate` when fetching from GitHub API to get all results
 - If a single PR review fails, include the error in its report section and continue with others
 - Never fail the entire batch because one PR errored

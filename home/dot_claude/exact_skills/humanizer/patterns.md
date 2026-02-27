@@ -140,9 +140,9 @@ Repetition-penalty code causes excessive synonym substitution for the same refer
 
 ### 13. Em dash overuse
 
-Excessive em dashes (---) mimicking punchy sales writing. Replace with commas, periods, or parentheses.
+Excessive em dashes (—) mimicking punchy sales writing. Replace with commas, periods, or parentheses.
 
-> **Before:** The term is promoted by Dutch institutions---not by the people themselves. You don't say "Netherlands, Europe"---yet this mislabeling continues---even in official documents.
+> **Before:** The term is promoted by Dutch institutions—not by the people themselves. You don't say "Netherlands, Europe"—yet this mislabeling continues—even in official documents.
 >
 > **After:** The term is promoted by Dutch institutions, not by the people themselves. You don't say "Netherlands, Europe," yet this mislabeling continues in official documents.
 
@@ -183,7 +183,7 @@ Emojis decorating headings or bullet points without communicative purpose.
 
 ### 18. Curly quotation marks
 
-ChatGPT uses curly quotes instead of straight quotes. Replace with straight quotes.
+AI chatbots often produce curly quotes instead of straight quotes. Replace with straight quotes.
 
 ---
 

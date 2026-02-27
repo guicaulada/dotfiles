@@ -1,6 +1,6 @@
 ---
 name: create-skill
-description: Creates new Claude Code skills or reviews existing ones against Anthropic's best practices for structure, conciseness, and prompt engineering. Use when user mentions create skill, new skill, write skill, build skill, make skill, skill template, review skill, audit skill, improve skill, or skill best practices.
+description: Creates new Claude Code skills or reviews existing ones against Anthropic's best practices for structure, conciseness, and prompt engineering. Use when user mentions create skill, new skill, write skill, build skill, make skill, skill template, review skill, audit skill, improve skill, or skill best practices. Do NOT use for general programming skills, coding tutorials, or non-Claude-Code skill tasks.
 allowed-tools: Read, Write, Edit, Glob, Grep
 argument-hint: [create|review] [skill-name]
 ---

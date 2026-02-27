@@ -8,6 +8,23 @@ Gather enough detail from the user to create a clear, actionable GitHub issue. I
 
 <process>
 
+## Checklist
+
+Copy and track progress:
+
+```
+Issue Creation Progress:
+- [ ] Step 1: Gather repository context
+- [ ] Step 2: Classify the initial description
+- [ ] Step 3: Interview for details
+- [ ] Step 4: Discover related issues
+- [ ] Step 5: Compose issue title
+- [ ] Step 6: Compose issue body
+- [ ] Step 7: Present issue preview
+- [ ] Step 8: Handle edits (if requested)
+- [ ] Step 9: Create issue
+```
+
 ## Step 1: Gather Repository Context
 
 Run in parallel:
@@ -251,13 +268,12 @@ The issue has been opened in your browser for final review.
 - Skip questions the user already answered in their initial description
 - Limit interview to 2 rounds of AskUserQuestion maximum
 - Check for duplicate issues before composing
-- Present the full issue preview for user confirmation before creating
+- Present the full issue preview and confirm with the user via AskUserQuestion before creating
 - Use only labels that exist in the target repository
 - Keep issue titles under 72 characters
 - Use HEREDOC for the issue body to preserve formatting
 - Default to the current repository; use a different one only when the user specifies it
 - Open the created issue in the browser for final review
-- Confirm with user via AskUserQuestion before creating the issue
 
 </rules>
 

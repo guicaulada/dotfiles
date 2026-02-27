@@ -37,7 +37,7 @@ Ask with AskUserQuestion:
 
 If none fit, follow up with:
 
-- Options: "docs — Documentation", "style — Formatting", "test — Tests", "chore — Maintenance"
+- Options: "docs — Documentation", "style — Formatting", "test — Tests", "chore — Maintenance", "perf — Performance"
 
 ## Step 4: Define Scope
 
@@ -188,4 +188,3 @@ Closes #89
 </example>
 
 </examples>
-```
