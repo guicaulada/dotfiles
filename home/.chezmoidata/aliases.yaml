@@ -1,10 +1,10 @@
 aliases:
   shell:
-    vim: nvim
     cat: "bat --paging=never"
-    ls: "eza --icons"
+    cheatsh: "navi --print --cheatsh"
     ll: "eza -la --icons --git"
+    ls: "eza --icons"
     lt: "eza --tree --icons --level=2"
     top: btop
-    cheatsh: "navi --print --cheatsh"
+    vim: nvim
 
