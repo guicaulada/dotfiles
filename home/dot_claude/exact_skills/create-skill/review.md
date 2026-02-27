@@ -39,8 +39,8 @@ Check each frontmatter field against the reference table in SKILL.md:
 
 | Field                      | Check                                                                 |
 |----------------------------|-----------------------------------------------------------------------|
-| `name`                     | Kebab-case, under 64 chars, no `anthropic`/`claude`, suggests purpose |
-| `description`              | Third person, specific, includes trigger terms, under 1024 chars      |
+| `name`                     | Kebab-case, under 64 chars, no `anthropic`/`claude`, matches folder name |
+| `description`              | Third person, specific, includes trigger terms, under 1024 chars, has negative triggers if needed |
 | `allowed-tools`            | Minimum required, Bash scoped with glob patterns                      |
 | `disable-model-invocation` | `true` for shared-state side effects                                  |
 | `user-invocable`           | `false` only for pure background knowledge                            |
@@ -51,6 +51,7 @@ Flag any deviation.
 
 **Structure checks:**
 
+- No README.md in skill folder (all docs in SKILL.md or references)
 - SKILL.md under 500 lines; detailed content in separate files
 - Each workflow in its own file, named after its action verb
 - Workflow files have frontmatter with `description`
@@ -75,8 +76,10 @@ Flag missing structure elements and unnecessary verbosity.
 - Imperative mood, positive framing (what to do, not what to avoid)
 - Each step focused on one action
 - Decision points explicit: "If [condition], [action]. Otherwise, [alternative]."
+- One default approach per decision (no unnecessary multiple options)
 - Parallel operations marked
 - Feedback loops present for quality-critical operations (validate → fix → re-validate)
+- Error handling/troubleshooting included for fragile or external operations
 - Copyable checklists for multi-step workflows
 
 **Output format:**
@@ -95,6 +98,7 @@ Flag missing structure elements and unnecessary verbosity.
 - Consistent terms throughout (one term per concept)
 - At least one example per workflow with structured output, covering standard and edge cases
 - Examples wrapped in `<example>` tags inside `<examples>`
+- Basic triggering tests defined (should-trigger + should-NOT-trigger phrases)
 
 Flag unclear, incomplete, inconsistent, or miscalibrated content.
 

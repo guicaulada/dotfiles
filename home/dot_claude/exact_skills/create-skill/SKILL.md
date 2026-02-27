@@ -22,8 +22,8 @@ Apply these when authoring or reviewing skills:
 
 | Field                      | Constraints                                       | Notes                                                                      |
 |----------------------------|---------------------------------------------------|----------------------------------------------------------------------------|
-| `name`                     | Kebab-case, max 64 chars, no `anthropic`/`claude` | Becomes the `/name` command. Consider gerund form (e.g., `reviewing-code`) |
-| `description`              | Max 1024 chars, third person, non-empty           | Include what it does + when to use it with trigger terms                   |
+| `name`                     | Kebab-case, max 64 chars, no `anthropic`/`claude` | Must match folder name. Consider gerund form (e.g., `reviewing-code`)     |
+| `description`              | Max 1024 chars, third person, non-empty           | Format: [what it does] + [when to use it] + [key capabilities]            |
 | `allowed-tools`            | Comma-separated                                   | Scope Bash: `Bash(git *)` not `Bash`                                       |
 | `disable-model-invocation` | Boolean                                           | `true` for side effects on shared state (git push, API calls, deployments) |
 | `user-invocable`           | Boolean                                           | `false` only for pure background knowledge                                 |
@@ -31,6 +31,9 @@ Apply these when authoring or reviewing skills:
 | `context`                  | `fork`                                            | Run in an isolated subagent                                                |
 | `agent`                    | String                                            | Subagent type when `context: fork`: `Explore`, `Plan`, `general-purpose`   |
 | `model`                    | `opus`, `sonnet`, `haiku`                         | Model override                                                             |
+| `license`                  | String (e.g., `MIT`, `Apache-2.0`)                | Required for open-source distribution                                      |
+| `compatibility`            | Max 500 chars                                     | Environment requirements (product, packages, network)                      |
+| `metadata`                 | YAML object                                       | Custom fields: `author`, `version`, `mcp-server`, `tags`, etc.             |
 
 ## File Organization
 

@@ -14,17 +14,28 @@ Copy and track progress:
 
 ```
 Skill Creation:
-- [ ] Step 1: Gather requirements
+- [ ] Step 1: Define use cases and gather requirements
 - [ ] Step 2: Design metadata
 - [ ] Step 3: Plan file structure
 - [ ] Step 4: Write SKILL.md
 - [ ] Step 5: Write workflow files
-- [ ] Step 6: Validate and iterate
+- [ ] Step 6: Validate, test, and iterate
 ```
 
-## Step 1: Gather Requirements
+## Step 1: Define Use Cases and Gather Requirements
 
-Determine from the user's input:
+Before writing any content, identify 2-3 concrete use cases the skill should enable:
+
+```
+Use Case: [Name]
+Trigger: User says "[phrase 1]" or "[phrase 2]"
+Steps:
+1. [First action]
+2. [Second action]
+Result: [Expected outcome]
+```
+
+Then determine from the user's input:
 
 - **Core capability** — What the skill does in one sentence
 - **Trigger scenarios** — When it should activate and common phrases users would say
@@ -37,12 +48,13 @@ Extract as much as possible from the user's description before asking clarifying
 
 ## Step 2: Design Metadata
 
-**`name`**: Kebab-case, max 64 chars. This becomes the `/name` command — keep it short and memorable. Consider gerund form (e.g., `reviewing-code`). Must not contain `anthropic` or `claude`.
+**`name`**: Kebab-case, max 64 chars. Must match the folder name. This becomes the `/name` command — keep it short and memorable. Consider gerund form (e.g., `reviewing-code`). Must not contain `anthropic` or `claude`.
 
-**`description`**: Write in third person, max 1024 chars. Format: "[What it does]. Use when [trigger terms]."
+**`description`**: Write in third person, max 1024 chars. Format: `[What it does] + [When to use it] + [Key capabilities]`.
 
 - Third person: "Generates changelogs..." not "Generate changelogs"
 - Include the primary action and common synonyms as trigger terms
+- Add negative triggers if over-triggering is likely: "Do NOT use for [out-of-scope task]."
 - Example: "Generates changelogs from git history. Use when user mentions changelog, release notes, or version history."
 
 **`allowed-tools`**: Include only the tools the skill genuinely needs. Scope Bash commands with glob patterns:
@@ -132,15 +144,19 @@ description: [One-line description of what this workflow does]
 - Destructive or irreversible operations (deployments, data mutations, external API calls) → exact commands, strict sequence, low freedom
 - Creative or exploratory operations (code review, analysis, brainstorming) → general guidance, high freedom
 - Most operations fall in between → preferred patterns with noted alternatives
+- Provide one default approach, not multiple options. Add an escape hatch only when context demands it.
 
-## Step 6: Validate and Iterate
+**Error handling**: For skills using external tools, MCP, or fragile operations, include a troubleshooting section with common error/cause/solution patterns.
+
+## Step 6: Validate, Test, and Iterate
 
 Validate the complete skill against this checklist:
 
 ```
 Quality Check:
 - [ ] Description is third person, specific, includes trigger terms, under 1024 chars
-- [ ] Name is kebab-case, under 64 chars, no "anthropic"/"claude"
+- [ ] Name is kebab-case, under 64 chars, no "anthropic"/"claude", matches folder name
+- [ ] No README.md in skill folder (all docs in SKILL.md or references)
 - [ ] SKILL.md body under 500 lines
 - [ ] Every paragraph justifies its token cost (no information Claude already knows)
 - [ ] References one level deep from SKILL.md (no chaining)
@@ -151,6 +167,8 @@ Quality Check:
 - [ ] Output format uses [PLACEHOLDER] templates
 - [ ] Feedback loops present for quality-critical operations
 - [ ] Instructions use imperative mood, positive framing
+- [ ] One default approach per decision (no unnecessary multiple options)
+- [ ] Error handling/troubleshooting included for fragile or external operations
 - [ ] allowed-tools scoped to minimum required, Bash uses glob patterns
 - [ ] disable-model-invocation set for shared-state side effects
 - [ ] Terminology consistent throughout (one term per concept)
@@ -159,6 +177,20 @@ Quality Check:
 ```
 
 Fix any failures. After fixing, re-run the full checklist. Repeat until all criteria pass.
+
+**Define basic triggering tests** for the skill:
+
+```
+Should trigger:
+- "[phrase that should activate the skill]"
+- "[paraphrased variant]"
+
+Should NOT trigger:
+- "[unrelated phrase that might seem similar]"
+- "[out-of-scope request]"
+```
+
+Share these with the user so they can verify the skill activates correctly after installation.
 
 Present the complete skill to the user with:
 
@@ -203,13 +235,19 @@ If revisions are requested, apply changes and re-validate before presenting agai
 <rules>
 
 - Confirm metadata and file structure with the user before generating content
+- Start with 2-3 concrete use cases before designing the skill
 - Write descriptions in third person ("Generates..." not "Generate..." or "I generate...")
+- Include negative triggers in descriptions when over-triggering is likely
+- Skill name must match the folder name
+- Do not include README.md in the skill folder
 - Scope allowed-tools to the minimum required; use `Bash(pattern *)` over bare `Bash`
 - Set `disable-model-invocation: true` for skills affecting shared state
 - Keep SKILL.md under 500 lines; move detailed content to supporting files
 - Include `<purpose>`, `<process>`, `<output>`, and `<rules>` in every workflow file
 - Include at least one `<example>` per workflow with structured output
 - Apply conciseness: remove information Claude already knows; include only domain-specific context
+- Provide one default approach per decision; avoid presenting multiple options unless necessary
+- Include error handling/troubleshooting for skills with external tools or fragile operations
 - Match degrees of freedom to task fragility
 - Keep file references one level deep from SKILL.md
 - Use forward slashes in all file paths
@@ -217,6 +255,7 @@ If revisions are requested, apply changes and re-validate before presenting agai
 - Use `$ARGUMENTS` for dynamic skill arguments
 - Name workflow files after their action verb
 - Use consistent terminology throughout (one term per concept)
+- Define basic triggering tests (should-trigger + should-NOT-trigger phrases)
 - Validate against the full quality checklist before presenting to the user
 
 </rules>
