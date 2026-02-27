@@ -70,8 +70,11 @@ Clone the repository to a unique temp directory so subsequent analysis steps can
 
 ```bash
 WORK_DIR=$(mktemp -d /tmp/pr-review-XXXXXX)
-gh repo clone [REPO] "$WORK_DIR" -- --depth=1 --single-branch
+# If REPO is set, clone that repo. Otherwise, clone the current repo.
+gh repo clone [REPO or current] "$WORK_DIR" -- --depth=1 --single-branch
 ```
+
+If REPO is empty, use `gh repo view --json url -q .url` to get the current repository URL for cloning.
 
 **4b. Checkout the PR branch:**
 
@@ -79,7 +82,7 @@ gh repo clone [REPO] "$WORK_DIR" -- --depth=1 --single-branch
 cd "$WORK_DIR" && gh pr checkout [PR_NUMBER] [-R REPO]
 ```
 
-Use `$WORK_DIR` as the base path for all file reads, greps, and globs in subsequent steps.
+Use `$WORK_DIR` as the base path for all file reads, greps, and globs in subsequent steps. Always use absolute paths with `$WORK_DIR` prefix since the working directory does not persist between bash calls.
 
 ## Step 5: Analyze PR Scope
 
@@ -99,32 +102,13 @@ Size classification:
 
 For large diffs (>300 lines), first extract and quote the most critical code sections before analyzing. This grounds your review in specific evidence and prevents important details from being overlooked.
 
-Analyze the diff systematically, using the checked-out code in `$WORK_DIR` to read surrounding context when needed:
+Analyze the diff systematically across these dimensions, using the checked-out code in `$WORK_DIR` to read surrounding context when needed:
 
-**6a. Logic and Correctness:**
-
-- Off-by-one errors, null/undefined handling, edge cases
-- Incorrect conditional logic, race conditions in async code
-
-**6b. Security Concerns:**
-
-- Input validation gaps, injection risks (SQL, XSS)
-- Hardcoded secrets, improper auth, sensitive data exposure
-
-**6c. Performance Issues:**
-
-- N+1 query patterns, unnecessary loops, missing caching
-- Large memory allocations, blocking operations
-
-**6d. Code Quality:**
-
-- Unclear naming, excessive complexity, duplication
-- Missing error handling, inconsistent patterns
-
-**6e. Maintainability:**
-
-- Tight coupling, missing documentation for public APIs
-- Test coverage gaps, breaking changes without migration
+- **Logic and correctness** — edge cases, error handling, race conditions
+- **Security** — input validation, injection risks, secrets, auth
+- **Performance** — inefficient patterns, unnecessary allocations
+- **Code quality** — naming, complexity, duplication, consistency
+- **Maintainability** — coupling, test coverage, breaking changes
 
 For each finding, note:
 

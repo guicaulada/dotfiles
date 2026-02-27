@@ -1,13 +1,11 @@
 ---
 name: impl-plan
-description: Creates task-based implementation plans using Prompt-Driven Development to refine ideas into actionable step-by-step plans. Use when user mentions implementation plan, impl plan, create plan, build plan, development plan, breakdown tasks, task plan, sprint plan, or plan implementation.
+description: Creates task-based implementation plans using Prompt-Driven Development to refine ideas into actionable plans with dependency mapping, risk registers, and demoable increments. Use when user mentions implementation plan, impl plan, create plan, build plan, development plan, breakdown tasks, task plan, sprint plan, or plan implementation. Do NOT use for general conversation about plans, scheduling, or project management without implementation context.
 argument-hint: [idea or file path]
 allowed-tools: Read, Write, Bash(mkdir *), Glob, Grep, WebSearch, WebFetch
 ---
 
 # Implementation Plan Skill
-
-Create structured, task-based implementation plans using Prompt-Driven Development (PDD). Guides users through iterative refinement of rough ideas into actionable implementation plans with discrete tasks, dependency mapping, and demoable increments.
 
 ## Plan Structure
 

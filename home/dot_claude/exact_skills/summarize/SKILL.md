@@ -5,7 +5,7 @@ allowed-tools: Read, WebFetch
 argument-hint: [file, url, or text]
 ---
 
-# Summarize Skill
+# Summarize
 
 Restructure any text into exhaustive, categorized bullet-point summaries for studying and test preparation.
 

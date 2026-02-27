@@ -151,4 +151,31 @@ AI coding assistants can generate docs, tests, and simple refactors. They're use
 
 </example>
 
+<example>
+
+**Input:** "humanize ./blog-post.md"
+
+File contents:
+
+> The framework serves as a testament to the vibrant open-source community, offering a comprehensive suite of tools that showcases the intricate interplay between developer experience and performance. Additionally, it boasts an extensive plugin ecosystem — fostering innovation and enabling developers to craft groundbreaking solutions.
+
+**Output:**
+
+## Changes to ./blog-post.md
+
+- Removed significance inflation ("testament to the vibrant open-source community")
+- Removed copula avoidance ("serves as")
+- Removed overused AI vocabulary ("additionally", "showcases", "intricate interplay", "fostering", "groundbreaking")
+- Removed promotional language ("boasts", "vibrant", "comprehensive")
+- Replaced em dash with period
+- Converted marketing tone to factual description
+
+## Audit
+
+Remaining tells addressed:
+- Generic "developer experience and performance" claim replaced with specific metric
+- "Craft solutions" replaced with plain verb
+
+</example>
+
 </examples>

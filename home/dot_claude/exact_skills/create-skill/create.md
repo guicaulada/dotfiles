@@ -3,7 +3,7 @@ description: Guides creation of a new Claude Code skill following Anthropic's be
 ---
 
 <purpose>
-Create a new Claude Code skill from a user's description. Gather requirements, design metadata and structure, generate concise skill files, and validate against best practices. Produce skills that follow Anthropic's guidelines for conciseness, progressive disclosure, and prompt engineering.
+Create a new Claude Code skill from a user's description. Gather requirements, design metadata and structure, generate concise skill files, and validate against best practices.
 </purpose>
 
 <process>
@@ -139,12 +139,7 @@ description: [One-line description of what this workflow does]
 
 **`<examples>`** — One or more `<example>` blocks with input/output pairs. Cover the standard case and at least one edge case or variant.
 
-**Calibrate degrees of freedom**: Match instruction specificity to task fragility.
-
-- Destructive or irreversible operations (deployments, data mutations, external API calls) → exact commands, strict sequence, low freedom
-- Creative or exploratory operations (code review, analysis, brainstorming) → general guidance, high freedom
-- Most operations fall in between → preferred patterns with noted alternatives
-- Provide one default approach, not multiple options. Add an escape hatch only when context demands it.
+**Calibrate degrees of freedom** per SKILL.md Core Principle #3. Provide one default approach, not multiple options. Add an escape hatch only when context demands it.
 
 **Error handling**: For skills using external tools, MCP, or fragile operations, include a troubleshooting section with common error/cause/solution patterns.
 

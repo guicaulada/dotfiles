@@ -1,5 +1,5 @@
 ---
-description: Transform text into exhaustive structured bullet-point summaries for studying and test preparation
+description: Transforms text into exhaustive structured bullet-point summaries for studying and test preparation
 ---
 
 <purpose>
@@ -30,16 +30,7 @@ If the input type is ambiguous, ask the user to clarify.
 
 ## Step 2: Extract All Content
 
-Read through the source material and capture:
-
-- Every definition and explanation
-- All facts, statistics, and data points
-- Every name, date, place, and number
-- All examples and illustrations
-- Every cause-effect relationship
-- All comparisons and contrasts
-- Exceptions and special cases
-- Conclusions and implications
+Read through the source material exhaustively. Capture every fact, definition, statistic, name, date, example, cause-effect relationship, comparison, exception, and conclusion. When in doubt about whether something is important, include it.
 
 ## Step 3: Organize by Category
 
@@ -157,6 +148,41 @@ For each bullet point:
 - Glycolysis is anaerobic; Krebs cycle and ETC require oxygen
 - Most ATP (34-36 of 36-38 total) is produced by the electron transport chain
 - Disruption at any stage (e.g., lack of oxygen) forces cells to rely on less efficient anaerobic pathways
+
+</example>
+
+<example>
+
+**Input**: Short paragraph on the Doppler effect
+
+> The Doppler effect describes the change in frequency of a wave when the source and observer move relative to each other. When they approach, frequency increases; when they recede, it decreases. This applies to sound and light. Police radar guns use the Doppler effect to measure vehicle speed.
+
+**Output**:
+
+## Study Notes: Doppler Effect
+
+**Core Concepts:**
+
+- **Doppler effect** describes the change in frequency of a wave when the source and observer move relative to each other
+
+**Key Terms & Definitions:**
+
+- **Doppler effect**: Change in observed wave frequency caused by relative motion between source and observer
+
+**Facts & Details:**
+
+- Approaching source/observer → frequency increases
+- Receding source/observer → frequency decreases
+- Applies to both sound waves and light waves
+
+**Examples & Applications:**
+
+- **Police radar guns** use the Doppler effect to measure vehicle speed
+
+**Summary Points:**
+
+- The Doppler effect links relative motion to observed frequency shift
+- Applies across wave types (sound, light) with practical uses in speed measurement
 
 </example>
 

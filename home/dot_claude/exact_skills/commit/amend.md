@@ -167,4 +167,3 @@ You'll need to force push: git push --force-with-lease
 </example>
 
 </examples>
-```

@@ -29,7 +29,7 @@ Determine the skill from user input or `$ARGUMENTS`:
 - **Skill name**: Look in `.claude/skills/[name]/SKILL.md`
 - **Directory path**: Read from the specified path
 
-If no skill is specified, list available skills with Glob and ask the user to choose with AskUserQuestion.
+If no skill is specified, list available skills with Glob and ask the user to choose.
 
 Read every file in the skill directory. Build a map of what the skill does, its workflows, tools, and how files connect.
 
@@ -123,7 +123,7 @@ Determine verdict:
 
 Present the review using the output template.
 
-If blocking or suggestion findings exist, ask with AskUserQuestion: "How would you like to proceed?" with options: "Apply fixes automatically", "Show fixes first", "Done".
+If blocking or suggestion findings exist, ask the user: "How would you like to proceed?" with options: "Apply fixes automatically", "Show fixes first", "Done".
 
 ## Step 6: Apply Fixes (if requested)
 

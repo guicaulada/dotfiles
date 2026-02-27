@@ -8,6 +8,22 @@ Transform a rough idea into a structured design document using Prompt-Driven Dev
 
 <process>
 
+## Checklist
+
+Copy and track progress:
+
+```
+Design Doc Progress:
+- [ ] Step 1: Capture idea
+- [ ] Step 2: Set up directory
+- [ ] Step 3: Initial process planning
+- [ ] Step 4: Requirements clarification
+- [ ] Step 5: Research
+- [ ] Step 6: Iteration checkpoint
+- [ ] Step 7: Generate design document
+- [ ] Step 8: Refine
+```
+
 ## Step 1: Capture Idea
 
 Get the rough idea from the user. Support multiple input methods:

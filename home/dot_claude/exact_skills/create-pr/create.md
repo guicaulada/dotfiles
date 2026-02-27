@@ -306,31 +306,6 @@ Closes #89.
 **Related Issues**: None
 **Related PRs**: #85 (merged) — "feat(auth): add session timeout handler"
 
-**Final Output**:
-
-## PR Ready for Review
-
-The PR has been opened in your browser for final review.
-
-**Branch**: fix/login-redirect -> main
-**Commits**: 1 commit(s)
-
-### Generated Title
-
-fix(auth): handle expired session redirect
-
-### Generated Body
-
-Handle the case where an expired session cookie causes an infinite redirect loop on the login page. Now detects stale sessions and clears them before redirecting.
-
-Closes #89.
-
-### Next Steps
-
-- Review the PR in your browser
-- Add reviewers if needed
-- Click "Create pull request" when ready
-
 </example>
 
 <example>

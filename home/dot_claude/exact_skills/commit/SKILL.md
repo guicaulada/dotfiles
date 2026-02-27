@@ -15,16 +15,16 @@ Creates well-formatted git commits following the conventional commit standard. S
 
 Trigger: "commit", "create commit", "make a commit", "commit changes"
 
-Read and follow `create.md`.
+Read and follow [create.md](create.md).
 
 ### Amend Commit
 
 Trigger: "amend commit", "fix last commit", "update commit message"
 
-Read and follow `amend.md`.
+Read and follow [amend.md](amend.md).
 
 ### Interactive Commit
 
 Trigger: "help me write a commit", "interactive commit", "commit wizard"
 
-Read and follow `interactive.md`.
+Read and follow [interactive.md](interactive.md).
