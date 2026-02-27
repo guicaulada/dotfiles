@@ -23,9 +23,3 @@ __pycache__/
 
 # Claude Code
 **/.claude/settings.local.json
-
-# os-eco
-.overstory/
-.seeds/
-.mulch/
-.canopy/
