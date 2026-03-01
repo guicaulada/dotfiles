@@ -35,6 +35,7 @@ bashToolPatterns:
 
   - pattern: '(^|[\s;|&])(/usr)?/bin/rm\s+'
     reason: absolute path rm (bypasses alias/function protection)
+    match_anywhere: true
 
   - pattern: '\btruncate\s+(-s\s*0|-s0)\b'
     reason: truncate -s 0 (empties file content without deleting)

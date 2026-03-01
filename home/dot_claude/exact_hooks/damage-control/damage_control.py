@@ -265,6 +265,20 @@ def check_path_patterns(
 
 
 # ============================================================================
+# COMMAND POSITION ANCHORING
+# ============================================================================
+
+# Requires the matched command to appear at the start of the command string or
+# after a shell separator (; | & && || or subshell open paren).  This prevents
+# false positives when command-like words appear inside quoted arguments such as
+# git commit messages (e.g. `git commit -m "fix mount point"`).
+#
+# Patterns that need to match mid-command (redirects, absolute-path overrides)
+# can opt out with `match_anywhere: true` in the YAML definition.
+_CMD_POSITION_PREFIX = r"(?:^|[;|&(]\s*)"
+
+
+# ============================================================================
 # TOOL HANDLERS
 # ============================================================================
 
@@ -285,6 +299,9 @@ def handle_bash(tool_input: dict[str, Any], config: dict[str, Any]) -> None:
         pattern = item.get("pattern", "")
         reason = item.get("reason", "Blocked by pattern")
         should_ask = item.get("ask", False)
+
+        if not item.get("match_anywhere", False):
+            pattern = _CMD_POSITION_PREFIX + pattern
 
         try:
             if re.search(pattern, command, re.IGNORECASE):

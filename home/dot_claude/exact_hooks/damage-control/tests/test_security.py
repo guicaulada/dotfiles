@@ -41,12 +41,10 @@ class TestCredentialManagerBlock:
         code, _, _ = run_hook("Bash", {"command": "pass otp email/gmail"})
         assert code == 2
 
-    def test_ask_pass_git(self):
-        """pass git push is caught by git push ask pattern (git.yaml loads first)."""
-        code, stdout, _ = run_hook("Bash", {"command": "pass git push"})
-        assert code == 0
-        data = json.loads(stdout)
-        assert data["hookSpecificOutput"]["permissionDecision"] == "ask"
+    def test_block_pass_git(self):
+        """pass git push is blocked by the pass credential manager pattern."""
+        code, _, _ = run_hook("Bash", {"command": "pass git push"})
+        assert code == 2
 
     # -- gopass (password-store alternative) catch-all --
     def test_block_gopass_show(self):
