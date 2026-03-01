@@ -3,7 +3,7 @@ theme = light:catppuccin-latte,dark:One Double Dark
 background = 000000
 
 # Font
-font-family = Hack
+font-family = Hack Nerd Font
 font-size = 14
 font-thicken = true
 adjust-cell-height = 1
