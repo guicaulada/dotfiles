@@ -8,6 +8,7 @@ bashToolPatterns:
 
   - pattern: '>+\s*/dev/(?!null)[a-z][a-z0-9]*'
     reason: redirect to device file (excluding /dev/null)
+    match_anywhere: true
 
   - pattern: '\bdd\s+.*of=/dev/'
     reason: dd writing to device
@@ -131,6 +132,7 @@ bashToolPatterns:
 
   - pattern: '>\s*/var/log/\S+'
     reason: redirect truncating log file (destroys audit trail)
+    match_anywhere: true
 
   # ---------------------------------------------------------------------------
   # DISK / VOLUME MANAGEMENT

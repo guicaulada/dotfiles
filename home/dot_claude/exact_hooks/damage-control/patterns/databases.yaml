@@ -21,13 +21,13 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   # MONGODB DESTRUCTIVE OPERATIONS
   # ---------------------------------------------------------------------------
-  - pattern: '\bmongosh?\b.*\bdropDatabase\b'
+  - pattern: '\bmongo(sh)?\b.*\bdropDatabase\b'
     reason: MongoDB dropDatabase (destroys entire database)
 
-  - pattern: '\bmongosh?\b.*\.(drop|dropCollection)\s*\('
+  - pattern: '\bmongo(sh)?\b.*\.(drop|dropCollection)\s*\('
     reason: MongoDB drop/dropCollection (destroys collection)
 
-  - pattern: '\bmongosh?\b.*\.deleteMany\s*\(\s*\{\s*\}'
+  - pattern: '\bmongo(sh)?\b.*\.deleteMany\s*\(\s*\{\s*\}'
     reason: MongoDB deleteMany({}) (deletes all documents)
 
   # ---------------------------------------------------------------------------
