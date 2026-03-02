@@ -9,3 +9,4 @@ paths:
 
 onepassword:
   ssh_key: "op://Private/SSH Key/public key"
+  wakatime_api_key: "op://Private/wakatime.com/api-key"
