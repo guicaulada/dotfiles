@@ -28,4 +28,5 @@ export PATH="$PATH:$HOME/{{ .paths.gobin }}"
 {{- if eq .chezmoi.os "darwin" }}
 GCS_PATH="{{ index .paths.homebrew .chezmoi.arch }}/{{ .paths.gcloud }}"
 [ -d "$GCS_PATH" ] && export PATH="$GCS_PATH:$PATH"
+export PATH="$PATH:/Applications/Obsidian.app/Contents/MacOS"
 {{- end }}
