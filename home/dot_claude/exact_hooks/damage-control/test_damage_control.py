@@ -1057,3 +1057,72 @@ class TestExpandShorthandsEdgeCases:
         original = r"[a-z]{3,5}"
         result = _expand_shorthands(original, {})
         assert result == original
+
+
+# ---------------------------------------------------------------------------
+# Tanka (tk) patterns
+# ---------------------------------------------------------------------------
+
+
+class TestTankaPatterns:
+    """Verify tanka (tk) patterns catch dangerous commands."""
+
+    # Destructive — blocked
+    def test_tk_delete(self):
+        assert _matches(r"\btk{flags}delete\b", "tk delete environments/default")
+
+    def test_tk_delete_with_flags(self):
+        assert _matches(
+            r"\btk{flags}delete\b",
+            "tk --tla-code env=prod delete environments/production",
+        )
+
+    def test_tk_prune(self):
+        assert _matches(r"\btk{flags}prune\b", "tk prune environments/default")
+
+    def test_tk_prune_with_flags(self):
+        assert _matches(
+            r"\btk{flags}prune\b",
+            "tk --tla-str cluster=us-east-1 prune environments/production",
+        )
+
+    # Mutating — ask
+    def test_tk_apply(self):
+        assert _matches(r"\btk{flags}apply\b", "tk apply environments/default")
+
+    def test_tk_apply_with_flags(self):
+        assert _matches(
+            r"\btk{flags}apply\b",
+            "tk --tla-code env=staging apply environments/staging",
+        )
+
+    def test_tk_diff(self):
+        assert _matches(r"\btk{flags}diff\b", "tk diff environments/default")
+
+    def test_tk_diff_with_flags(self):
+        assert _matches(
+            r"\btk{flags}diff\b",
+            "tk --tla-str cluster=prod diff environments/production",
+        )
+
+    # Safe commands — should NOT match destructive/mutating patterns
+    def test_tk_show_not_blocked(self):
+        assert not _matches(r"\btk{flags}delete\b", "tk show environments/default")
+        assert not _matches(r"\btk{flags}prune\b", "tk show environments/default")
+        assert not _matches(r"\btk{flags}apply\b", "tk show environments/default")
+
+    def test_tk_export_not_blocked(self):
+        assert not _matches(r"\btk{flags}delete\b", "tk export environments/default ./out")
+
+    # Boundary safety — no false positives
+    def test_tk_in_commit_message_not_matched(self):
+        assert not _matches(
+            r"\btk{flags}delete\b",
+            'git commit -m "tk delete was too aggressive"',
+        )
+
+    def test_tk_after_pipe_not_matched(self):
+        assert not _matches(
+            r"\btk{flags}delete\b",
+            "echo test | grep delete",
+        )
