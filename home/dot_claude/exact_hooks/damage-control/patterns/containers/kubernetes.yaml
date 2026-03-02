@@ -1,4 +1,4 @@
-# Kubernetes, Helm, and related orchestration security patterns
+# Kubernetes, Helm, Tanka, and related orchestration security patterns
 bashToolPatterns:
   # ---------------------------------------------------------------------------
   # KUBERNETES (kubectl) DESTRUCTIVE OPERATIONS
@@ -74,6 +74,15 @@ bashToolPatterns:
 
   - pattern: '\bnomad{flags}volume\s+delete\b'
     reason: nomad volume delete (destroys Nomad storage volume)
+
+  # ---------------------------------------------------------------------------
+  # TANKA (Grafana) DESTRUCTIVE OPERATIONS
+  # ---------------------------------------------------------------------------
+  - pattern: '\btk{flags}delete\b'
+    reason: tk delete (deletes deployed Kubernetes resources)
+
+  - pattern: '\btk{flags}prune\b'
+    reason: tk prune (removes resources not defined in manifests)
 
   # ---------------------------------------------------------------------------
   # KUBERNETES SECRET EXPOSURE
@@ -195,4 +204,15 @@ bashToolPatterns:
 
   - pattern: '\bnomad{flags}job\s+run\b'
     reason: Submits Nomad job
+    ask: true
+
+  # ---------------------------------------------------------------------------
+  # TANKA (Grafana) OPERATIONS REQUIRING CONFIRMATION (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\btk{flags}apply\b'
+    reason: Applies Tanka manifests to Kubernetes cluster
+    ask: true
+
+  - pattern: '\btk{flags}diff\b'
+    reason: Compares Tanka manifests against live cluster
     ask: true
