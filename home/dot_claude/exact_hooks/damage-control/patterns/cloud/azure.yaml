@@ -3,7 +3,7 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   # CREDENTIAL EXPOSURE
   # ---------------------------------------------------------------------------
-  - pattern: '\baz\s+account\s+get-access-token\b'
+  - pattern: '\baz{flags}account\s+get-access-token\b'
     reason: Azure token exposure (prints access token)
 
   # ---------------------------------------------------------------------------
@@ -12,7 +12,7 @@ bashToolPatterns:
 
   # "backup protection disable" uses "disable" which the ask catch-all would
   # cover, but disabling backup protection must BLOCK
-  - pattern: '\baz\s+backup\s+protection\s+disable\b'
+  - pattern: '\baz{flags}backup\s+protection\s+disable\b'
     reason: az backup protection disable (disables backup protection)
 
   # ---------------------------------------------------------------------------
@@ -21,35 +21,35 @@ bashToolPatterns:
 
   # State changes use "start"/"stop"/"restart"/"deallocate" which are in
   # the ask catch-all, but these are important enough to have specific reasons
-  - pattern: '\baz\s+vm\s+(start|stop|restart|deallocate)\b'
+  - pattern: '\baz{flags}vm\s+(start|stop|restart|deallocate)\b'
     reason: Changes Azure VM state
     ask: true
 
-  - pattern: '\baz\s+(webapp|functionapp)\s+(start|stop|restart)\b'
+  - pattern: '\baz{flags}(webapp|functionapp)\s+(start|stop|restart)\b'
     reason: Changes Azure Web App/Function App state
     ask: true
 
-  - pattern: '\baz\s+aks\s+upgrade\b' # codespell:ignore aks
+  - pattern: '\baz{flags}aks\s+upgrade\b' # codespell:ignore aks
     reason: Upgrades AKS cluster (potential downtime) # codespell:ignore aks
     ask: true
 
-  - pattern: '\baz\s+keyvault\s+secret\s+set\b'
+  - pattern: '\baz{flags}keyvault\s+secret\s+set\b'
     reason: Creates or updates Key Vault secret
     ask: true
 
-  - pattern: '\baz\s+deployment\s+(group|sub|mg|tenant)\s+create\b'
+  - pattern: '\baz{flags}deployment\s+(group|sub|mg|tenant)\s+create\b'
     reason: Deploys Azure ARM template
     ask: true
 
   # ---------------------------------------------------------------------------
   # BLOCK CATCH-ALL: any "az ... delete" or "az ... purge"
   # ---------------------------------------------------------------------------
-  - pattern: '\baz\s+.*\b(delete|purge)\b'
+  - pattern: '\baz{flags}.*\b(delete|purge)\b'
     reason: Azure CLI destructive operation (catch-all)
 
   # ---------------------------------------------------------------------------
   # ASK CATCH-ALL: any "az ... create/update/set/start/stop/restart/deploy"
   # ---------------------------------------------------------------------------
-  - pattern: '\baz\s+.*\b(create|update|set|start|stop|restart|deploy)\b'
+  - pattern: '\baz{flags}.*\b(create|update|set|start|stop|restart|deploy)\b'
     reason: Azure CLI mutating operation (catch-all)
     ask: true

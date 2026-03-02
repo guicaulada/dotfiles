@@ -3,34 +3,34 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   # GO - CACHE OPERATIONS
   # ---------------------------------------------------------------------------
-  - pattern: '\bgo\s+clean\s+.*-modcache\b'
+  - pattern: '\bgo{flags}clean{args}\s+-modcache\b'
     reason: go clean -modcache (removes entire module download cache)
 
-  - pattern: '\bgo\s+clean\s+.*-(cache|testcache|fuzzcache)\b'
+  - pattern: '\bgo{flags}clean{args}\s+-(cache|testcache|fuzzcache)\b'
     reason: go clean cache-clearing flags (destroys Go build cache)
     ask: true
 
   # ---------------------------------------------------------------------------
   # RUST - CARGO AND RUSTUP
   # ---------------------------------------------------------------------------
-  - pattern: '\brustup\s+self\s+uninstall\b'
+  - pattern: '\brustup{flags}self\s+uninstall\b'
     reason: rustup self uninstall (removes entire Rust toolchain)
 
-  - pattern: '\bcargo\s+clean\b'
+  - pattern: '\bcargo{flags}clean\b'
     reason: cargo clean (removes target directory / all build artifacts)
     ask: true
 
-  - pattern: '\brustup\s+toolchain\s+(uninstall|remove)\b'
+  - pattern: '\brustup{flags}toolchain\s+(uninstall|remove)\b'
     reason: rustup toolchain uninstall (removes Rust toolchain version)
     ask: true
 
   # ---------------------------------------------------------------------------
   # JAVA / JVM
   # ---------------------------------------------------------------------------
-  - pattern: '\bmvn\s+dependency:purge-local-repository\b'
+  - pattern: '\bmvn{flags}dependency:purge-local-repository\b'
     reason: mvn dependency:purge-local-repository (removes local Maven repo)
 
-  - pattern: '\bmvn\s+.*clean\b'
+  - pattern: '\bmvn{flags}.*clean\b'
     reason: mvn clean (removes target build directory)
     ask: true
 
@@ -38,94 +38,94 @@ bashToolPatterns:
     reason: gradle clean (removes build directory)
     ask: true
 
-  - pattern: '\bsbt\s+clean\b'
+  - pattern: '\bsbt{flags}clean\b'
     reason: sbt clean (removes target directory)
     ask: true
 
   # ---------------------------------------------------------------------------
   # PHP - COMPOSER AND LARAVEL
   # ---------------------------------------------------------------------------
-  - pattern: '\bphp\s+artisan\s+migrate:fresh\b'
+  - pattern: '\bphp{flags}artisan\s+migrate:fresh\b'
     reason: artisan migrate:fresh (drops ALL tables - WIPES DATABASE)
 
-  - pattern: '\bphp\s+artisan\s+db:wipe\b'
+  - pattern: '\bphp{flags}artisan\s+db:wipe\b'
     reason: artisan db:wipe (drops all tables, views, and types)
 
-  - pattern: '\bphp\s+artisan\s+migrate:reset\b'
+  - pattern: '\bphp{flags}artisan\s+migrate:reset\b'
     reason: artisan migrate:reset (rolls back ALL migrations)
 
-  - pattern: '\bcomposer\s+remove\b'
+  - pattern: '\bcomposer{flags}remove\b'
     reason: composer remove (removes PHP package from project)
     ask: true
 
-  - pattern: '\bphp\s+artisan\s+migrate:rollback\b'
+  - pattern: '\bphp{flags}artisan\s+migrate:rollback\b'
     reason: artisan migrate:rollback (rolls back last batch)
     ask: true
 
   # ---------------------------------------------------------------------------
   # ELIXIR - MIX / ECTO
   # ---------------------------------------------------------------------------
-  - pattern: '\bmix\s+ecto\.drop\b'
+  - pattern: '\bmix{flags}ecto\.drop\b'
     reason: mix ecto.drop (drops the database)
 
-  - pattern: '\bmix\s+ecto\.reset\b'
+  - pattern: '\bmix{flags}ecto\.reset\b'
     reason: mix ecto.reset (drops and recreates database)
 
-  - pattern: '\bmix\s+deps\.clean\s+.*--all\b'
+  - pattern: '\bmix{flags}deps\.clean{args}\s+--all\b'
     reason: mix deps.clean --all (removes all Mix dependencies)
 
-  - pattern: '\bmix\s+ecto\.rollback\b'
+  - pattern: '\bmix{flags}ecto\.rollback\b'
     reason: mix ecto.rollback (rolls back database migrations)
     ask: true
 
   # ---------------------------------------------------------------------------
   # SWIFT / XCODE
   # ---------------------------------------------------------------------------
-  - pattern: '\bswift\s+package\s+reset\b'
+  - pattern: '\bswift{flags}package\s+reset\b'
     reason: swift package reset (removes all build artifacts and resolved packages)
 
-  - pattern: '\bxcodebuild\s+clean\b'
+  - pattern: '\bxcodebuild{flags}clean\b'
     reason: xcodebuild clean (removes Xcode build products)
     ask: true
 
   # ---------------------------------------------------------------------------
   # .NET / C#
   # ---------------------------------------------------------------------------
-  - pattern: '\bdotnet\s+nuget\s+delete\b'
+  - pattern: '\bdotnet{flags}nuget\s+delete\b'
     reason: dotnet nuget delete (removes NuGet package from feed)
 
-  - pattern: '\bdotnet\s+clean\b'
+  - pattern: '\bdotnet{flags}clean\b'
     reason: dotnet clean (removes build outputs)
     ask: true
 
   # ---------------------------------------------------------------------------
   # HASKELL
   # ---------------------------------------------------------------------------
-  - pattern: '\bstack\s+purge\b'
+  - pattern: '\bstack{flags}purge\b'
     reason: stack purge (removes Stack work directory completely)
 
-  - pattern: '\bstack\s+clean\b'
+  - pattern: '\bstack{flags}clean\b'
     reason: stack clean (removes Haskell Stack build artifacts)
     ask: true
 
   # ---------------------------------------------------------------------------
   # DART / FLUTTER
   # ---------------------------------------------------------------------------
-  - pattern: '\bflutter\s+clean\b'
+  - pattern: '\bflutter{flags}clean\b'
     reason: flutter clean (removes Flutter build artifacts)
     ask: true
 
-  - pattern: '\bdart\s+pub\s+cache\s+clean\b'
+  - pattern: '\bdart{flags}pub\s+cache\s+clean\b'
     reason: dart pub cache clean (clears Dart package cache)
     ask: true
 
   # ---------------------------------------------------------------------------
   # LUA / PERL
   # ---------------------------------------------------------------------------
-  - pattern: '\bluarocks\s+purge\b'
+  - pattern: '\bluarocks{flags}purge\b'
     reason: luarocks purge (removes ALL rocks from a tree)
 
-  - pattern: '\bluarocks\s+remove\b'
+  - pattern: '\bluarocks{flags}remove\b'
     reason: luarocks remove (uninstalls Lua rock/package)
     ask: true
 
@@ -149,6 +149,6 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   # RUST ECOSYSTEM ADDITIONAL
   # ---------------------------------------------------------------------------
-  - pattern: '\bcargo\s+uninstall\b'
+  - pattern: '\bcargo{flags}uninstall\b'
     reason: cargo uninstall (removes installed Rust binary)
     ask: true

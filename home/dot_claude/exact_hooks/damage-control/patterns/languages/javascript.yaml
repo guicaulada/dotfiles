@@ -3,21 +3,21 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   # NODE.JS - DENO / BUN
   # ---------------------------------------------------------------------------
-  - pattern: '\bdeno\s+run\s+.*(-A\b|--allow-all)\b'
+  - pattern: '\bdeno{flags}run{args}\s+(-A\b|--allow-all)\b'
     reason: deno run with full system access
 
-  - pattern: '\bdeno\s+install\b'
+  - pattern: '\bdeno{flags}install\b'
     reason: deno install (installs script as global command)
     ask: true
 
-  - pattern: '\bdeno\s+eval\b'
+  - pattern: '\bdeno{flags}eval\b'
     reason: deno eval (executes Deno code inline)
     ask: true
 
-  - pattern: '\bbun\s+pm\s+cache\s+rm\b'
+  - pattern: '\bbun{flags}pm\s+cache\s+rm\b'
     reason: bun pm cache rm (removes bun package cache)
 
-  - pattern: '\bbun\s+(remove|rm)\b'
+  - pattern: '\bbun{flags}(remove|rm)\b'
     reason: bun remove (removes packages from project)
     ask: true
 
@@ -39,31 +39,31 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   # NODE.JS - CACHE AND CLEANUP
   # ---------------------------------------------------------------------------
-  - pattern: '\b(npm|yarn)\s+cache\s+clean\b'
+  - pattern: '\b(npm|yarn){flags}cache\s+clean\b'
     reason: npm/yarn cache clean (destroys package cache)
 
-  - pattern: '\bpnpm\s+store\s+prune\b'
+  - pattern: '\bpnpm{flags}store\s+prune\b'
     reason: pnpm store prune (removes unreferenced packages from store)
 
-  - pattern: '\bnpm\s+ci\b'
+  - pattern: '\bnpm{flags}ci\b'
     reason: npm ci (deletes node_modules and reinstalls from lockfile)
     ask: true
 
   # ---------------------------------------------------------------------------
   # MONOREPO TOOLS
   # ---------------------------------------------------------------------------
-  - pattern: '\bnx\s+reset\b'
+  - pattern: '\bnx{flags}reset\b'
     reason: nx reset (clears Nx daemon and cache)
     ask: true
 
-  - pattern: '\bturbo\s+(clean|prune)\b'
+  - pattern: '\bturbo{flags}(clean|prune)\b'
     reason: turbo clean/prune (removes Turborepo cache or dependencies)
     ask: true
 
-  - pattern: '\blerna\s+clean\b'
+  - pattern: '\blerna{flags}clean\b'
     reason: lerna clean (removes node_modules from all packages)
     ask: true
 
-  - pattern: '\brush\s+purge\b'
+  - pattern: '\brush{flags}purge\b'
     reason: rush purge (deletes all node_modules in Rush monorepo)
     ask: true

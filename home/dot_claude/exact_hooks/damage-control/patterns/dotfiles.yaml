@@ -3,7 +3,7 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   # DOTFILE MANAGERS (ask: true)
   # ---------------------------------------------------------------------------
-  - pattern: '\bchezmoi\s+(apply|update|re-add|remove|forget)\b'
+  - pattern: '\bchezmoi{flags}(apply|update|re-add|remove|forget)\b'
     reason: chezmoi modifying dotfiles on disk
     ask: true
 

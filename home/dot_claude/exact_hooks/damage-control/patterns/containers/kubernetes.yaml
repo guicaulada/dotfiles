@@ -3,196 +3,196 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   # KUBERNETES (kubectl) DESTRUCTIVE OPERATIONS
   # ---------------------------------------------------------------------------
-  - pattern: '\bkubectl\s+delete\s+(namespace|ns)\b'
+  - pattern: '\bkubectl{flags}delete\s+(namespace|ns)\b'
     reason: kubectl delete namespace (destroys all resources in namespace)
 
-  - pattern: '\bkubectl\s+delete\s+(pv|persistentvolume|pvc|persistentvolumeclaim)\b'
+  - pattern: '\bkubectl{flags}delete\s+(pv|persistentvolume|pvc|persistentvolumeclaim)\b'
     reason: kubectl delete persistent volume/claim (data loss)
 
-  - pattern: '\bkubectl\s+delete\s+.*--all\b'
+  - pattern: '\bkubectl{flags}delete{args}\s+--all\b'
     reason: kubectl delete --all (bulk resource deletion)
 
-  - pattern: '\bkubectl\s+delete\s+.*(-A|--all-namespaces)'
+  - pattern: '\bkubectl{flags}delete{args}\s+(-A|--all-namespaces)'
     reason: kubectl delete across all namespaces
 
-  - pattern: '\bkubectl\s+delete\s+.*--force'
+  - pattern: '\bkubectl{flags}delete{args}\s+--force'
     reason: kubectl delete --force (bypasses graceful shutdown)
 
-  - pattern: '\bkubectl\s+config\s+(delete-(context|cluster|user)|unset)\b'
+  - pattern: '\bkubectl{flags}config\s+(delete-(context|cluster|user)|unset)\b'
     reason: kubectl config delete/unset (modifies kubeconfig)
 
-  - pattern: '\bkubectl\s+drain\s+.*--force'
+  - pattern: '\bkubectl{flags}drain{args}\s+--force'
     reason: kubectl drain --force (ignores PodDisruptionBudgets)
 
-  - pattern: '\bkubectl\s+drain\s+.*--delete-emptydir-data'
+  - pattern: '\bkubectl{flags}drain{args}\s+--delete-emptydir-data'
     reason: kubectl drain --delete-emptydir-data (deletes local data)
 
-  - pattern: '\bkubectl\s+replace\s+.*--force'
+  - pattern: '\bkubectl{flags}replace{args}\s+--force'
     reason: kubectl replace --force (deletes then recreates resource)
 
   # ---------------------------------------------------------------------------
   # HELM DESTRUCTIVE OPERATIONS
   # ---------------------------------------------------------------------------
-  - pattern: '\bhelm\s+(uninstall|delete)\b'
+  - pattern: '\bhelm{flags}(uninstall|delete)\b'
     reason: helm uninstall/delete (removes release)
 
   # ---------------------------------------------------------------------------
   # SERVICE MESH AND ORCHESTRATION
   # ---------------------------------------------------------------------------
-  - pattern: '\bistioctl\s+(uninstall|remove-from-cluster)\b'
+  - pattern: '\bistioctl{flags}(uninstall|remove-from-cluster)\b'
     reason: istioctl uninstall (removes service mesh from cluster)
 
-  - pattern: '\blinkerd\s+uninstall\b'
+  - pattern: '\blinkerd{flags}uninstall\b'
     reason: linkerd uninstall (removes Linkerd service mesh)
 
-  - pattern: '\bconsul\s+(leave|force-leave)\b'
+  - pattern: '\bconsul{flags}(leave|force-leave)\b'
     reason: consul leave/force-leave (removes node from service mesh)
 
-  - pattern: '\bconsul\s+kv\s+delete\b'
+  - pattern: '\bconsul{flags}kv\s+delete\b'
     reason: consul kv delete (destroys key-value data)
 
   # ---------------------------------------------------------------------------
   # LOCAL KUBERNETES
   # ---------------------------------------------------------------------------
-  - pattern: '\bkind\s+delete\s+cluster\b'
+  - pattern: '\bkind{flags}delete\s+cluster\b'
     reason: kind delete cluster (destroys local Kubernetes cluster)
 
-  - pattern: '\bminikube\s+delete\b'
+  - pattern: '\bminikube{flags}delete\b'
     reason: minikube delete (destroys local Kubernetes cluster)
 
-  - pattern: '\bk3d\s+cluster\s+delete\b'
+  - pattern: '\bk3d{flags}cluster\s+delete\b'
     reason: k3d cluster delete (destroys local k3s cluster)
 
   # ---------------------------------------------------------------------------
   # NOMAD (HashiCorp) DESTRUCTIVE OPERATIONS
   # ---------------------------------------------------------------------------
-  - pattern: '\bnomad\s+job\s+stop\b'
+  - pattern: '\bnomad{flags}job\s+stop\b'
     reason: nomad job stop (stops Nomad job)
 
-  - pattern: '\bnomad\s+namespace\s+delete\b'
+  - pattern: '\bnomad{flags}namespace\s+delete\b'
     reason: nomad namespace delete (destroys Nomad namespace)
 
-  - pattern: '\bnomad\s+volume\s+delete\b'
+  - pattern: '\bnomad{flags}volume\s+delete\b'
     reason: nomad volume delete (destroys Nomad storage volume)
 
   # ---------------------------------------------------------------------------
   # KUBERNETES SECRET EXPOSURE
   # ---------------------------------------------------------------------------
-  - pattern: '\bkubectl\s+get\s+secrets?\b'
+  - pattern: '\bkubectl{flags}get\s+secrets?\b'
     reason: kubectl get secret (may expose decoded secret values)
     ask: true
 
   # ---------------------------------------------------------------------------
   # KUBERNETES (kubectl/helm) OPERATIONS REQUIRING CONFIRMATION (ask: true)
   # ---------------------------------------------------------------------------
-  - pattern: '\bkubectl\s+delete\b'
+  - pattern: '\bkubectl{flags}delete\b'
     reason: Deletes Kubernetes resources
     ask: true
 
-  - pattern: '\bkubectl\s+apply\b'
+  - pattern: '\bkubectl{flags}apply\b'
     reason: Creates or updates Kubernetes resources
     ask: true
 
-  - pattern: '\bkubectl\s+create\b'
+  - pattern: '\bkubectl{flags}create\b'
     reason: Creates Kubernetes resources
     ask: true
 
-  - pattern: '\bkubectl\s+patch\b'
+  - pattern: '\bkubectl{flags}patch\b'
     reason: Modifies Kubernetes resources in-place
     ask: true
 
-  - pattern: '\bkubectl\s+replace\b'
+  - pattern: '\bkubectl{flags}replace\b'
     reason: Replaces Kubernetes resources
     ask: true
 
-  - pattern: '\bkubectl\s+scale\b'
+  - pattern: '\bkubectl{flags}scale\b'
     reason: Changes replica count
     ask: true
 
-  - pattern: '\bkubectl\s+rollout\s+(restart|undo)\b'
+  - pattern: '\bkubectl{flags}rollout\s+(restart|undo)\b'
     reason: Restarts or rolls back deployment
     ask: true
 
-  - pattern: '\bkubectl\s+drain\b'
+  - pattern: '\bkubectl{flags}drain\b'
     reason: Evicts pods from node
     ask: true
 
-  - pattern: '\bkubectl\s+cordon\b'
+  - pattern: '\bkubectl{flags}cordon\b'
     reason: Marks node as unschedulable
     ask: true
 
-  - pattern: '\bkubectl\s+uncordon\b'
+  - pattern: '\bkubectl{flags}uncordon\b'
     reason: Marks node as schedulable
     ask: true
 
-  - pattern: '\bkubectl\s+taint\b'
+  - pattern: '\bkubectl{flags}taint\b'
     reason: Modifies node taints
     ask: true
 
-  - pattern: '\bkubectl\s+exec\b'
+  - pattern: '\bkubectl{flags}exec\b'
     reason: Executes command in pod
     ask: true
 
-  - pattern: '\bkubectl\s+set\s+(image|env|resources)\b'
+  - pattern: '\bkubectl{flags}set\s+(image|env|resources)\b'
     reason: Modifies deployment configuration
     ask: true
 
-  - pattern: '\bkubectl\s+edit\b'
+  - pattern: '\bkubectl{flags}edit\b'
     reason: Edits Kubernetes resource in-place
     ask: true
 
-  - pattern: '\bkubectl\s+run\b'
+  - pattern: '\bkubectl{flags}run\b'
     reason: Creates ad-hoc pod
     ask: true
 
-  - pattern: '\bkubectl\s+expose\b'
+  - pattern: '\bkubectl{flags}expose\b'
     reason: Creates Kubernetes service
     ask: true
 
-  - pattern: '\bkubectl\s+cp\b'
+  - pattern: '\bkubectl{flags}cp\b'
     reason: Copies files to/from pod
     ask: true
 
-  - pattern: '\bkubectl\s+label\s+.*--overwrite'
+  - pattern: '\bkubectl{flags}label{args}\s+--overwrite'
     reason: Overwrites existing labels
     ask: true
 
-  - pattern: '\bkubectl\s+annotate\s+.*--overwrite'
+  - pattern: '\bkubectl{flags}annotate{args}\s+--overwrite'
     reason: Overwrites existing annotations
     ask: true
 
-  - pattern: '\bkubectl\s+port-forward\b'
+  - pattern: '\bkubectl{flags}port-forward\b'
     reason: Forwards local port to pod
     ask: true
 
-  - pattern: '\bkubectl\s+config\s+(set-context|use-context)\b'
+  - pattern: '\bkubectl{flags}config\s+(set-context|use-context)\b'
     reason: Changes active Kubernetes context
     ask: true
 
-  - pattern: '\bkubectl\s+config\s+set-credentials\b'
+  - pattern: '\bkubectl{flags}config\s+set-credentials\b'
     reason: Modifies Kubernetes credentials
     ask: true
 
-  - pattern: '\bkubectl\s+debug\b'
+  - pattern: '\bkubectl{flags}debug\b'
     reason: Creates debug container in pod
     ask: true
 
-  - pattern: '\bkubectl\s+auth\s+reconcile\b'
+  - pattern: '\bkubectl{flags}auth\s+reconcile\b'
     reason: Modifies Kubernetes RBAC rules
     ask: true
 
-  - pattern: '\blinkerd\s+inject\b'
+  - pattern: '\blinkerd{flags}inject\b'
     reason: Injects Linkerd sidecar proxy into resources
     ask: true
 
-  - pattern: '\bhelm\s+(install|upgrade)\b'
+  - pattern: '\bhelm{flags}(install|upgrade)\b'
     reason: Deploys or updates Helm release
     ask: true
 
-  - pattern: '\bhelm\s+rollback\b'
+  - pattern: '\bhelm{flags}rollback\b'
     reason: Rolls back Helm release
     ask: true
 
-  - pattern: '\bnomad\s+job\s+run\b'
+  - pattern: '\bnomad{flags}job\s+run\b'
     reason: Submits Nomad job
     ask: true
