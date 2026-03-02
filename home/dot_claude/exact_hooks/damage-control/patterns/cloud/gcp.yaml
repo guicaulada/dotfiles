@@ -1,6 +1,15 @@
 # GCP (gcloud) security patterns
 bashToolPatterns:
   # ---------------------------------------------------------------------------
+  # CREDENTIAL EXPOSURE
+  # ---------------------------------------------------------------------------
+  - pattern: '\bgcloud\s+auth\s+print-(access-token|identity-token)\b'
+    reason: GCP token exposure (prints authentication token)
+
+  - pattern: '\bgcloud\s+auth\s+application-default\s+print-access-token\b'
+    reason: GCP ADC token exposure (prints application default credentials token)
+
+  # ---------------------------------------------------------------------------
   # SPECIFIC BLOCKS: patterns the catch-all would miss or only ask about
   # ---------------------------------------------------------------------------
 

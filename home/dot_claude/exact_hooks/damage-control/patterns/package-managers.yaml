@@ -2,6 +2,18 @@
 # (registry, system, npm/yarn/pnpm, brew, pip, cargo, go, nix, snap, flatpak, asdf/mise/proto)
 bashToolPatterns:
   # ---------------------------------------------------------------------------
+  # CREDENTIAL / TOKEN EXPOSURE
+  # ---------------------------------------------------------------------------
+  - pattern: '\bnpm\s+token\b'
+    reason: npm token management (may expose authentication tokens)
+
+  - pattern: '\bcomposer\s+config\b.*(http-basic|token|gitlab-token|github-oauth)\b'
+    reason: Composer credential retrieval (may expose authentication tokens)
+
+  - pattern: '\bgem\s+credentials\b'
+    reason: gem credentials (exposes RubyGems API key)
+
+  # ---------------------------------------------------------------------------
   # PACKAGE REGISTRY DESTRUCTIVE OPERATIONS
   # ---------------------------------------------------------------------------
   - pattern: '\bnpm\s+unpublish\b'

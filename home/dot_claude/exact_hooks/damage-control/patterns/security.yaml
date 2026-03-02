@@ -40,6 +40,23 @@ bashToolPatterns:
     reason: KDE Wallet (kwallet-query) - credential manager access denied
 
   # ---------------------------------------------------------------------------
+  # CREDENTIAL / TOKEN EXPOSURE COMMANDS
+  # ---------------------------------------------------------------------------
+  - pattern: '\bgpg\s+--export-secret-(keys|subkeys)\b'
+    reason: GPG secret key export (exposes private keys)
+
+  # ---------------------------------------------------------------------------
+  # ENVIRONMENT VARIABLE DUMPING (ask: true)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bprintenv\s*($|\|)'
+    reason: printenv dumps all environment variables (may contain secrets)
+    ask: true
+
+  - pattern: '\b(export\s+-p|declare\s+-x)\b'
+    reason: Dumps all exported environment variables (may contain secrets)
+    ask: true
+
+  # ---------------------------------------------------------------------------
   # SCHEDULED EXECUTION REQUIRING CONFIRMATION (ask: true)
   # ---------------------------------------------------------------------------
   - pattern: '\bcrontab\s+[^-\s]'

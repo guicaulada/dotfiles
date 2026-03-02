@@ -8,6 +8,32 @@ from tests.conftest import run_hook
 class TestAwsBlock:
     """Tests for AWS CLI operations that should be blocked."""
 
+    # --- Credential exposure ---
+
+    def test_block_aws_configure_get(self):
+        code, _, _ = run_hook(
+            "Bash", {"command": "aws configure get aws_secret_access_key"}
+        )
+        assert code == 2
+
+    def test_block_aws_configure_export_credentials(self):
+        code, _, _ = run_hook(
+            "Bash", {"command": "aws configure export-credentials --profile default"}
+        )
+        assert code == 2
+
+    def test_block_aws_sts_get_session_token(self):
+        code, _, _ = run_hook(
+            "Bash", {"command": "aws sts get-session-token --duration-seconds 3600"}
+        )
+        assert code == 2
+
+    def test_block_aws_sts_get_access_key_info(self):
+        code, _, _ = run_hook(
+            "Bash", {"command": "aws sts get-access-key-info --access-key-id AKIA123"}
+        )
+        assert code == 2
+
     # --- Specific S3 patterns (not caught by catch-all) ---
 
     def test_block_aws_s3_rm_recursive(self):

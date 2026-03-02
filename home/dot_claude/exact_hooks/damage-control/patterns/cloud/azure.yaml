@@ -1,6 +1,12 @@
 # Azure CLI security patterns
 bashToolPatterns:
   # ---------------------------------------------------------------------------
+  # CREDENTIAL EXPOSURE
+  # ---------------------------------------------------------------------------
+  - pattern: '\baz\s+account\s+get-access-token\b'
+    reason: Azure token exposure (prints access token)
+
+  # ---------------------------------------------------------------------------
   # SPECIFIC BLOCKS: patterns the catch-all would miss or only ask about
   # ---------------------------------------------------------------------------
 

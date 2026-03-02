@@ -1,6 +1,15 @@
 # AWS CLI security patterns
 bashToolPatterns:
   # ---------------------------------------------------------------------------
+  # CREDENTIAL EXPOSURE
+  # ---------------------------------------------------------------------------
+  - pattern: '\baws\s+configure\s+(get|export-credentials)\b'
+    reason: AWS credential exposure (prints stored credentials)
+
+  - pattern: '\baws\s+sts\s+(get-session-token|get-access-key-info)\b'
+    reason: AWS STS credential retrieval (exposes session tokens)
+
+  # ---------------------------------------------------------------------------
   # SPECIFIC BLOCKS: patterns the catch-all would miss or only ask about
   # ---------------------------------------------------------------------------
 

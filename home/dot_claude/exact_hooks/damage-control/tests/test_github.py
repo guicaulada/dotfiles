@@ -8,6 +8,24 @@ from tests.conftest import run_hook
 class TestGitHubBlock:
     """Test blocked (destructive) GitHub CLI operations."""
 
+    # -- gh auth token / --show-token (credential exposure) ----------------
+
+    def test_block_gh_auth_token(self):
+        code, _, _ = run_hook("Bash", {"command": "gh auth token"})
+        assert code == 2
+
+    def test_block_gh_auth_token_with_hostname(self):
+        code, _, _ = run_hook("Bash", {"command": "gh auth token --hostname github.com"})
+        assert code == 2
+
+    def test_block_gh_auth_status_show_token_long(self):
+        code, _, _ = run_hook("Bash", {"command": "gh auth status --show-token"})
+        assert code == 2
+
+    def test_block_gh_auth_status_show_token_short(self):
+        code, _, _ = run_hook("Bash", {"command": "gh auth status -t"})
+        assert code == 2
+
     # -- gh repo delete/archive/rename ------------------------------------
 
     def test_block_gh_repo_delete(self):
@@ -349,6 +367,11 @@ class TestGitHubAsk:
 
 class TestGitHubAllow:
     """Test that read-only GitHub CLI operations are allowed."""
+
+    def test_allow_gh_auth_status_without_show_token(self):
+        """gh auth status without --show-token should be allowed."""
+        code, _, _ = run_hook("Bash", {"command": "gh auth status"})
+        assert code == 0
 
     def test_allow_gh_pr_list(self):
         code, stdout, _ = run_hook("Bash", {"command": "gh pr list"})
