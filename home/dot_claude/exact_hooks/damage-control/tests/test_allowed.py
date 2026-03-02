@@ -70,3 +70,32 @@ class TestAllowedCommands:
         code, stdout, _ = run_hook("Bash", {"command": "helm status my-release"})
         assert code == 0
         assert stdout == ""
+
+    # --- Paths containing "secrets" as substring (not a secrets dir) ---
+
+    def test_allow_git_add_external_secrets(self):
+        """'secrets/' inside 'external-secrets/' should not trigger zero-access."""
+        code, stdout, _ = run_hook(
+            "Bash",
+            {
+                "command": "git add ksonnet/lib/external-secrets/gar-migration/db-o11y.libsonnet"
+            },
+        )
+        assert code == 0
+        assert stdout == ""
+
+    def test_allow_cat_external_secrets_path(self):
+        """Reading a file under an 'external-secrets' directory should be allowed."""
+        code, stdout, _ = run_hook(
+            "Bash",
+            {"command": "cat charts/external-secrets/templates/deployment.yaml"},
+        )
+        assert code == 0
+        assert stdout == ""
+
+    def test_allow_ls_external_secrets(self):
+        code, stdout, _ = run_hook(
+            "Bash", {"command": "ls external-secrets/"}
+        )
+        assert code == 0
+        assert stdout == ""

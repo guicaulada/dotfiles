@@ -337,8 +337,19 @@ def handle_bash(tool_input: dict[str, Any], config: dict[str, Any]) -> None:
             expanded = str(Path(zero_path).expanduser())
             escaped_expanded = re.escape(expanded)
             escaped_original = re.escape(zero_path)
-            if re.search(escaped_expanded, command) or re.search(
-                escaped_original, command
+            # Use path-component boundary to avoid matching inside
+            # longer names (e.g. "secrets/" inside "external-secrets/").
+            # Absolute paths already start with "/" so the boundary is
+            # implicit; relative paths need an explicit anchor.
+            if expanded.startswith("/"):
+                exp_pat = escaped_expanded
+                orig_pat = escaped_original
+            else:
+                boundary = r"(?:^|(?<=\s)|(?<=/))"
+                exp_pat = boundary + escaped_expanded
+                orig_pat = boundary + escaped_original
+            if re.search(exp_pat, command) or re.search(
+                orig_pat, command
             ):
                 _block(
                     f"Blocked: zero-access path {zero_path} (no operations allowed)",
