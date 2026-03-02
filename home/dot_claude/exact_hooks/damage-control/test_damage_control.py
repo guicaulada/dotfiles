@@ -13,6 +13,7 @@ import yaml
 from damage_control import (
     _BUILTIN_SHORTHANDS,
     _CMD_POSITION_PREFIX,
+    _GLOB_BOUNDARY,
     _block,
     _expand_shorthands,
     NO_DELETE_BLOCKED,
@@ -585,6 +586,56 @@ class TestCheckPathPatterns:
         )
         assert blocked is True
 
+    def test_glob_no_substring_match(self):
+        """*.o must not match .obsidian (glob boundary prevents prefix match)."""
+        blocked, _ = check_path_patterns(
+            'git rm --cached ".obsidian/workspace.json"',
+            "*.o",
+            READ_ONLY_BLOCKED,
+            "read-only path",
+        )
+        assert blocked is False
+
+    def test_glob_no_substring_match_so_vs_something(self):
+        """*.so must not match .something/file."""
+        blocked, _ = check_path_patterns(
+            "rm .ソフト/data",
+            "*.so",
+            NO_DELETE_BLOCKED,
+            "no-delete path",
+        )
+        assert blocked is False
+
+    def test_glob_matches_exact_extension(self):
+        """*.o still matches actual .o files."""
+        blocked, _ = check_path_patterns(
+            "rm main.o",
+            "*.o",
+            NO_DELETE_BLOCKED,
+            "no-delete path",
+        )
+        assert blocked is True
+
+    def test_glob_matches_quoted_path(self):
+        """*.o matches inside quotes."""
+        blocked, _ = check_path_patterns(
+            'rm "main.o"',
+            "*.o",
+            NO_DELETE_BLOCKED,
+            "no-delete path",
+        )
+        assert blocked is True
+
+    def test_glob_matches_path_component(self):
+        """*.o matches as path component before /."""
+        blocked, _ = check_path_patterns(
+            "rm build/main.o",
+            "*.o",
+            NO_DELETE_BLOCKED,
+            "no-delete path",
+        )
+        assert blocked is True
+
 
 # ---------------------------------------------------------------------------
 # _block
@@ -720,6 +771,20 @@ class TestHandleBash:
         with pytest.raises(SystemExit) as exc_info:
             handle_bash({"command": "cat external-secrets/file"}, config)
         assert exc_info.value.code == 0
+
+    def test_zero_access_glob_no_substring(self):
+        """*.o in zeroAccessPaths must not match .obsidian paths."""
+        config = {"zeroAccessPaths": ["*.o"]}
+        with pytest.raises(SystemExit) as exc_info:
+            handle_bash({"command": 'cat ".obsidian/workspace.json"'}, config)
+        assert exc_info.value.code == 0
+
+    def test_zero_access_glob_exact_match(self):
+        """*.o in zeroAccessPaths still blocks actual .o files."""
+        config = {"zeroAccessPaths": ["*.o"]}
+        with pytest.raises(SystemExit) as exc_info:
+            handle_bash({"command": "cat main.o"}, config)
+        assert exc_info.value.code == 2
 
     # Phase 3 — read-only paths
     def test_read_only_write_blocked(self):

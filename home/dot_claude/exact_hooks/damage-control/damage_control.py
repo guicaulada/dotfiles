@@ -54,6 +54,11 @@ def glob_to_regex(glob_pattern: str) -> str:
     return result
 
 
+# End-of-token boundary appended to glob regexes when searching inside
+# command strings.  Ensures *.o matches "file.o" but not ".obsidian/…".
+_GLOB_BOUNDARY = r'(?=[/\s;|&"\')\]]|$)'
+
+
 def match_path(file_path: str, pattern: str) -> bool:
     """Match a file path against a pattern (glob or prefix)."""
     expanded_pattern = str(Path(pattern).expanduser())
@@ -278,7 +283,7 @@ def check_path_patterns(
 ) -> tuple[bool, str]:
     """Check a command against operation patterns for a specific path."""
     if is_glob_pattern(path):
-        glob_regex = glob_to_regex(path)
+        glob_regex = glob_to_regex(path) + _GLOB_BOUNDARY
         for pattern_template, operation in patterns:
             try:
                 cmd_prefix = pattern_template.replace("{path}", "")
@@ -370,7 +375,7 @@ def handle_bash(tool_input: dict[str, Any], config: dict[str, Any]) -> None:
     # 2. Zero-access paths: block ANY mention
     for zero_path in zero_access_paths:
         if is_glob_pattern(zero_path):
-            glob_regex = glob_to_regex(zero_path)
+            glob_regex = glob_to_regex(zero_path) + _GLOB_BOUNDARY
             try:
                 if re.search(glob_regex, command, re.IGNORECASE):
                     msg = f"Blocked: zero-access pattern {zero_path}"
