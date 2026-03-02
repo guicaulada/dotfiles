@@ -2,9 +2,9 @@ aliases:
   shell:
     cat: "bat --paging=never"
     cheatsh: "navi --print --cheatsh"
-    ll: "eza -la --icons --git"
-    ls: "eza --icons"
-    lt: "eza --tree --icons --level=2"
+    ll: "eza -la --icons=auto --git"
+    ls: "eza --icons=auto"
+    lt: "eza --tree --icons=auto --level=2"
     top: btop
     vim: nvim
 
