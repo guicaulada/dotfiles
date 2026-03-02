@@ -173,6 +173,34 @@ class TestNomadBlock:
         assert code == 2
 
 
+class TestKubernetesSecretExposure:
+    """Tests for kubectl get secret that should prompt for confirmation."""
+
+    def test_ask_kubectl_get_secret(self):
+        code, stdout, _ = run_hook(
+            "Bash", {"command": "kubectl get secret my-secret -o yaml"}
+        )
+        assert code == 0
+        data = json.loads(stdout)
+        assert data["hookSpecificOutput"]["permissionDecision"] == "ask"
+
+    def test_ask_kubectl_get_secrets(self):
+        code, stdout, _ = run_hook(
+            "Bash", {"command": "kubectl get secrets -n production"}
+        )
+        assert code == 0
+        data = json.loads(stdout)
+        assert data["hookSpecificOutput"]["permissionDecision"] == "ask"
+
+    def test_ask_kubectl_get_secret_json(self):
+        code, stdout, _ = run_hook(
+            "Bash", {"command": "kubectl get secret db-creds -o json"}
+        )
+        assert code == 0
+        data = json.loads(stdout)
+        assert data["hookSpecificOutput"]["permissionDecision"] == "ask"
+
+
 class TestKubernetesAsk:
     def test_ask_kubectl_delete_pod(self):
         code, stdout, _ = run_hook("Bash", {"command": "kubectl delete pod my-pod"})

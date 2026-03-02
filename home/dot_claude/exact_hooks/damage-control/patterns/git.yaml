@@ -1,6 +1,12 @@
 # Git security patterns
 bashToolPatterns:
   # ---------------------------------------------------------------------------
+  # GIT CREDENTIAL EXPOSURE
+  # ---------------------------------------------------------------------------
+  - pattern: '\bgit\s+credential\b'
+    reason: git credential helper interaction (may expose stored credentials)
+
+  # ---------------------------------------------------------------------------
   # GIT DESTRUCTIVE OPERATIONS (block)
   # ---------------------------------------------------------------------------
   - pattern: '\bgit\s+reset\s+--hard\b'

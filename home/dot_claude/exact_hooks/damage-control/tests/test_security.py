@@ -239,6 +239,54 @@ class TestCredentialManagerBlock:
         assert code == 2
 
 
+class TestCredentialTokenExposure:
+    """Block and ask patterns for credential/token exposure commands."""
+
+    # -- GPG secret key export (block) --
+    def test_block_gpg_export_secret_keys(self):
+        code, _, _ = run_hook(
+            "Bash", {"command": "gpg --export-secret-keys user@example.com"}
+        )
+        assert code == 2
+
+    def test_block_gpg_export_secret_subkeys(self):
+        code, _, _ = run_hook(
+            "Bash", {"command": "gpg --export-secret-subkeys KEYID"}
+        )
+        assert code == 2
+
+    # -- printenv dump (ask) --
+    def test_ask_printenv_bare(self):
+        code, stdout, _ = run_hook("Bash", {"command": "printenv"})
+        assert code == 0
+        data = json.loads(stdout)
+        assert data["hookSpecificOutput"]["permissionDecision"] == "ask"
+
+    def test_ask_printenv_piped(self):
+        code, stdout, _ = run_hook("Bash", {"command": "printenv | grep TOKEN"})
+        assert code == 0
+        data = json.loads(stdout)
+        assert data["hookSpecificOutput"]["permissionDecision"] == "ask"
+
+    def test_allow_printenv_specific_var(self):
+        """printenv with a specific variable name should be allowed."""
+        code, _, _ = run_hook("Bash", {"command": "printenv HOME"})
+        assert code == 0
+
+    # -- export -p / declare -x (ask) --
+    def test_ask_export_p(self):
+        code, stdout, _ = run_hook("Bash", {"command": "export -p"})
+        assert code == 0
+        data = json.loads(stdout)
+        assert data["hookSpecificOutput"]["permissionDecision"] == "ask"
+
+    def test_ask_declare_x(self):
+        code, stdout, _ = run_hook("Bash", {"command": "declare -x"})
+        assert code == 0
+        data = json.loads(stdout)
+        assert data["hookSpecificOutput"]["permissionDecision"] == "ask"
+
+
 class TestScheduledExecution:
     """Ask patterns for scheduled execution and crontab destruction block."""
 

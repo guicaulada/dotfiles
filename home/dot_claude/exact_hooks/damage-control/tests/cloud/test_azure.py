@@ -8,6 +8,21 @@ from tests.conftest import run_hook
 class TestAzureBlock:
     """Tests for Azure CLI operations that should be blocked."""
 
+    # --- Credential exposure ---
+
+    def test_block_az_account_get_access_token(self):
+        code, _, _ = run_hook(
+            "Bash", {"command": "az account get-access-token"}
+        )
+        assert code == 2
+
+    def test_block_az_account_get_access_token_with_resource(self):
+        code, _, _ = run_hook(
+            "Bash",
+            {"command": "az account get-access-token --resource https://management.azure.com"},
+        )
+        assert code == 2
+
     # --- Specific block pattern ---
 
     def test_block_az_backup_protection_disable(self):

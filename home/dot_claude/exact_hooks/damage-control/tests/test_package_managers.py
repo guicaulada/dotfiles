@@ -9,6 +9,35 @@ from tests.conftest import run_hook
 # =============================================================================
 
 
+class TestCredentialTokenExposureBlock:
+    """Credential/token exposure operations that are always blocked."""
+
+    def test_block_npm_token_list(self):
+        code, _, _ = run_hook("Bash", {"command": "npm token list"})
+        assert code == 2
+
+    def test_block_npm_token_create(self):
+        code, _, _ = run_hook("Bash", {"command": "npm token create --read-only"})
+        assert code == 2
+
+    def test_block_composer_config_http_basic(self):
+        code, _, _ = run_hook(
+            "Bash", {"command": "composer config --global http-basic.repo.example.com"}
+        )
+        assert code == 2
+
+    def test_block_composer_config_github_oauth(self):
+        code, _, _ = run_hook(
+            "Bash",
+            {"command": "composer config --global github-oauth.github.com"},
+        )
+        assert code == 2
+
+    def test_block_gem_credentials(self):
+        code, _, _ = run_hook("Bash", {"command": "gem credentials"})
+        assert code == 2
+
+
 class TestPackageRegistryBlock:
     """Registry destructive operations that are always blocked."""
 

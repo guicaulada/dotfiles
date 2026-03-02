@@ -1,6 +1,15 @@
 # GitHub CLI (gh) security patterns
 bashToolPatterns:
   # ---------------------------------------------------------------------------
+  # GITHUB CLI CREDENTIAL EXPOSURE
+  # ---------------------------------------------------------------------------
+  - pattern: '\bgh\s+auth\s+token\b'
+    reason: gh auth token (exposes authentication token)
+
+  - pattern: '\bgh\s+auth\s+status\b.*(-t\b|--show-token)'
+    reason: gh auth status --show-token (exposes authentication token)
+
+  # ---------------------------------------------------------------------------
   # GITHUB CLI DESTRUCTIVE OPERATIONS
   # ---------------------------------------------------------------------------
   - pattern: '\bgh\s+repo\s+(delete|archive|rename)\b'

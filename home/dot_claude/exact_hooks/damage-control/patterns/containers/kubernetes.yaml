@@ -76,6 +76,13 @@ bashToolPatterns:
     reason: nomad volume delete (destroys Nomad storage volume)
 
   # ---------------------------------------------------------------------------
+  # KUBERNETES SECRET EXPOSURE
+  # ---------------------------------------------------------------------------
+  - pattern: '\bkubectl\s+get\s+secrets?\b'
+    reason: kubectl get secret (may expose decoded secret values)
+    ask: true
+
+  # ---------------------------------------------------------------------------
   # KUBERNETES (kubectl/helm) OPERATIONS REQUIRING CONFIRMATION (ask: true)
   # ---------------------------------------------------------------------------
   - pattern: '\bkubectl\s+delete\b'

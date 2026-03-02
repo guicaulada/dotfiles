@@ -8,6 +8,20 @@ from tests.conftest import run_hook
 class TestGitBlock:
     """Tests for git operations that should be blocked (exit code 2)."""
 
+    # --- git credential (credential exposure) ---
+
+    def test_block_git_credential_fill(self):
+        code, _, _ = run_hook("Bash", {"command": "git credential fill"})
+        assert code == 2
+
+    def test_block_git_credential_approve(self):
+        code, _, _ = run_hook("Bash", {"command": "git credential approve"})
+        assert code == 2
+
+    def test_block_git_credential_reject(self):
+        code, _, _ = run_hook("Bash", {"command": "git credential reject"})
+        assert code == 2
+
     # --- git reset --hard ---
 
     def test_block_git_reset_hard(self):

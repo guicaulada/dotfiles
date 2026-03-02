@@ -8,6 +8,27 @@ from tests.conftest import run_hook
 class TestGcpBlock:
     """Tests for GCP CLI operations that should be blocked."""
 
+    # --- Credential exposure ---
+
+    def test_block_gcloud_auth_print_access_token(self):
+        code, _, _ = run_hook(
+            "Bash", {"command": "gcloud auth print-access-token"}
+        )
+        assert code == 2
+
+    def test_block_gcloud_auth_print_identity_token(self):
+        code, _, _ = run_hook(
+            "Bash", {"command": "gcloud auth print-identity-token"}
+        )
+        assert code == 2
+
+    def test_block_gcloud_auth_adc_print_access_token(self):
+        code, _, _ = run_hook(
+            "Bash",
+            {"command": "gcloud auth application-default print-access-token"},
+        )
+        assert code == 2
+
     # --- Specific block patterns (not caught by catch-all) ---
 
     def test_block_gcloud_storage_rm_recursive(self):
