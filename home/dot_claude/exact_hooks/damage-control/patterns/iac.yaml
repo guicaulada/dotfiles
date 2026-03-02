@@ -3,70 +3,70 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   # INFRASTRUCTURE AS CODE DESTRUCTIVE OPERATIONS
   # ---------------------------------------------------------------------------
-  - pattern: '\b(terraform|tofu|terragrunt)\s+destroy\b'
+  - pattern: '\b(terraform|tofu|terragrunt){flags}destroy\b'
     reason: terraform/tofu/terragrunt destroy (destroys all infrastructure)
 
-  - pattern: '\bterragrunt\s+run-all\s+destroy\b'
+  - pattern: '\bterragrunt{flags}run-all\s+destroy\b'
     reason: terragrunt run-all destroy (destroys ALL infrastructure across modules)
 
-  - pattern: '\bpulumi\s+destroy\b'
+  - pattern: '\bpulumi{flags}destroy\b'
     reason: pulumi destroy (destroys all resources)
 
-  - pattern: '\b(serverless|sls)\s+remove\b'
+  - pattern: '\b(serverless|sls){flags}remove\b'
     reason: serverless/sls remove (removes stack)
 
-  - pattern: '\bsam\s+delete\b'
+  - pattern: '\bsam{flags}delete\b'
     reason: sam delete (deletes SAM application)
 
-  - pattern: '\b(terraform|tofu)\s+state\s+rm\b'
+  - pattern: '\b(terraform|tofu){flags}state\s+rm\b'
     reason: terraform/tofu state rm (removes resource from state, causes drift)
 
-  - pattern: '\b(terraform|tofu)\s+force-unlock\b'
+  - pattern: '\b(terraform|tofu){flags}force-unlock\b'
     reason: terraform/tofu force-unlock (can cause state corruption)
 
-  - pattern: '\b(cdk|cdktf)\s+destroy\b'
+  - pattern: '\b(cdk|cdktf){flags}destroy\b'
     reason: cdk/cdktf destroy (destroys infrastructure)
 
-  - pattern: '\bterraform\s+workspace\s+delete\b'
+  - pattern: '\bterraform{flags}workspace\s+delete\b'
     reason: terraform workspace delete (destroys workspace and state)
 
-  - pattern: '\bpulumi\s+stack\s+rm\b'
+  - pattern: '\bpulumi{flags}stack\s+rm\b'
     reason: pulumi stack rm (destroys stack and state)
 
-  - pattern: '\b(terraform|tofu)\s+state\s+(push|replace-provider)\b'
+  - pattern: '\b(terraform|tofu){flags}state\s+(push|replace-provider)\b'
     reason: terraform/tofu state push/replace-provider (overwrites state file)
 
   # ---------------------------------------------------------------------------
   # IAC OPERATIONS REQUIRING CONFIRMATION (ask: true)
   # ---------------------------------------------------------------------------
-  - pattern: '\b(terraform|tofu)\s+apply\b'
+  - pattern: '\b(terraform|tofu){flags}apply\b'
     reason: Applies Terraform/OpenTofu infrastructure changes
     ask: true
 
-  - pattern: '\b(terraform|tofu)\s+(import|state\s+mv)\b'
+  - pattern: '\b(terraform|tofu){flags}(import|state\s+mv)\b'
     reason: Modifies Terraform/OpenTofu state
     ask: true
 
-  - pattern: '\bpulumi\s+up\b'
+  - pattern: '\bpulumi{flags}up\b'
     reason: Deploys Pulumi infrastructure changes
     ask: true
 
-  - pattern: '\bterraform\s+workspace\s+(new|select)\b'
+  - pattern: '\bterraform{flags}workspace\s+(new|select)\b'
     reason: Creates or switches Terraform workspace
     ask: true
 
-  - pattern: '\bpulumi\s+stack\s+(init|select)\b'
+  - pattern: '\bpulumi{flags}stack\s+(init|select)\b'
     reason: Creates or selects Pulumi stack
     ask: true
 
-  - pattern: '\b(cdk|cdktf)\s+deploy\b'
+  - pattern: '\b(cdk|cdktf){flags}deploy\b'
     reason: Deploys CDK/CDKTF infrastructure
     ask: true
 
-  - pattern: '\b(terraform|tofu)\s+refresh\b'
+  - pattern: '\b(terraform|tofu){flags}refresh\b'
     reason: Refreshes Terraform/OpenTofu state from cloud
     ask: true
 
-  - pattern: '\bpulumi\s+refresh\b'
+  - pattern: '\bpulumi{flags}refresh\b'
     reason: Refreshes Pulumi state from cloud
     ask: true

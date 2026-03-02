@@ -3,22 +3,22 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   # DOCKER / PODMAN DESTRUCTIVE OPERATIONS
   # ---------------------------------------------------------------------------
-  - pattern: '\b(docker|podman)\s+system\s+prune\s+.*-a'
+  - pattern: '\b(docker|podman){flags}system\s+prune{args}\s+-a'
     reason: system prune -a (removes all unused data)
 
-  - pattern: '\b(docker|podman)\s+rm\s+.*-f'
+  - pattern: '\b(docker|podman){flags}rm{args}\s+-f'
     reason: rm -f (force removes containers)
 
-  - pattern: '\b(docker|podman)\s+rmi\s+.*-f'
+  - pattern: '\b(docker|podman){flags}rmi{args}\s+-f'
     reason: rmi -f (force removes images)
 
-  - pattern: '\b(docker|podman)\s+(volume|network|container|image|builder|stack|service|secret|buildx|context|config|plugin|trust)\s+(rm|prune|revoke)\b'
+  - pattern: '\b(docker|podman){flags}(volume|network|container|image|builder|stack|service|secret|buildx|context|config|plugin|trust)\s+(rm|prune|revoke)\b'
     reason: destructive resource operation (rm/prune/revoke)
 
-  - pattern: '\b(docker|podman)\s+image\s+prune\s+.*-a'
+  - pattern: '\b(docker|podman){flags}image\s+prune{args}\s+-a'
     reason: image prune -a (removes all unused images)
 
-  - pattern: '\b(docker|podman)\s+swarm\s+leave\s+.*--force'
+  - pattern: '\b(docker|podman){flags}swarm\s+leave{args}\s+--force'
     reason: swarm leave --force (disrupts cluster)
 
   # ---------------------------------------------------------------------------
@@ -34,31 +34,31 @@ bashToolPatterns:
     reason: Stops and removes containers
     ask: true
 
-  - pattern: '\b(docker|podman)\s+run\s+.*--privileged(?!=false)'
+  - pattern: '\b(docker|podman){flags}run{args}\s+--privileged(?!=false)'
     reason: Runs container with full host access
     ask: true
 
-  - pattern: '\b(docker|podman)\s+push\b'
+  - pattern: '\b(docker|podman){flags}push\b'
     reason: Pushes image to registry
     ask: true
 
-  - pattern: '\b(docker|podman)\s+manifest\s+push\b'
+  - pattern: '\b(docker|podman){flags}manifest\s+push\b'
     reason: Pushes multi-arch manifest to registry
     ask: true
 
   # ---------------------------------------------------------------------------
   # HOST MOUNT (ask: true)
   # ---------------------------------------------------------------------------
-  - pattern: '\b(docker|podman)\s+run\s+.*(-v|--volume)\s+/:/\b'
+  - pattern: '\b(docker|podman){flags}run{args}\s+(-v|--volume)\s+/:/\b'
     reason: Container run mounting host root filesystem
     ask: true
 
-  - pattern: '\b(docker|podman)\s+run\s+.*--mount\s+.*src=/[,\s]'
+  - pattern: '\b(docker|podman){flags}run{args}\s+--mount\s+.*src=/[,\s]'
     reason: Container run mounting host root filesystem (--mount syntax)
     ask: true
 
   # ---------------------------------------------------------------------------
   # CONTAINER REGISTRY TOOLS
   # ---------------------------------------------------------------------------
-  - pattern: '\b(skopeo|crane)\s+delete\b'
+  - pattern: '\b(skopeo|crane){flags}delete\b'
     reason: Deletes container image from registry

@@ -6,45 +6,45 @@ bashToolPatterns:
   - pattern: '\bpython3?\s+-c\s+.*\b(exec|eval|compile|__import__)\b'
     reason: Python one-liner with exec/eval/compile/__import__ (arbitrary code execution)
 
-  - pattern: '\bpipx\s+uninstall-all\b'
+  - pattern: '\bpipx{flags}uninstall-all\b'
     reason: pipx uninstall-all (removes ALL globally installed Python apps)
 
-  - pattern: '\bpipx\s+(install|uninstall)\b'
+  - pattern: '\bpipx{flags}(install|uninstall)\b'
     reason: pipx install/uninstall (manages globally installed Python apps)
     ask: true
 
-  - pattern: '\b(conda|mamba)\s+env\s+remove\b'
+  - pattern: '\b(conda|mamba){flags}env\s+remove\b'
     reason: conda/mamba env remove (deletes entire conda environment)
 
-  - pattern: '\bconda\s+clean\s+.*(-a|--all)\b'
+  - pattern: '\bconda{flags}clean{args}\s+(-a|--all)\b'
     reason: conda clean --all (removes all cached packages)
 
-  - pattern: '\bconda\s+(remove|uninstall)\b'
+  - pattern: '\bconda{flags}(remove|uninstall)\b'
     reason: conda remove/uninstall (removes packages from environment)
     ask: true
 
-  - pattern: '\bpoetry\s+env\s+remove\b'
+  - pattern: '\bpoetry{flags}env\s+remove\b'
     reason: poetry env remove (removes virtual environment)
 
-  - pattern: '\bpoetry\s+remove\b'
+  - pattern: '\bpoetry{flags}remove\b'
     reason: poetry remove (removes package from project)
     ask: true
 
-  - pattern: '\buv\s+pip\s+uninstall\b'
+  - pattern: '\buv{flags}pip\s+uninstall\b'
     reason: uv pip uninstall (removes Python packages)
     ask: true
 
-  - pattern: '\buv\s+cache\s+clean\b'
+  - pattern: '\buv{flags}cache\s+clean\b'
     reason: uv cache clean (removes uv cache)
     ask: true
 
   # ---------------------------------------------------------------------------
   # PYTHON VERSION MANAGERS
   # ---------------------------------------------------------------------------
-  - pattern: '\bpyenv\s+uninstall\b'
+  - pattern: '\bpyenv{flags}uninstall\b'
     reason: pyenv uninstall (removes Python version)
 
-  - pattern: '\bpyenv\s+virtualenv-delete\b'
+  - pattern: '\bpyenv{flags}virtualenv-delete\b'
     reason: pyenv virtualenv-delete (removes virtual environment)
 
   - pattern: '\bpipenv\s+--rm\b'

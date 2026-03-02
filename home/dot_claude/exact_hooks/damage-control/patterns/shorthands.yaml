@@ -1,0 +1,15 @@
+# Shorthand definitions for damage-control patterns
+#
+# Shorthands are {name} placeholders expanded in pattern regexes before
+# compilation.  Built-in shorthands are always available; override their
+# values here or define new ones.
+#
+# Built-in shorthands:
+#   {flags} — global CLI flags between tool and subcommand
+#             e.g. \bkubectl{flags}delete\b  matches  kubectl --context prod delete ...
+#   {args}  — boundary-safe arguments within one command (safer than .*)
+#             e.g. delete{args}\s+--all  matches  delete pod foo --all
+#             but does NOT cross ; | & boundaries
+#   {sudo}  — optional sudo prefix
+#             e.g. {sudo}\bapt{flags}remove\b  matches both  sudo apt remove  and  apt remove
+shorthands: {}

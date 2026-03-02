@@ -3,13 +3,13 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   # DESTRUCTIVE OPERATIONS (block)
   # ---------------------------------------------------------------------------
-  - pattern: '\bglab\s+project\s+delete\b'
+  - pattern: '\bglab{flags}project\s+delete\b'
     reason: glab project delete (deletes GitLab project)
 
-  - pattern: '\bcircleci\s+context\s+(delete|remove-secret|store-secret)\b'
+  - pattern: '\bcircleci{flags}context\s+(delete|remove-secret|store-secret)\b'
     reason: CircleCI context management (destroys or modifies secrets)
 
-  - pattern: '\bsst\s+remove\b'
+  - pattern: '\bsst{flags}remove\b'
     reason: sst remove (destroys SST stack)
 
   - pattern: '\bhg\s+(strip|purge|rollback)\b'
@@ -30,23 +30,23 @@ bashToolPatterns:
     reason: Runs GitHub Actions workflows locally
     ask: true
 
-  - pattern: '\bglab\s+mr\s+(merge|close|create)\b'
+  - pattern: '\bglab{flags}mr\s+(merge|close|create)\b'
     reason: GitLab merge request action
     ask: true
 
-  - pattern: '\bglab\s+issue\s+(create|close)\b'
+  - pattern: '\bglab{flags}issue\s+(create|close)\b'
     reason: GitLab issue action
     ask: true
 
-  - pattern: '\bglab\s+pipeline\s+(cancel|delete|retry)\b'
+  - pattern: '\bglab{flags}pipeline\s+(cancel|delete|retry)\b'
     reason: GitLab pipeline action
     ask: true
 
-  - pattern: '\b(serverless|sls)\s+deploy\b'
+  - pattern: '\b(serverless|sls){flags}deploy\b'
     reason: Deploys Serverless Framework application
     ask: true
 
-  - pattern: '\bsst\s+deploy\b'
+  - pattern: '\bsst{flags}deploy\b'
     reason: Deploys SST application
     ask: true
 

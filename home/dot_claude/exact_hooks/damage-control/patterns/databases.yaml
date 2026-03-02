@@ -45,7 +45,7 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   # MYSQL / MARIADB DESTRUCTIVE OPERATIONS
   # ---------------------------------------------------------------------------
-  - pattern: '\bmysqladmin\s+drop\b'
+  - pattern: '\bmysqladmin{flags}drop\b'
     reason: MySQL drop database via mysqladmin
 
   - pattern: '\b(mysql|mariadb)\b.*(-e|--execute)\s+.*(DROP|TRUNCATE|DELETE\s+FROM)'
@@ -111,16 +111,16 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   # FLYWAY / LIQUIBASE DATABASE MIGRATIONS
   # ---------------------------------------------------------------------------
-  - pattern: '\bflyway\s+clean\b'
+  - pattern: '\bflyway{flags}clean\b'
     reason: flyway clean (drops ALL objects in schema)
 
-  - pattern: '\bliquibase\s+drop-all\b'
+  - pattern: '\bliquibase{flags}drop-all\b'
     reason: liquibase drop-all (drops all database objects)
 
-  - pattern: '\bflyway\s+undo\b'
+  - pattern: '\bflyway{flags}undo\b'
     reason: flyway undo (undoes most recent migration)
     ask: true
 
-  - pattern: '\bliquibase\s+rollback\b'
+  - pattern: '\bliquibase{flags}rollback\b'
     reason: liquibase rollback (rolls back database changes)
     ask: true

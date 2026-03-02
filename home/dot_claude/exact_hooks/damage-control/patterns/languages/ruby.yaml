@@ -6,7 +6,7 @@ bashToolPatterns:
   - pattern: '\b(rbenv|rvm)\s+(remove|uninstall)\b'
     reason: Ruby version manager remove/uninstall (removes Ruby version)
 
-  - pattern: '\bbundle\s+clean\b'
+  - pattern: '\bbundle{flags}clean\b'
     reason: bundle clean (removes unused gems)
     ask: true
 

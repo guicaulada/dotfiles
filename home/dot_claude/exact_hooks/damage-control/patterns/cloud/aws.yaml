@@ -3,10 +3,10 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   # CREDENTIAL EXPOSURE
   # ---------------------------------------------------------------------------
-  - pattern: '\baws\s+configure\s+(get|export-credentials)\b'
+  - pattern: '\baws{flags}configure\s+(get|export-credentials)\b'
     reason: AWS credential exposure (prints stored credentials)
 
-  - pattern: '\baws\s+sts\s+(get-session-token|get-access-key-info)\b'
+  - pattern: '\baws{flags}sts\s+(get-session-token|get-access-key-info)\b'
     reason: AWS STS credential retrieval (exposes session tokens)
 
   # ---------------------------------------------------------------------------
@@ -14,26 +14,26 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
 
   # S3 uses "rm"/"rb" instead of "delete-" so the catch-all misses them
-  - pattern: '\baws\s+s3\s+rm\s+.*(-r\b|--recursive)'
+  - pattern: '\baws{flags}s3\s+rm{args}\s+(-r\b|--recursive)'
     reason: aws s3 rm --recursive (deletes all objects)
 
-  - pattern: '\baws\s+s3\s+rb\s+.*--force'
+  - pattern: '\baws{flags}s3\s+rb{args}\s+--force'
     reason: aws s3 rb --force (force removes bucket)
 
-  - pattern: '\baws\s+s3\s+sync\s+.*--delete\b'
+  - pattern: '\baws{flags}s3\s+sync{args}\s+--delete\b'
     reason: aws s3 sync --delete (deletes files at destination not in source)
 
   # IAM detach is "detach-" which the ask catch-all covers, but it must BLOCK
-  - pattern: '\baws\s+iam\s+detach-(role-policy|group-policy|user-policy)\b'
+  - pattern: '\baws{flags}iam\s+detach-(role-policy|group-policy|user-policy)\b'
     reason: aws iam detach policy (removes security controls)
 
   # CloudTrail stop-logging uses "stop-" which the ask catch-all covers, but
   # disabling audit logging must BLOCK
-  - pattern: '\baws\s+cloudtrail\s+stop-logging\b'
+  - pattern: '\baws{flags}cloudtrail\s+stop-logging\b'
     reason: aws cloudtrail stop-logging (disables audit trail)
 
   # WAF delete uses a different command structure (no hyphen after delete)
-  - pattern: '\baws\s+waf.*delete\b'
+  - pattern: '\baws{flags}waf.*delete\b'
     reason: aws waf delete (removes WAF protection)
 
   # EMR uses "terminate-job-flows" -- caught by block catch-all but "terminate"
@@ -46,33 +46,33 @@ bashToolPatterns:
 
   # Route53 delete-hosted-zone: "delete-" would match the block catch-all,
   # but deleting a hosted zone should ASK (recoverable, requires confirmation)
-  - pattern: '\baws\s+route53\s+delete-hosted-zone\b'
+  - pattern: '\baws{flags}route53\s+delete-hosted-zone\b'
     reason: Deletes Route53 hosted zone (all DNS records)
     ask: true
 
   # Route53 change- is not in the ask catch-all verb list
-  - pattern: '\baws\s+route53\s+change-resource-record-sets\b'
+  - pattern: '\baws{flags}route53\s+change-resource-record-sets\b'
     reason: Modifies DNS records
     ask: true
 
   # Standalone mutating verbs without hyphen suffix (catch-all requires hyphen)
-  - pattern: '\baws\s+lambda\s+invoke\b'
+  - pattern: '\baws{flags}lambda\s+invoke\b'
     reason: Invokes Lambda function
     ask: true
 
-  - pattern: '\baws\s+sns\s+publish\b'
+  - pattern: '\baws{flags}sns\s+publish\b'
     reason: Publishes SNS message
     ask: true
 
   # ---------------------------------------------------------------------------
   # BLOCK CATCH-ALL: any "aws <service> delete-/terminate-/remove-/purge-/deregister-"
   # ---------------------------------------------------------------------------
-  - pattern: '\baws\s+\S+\s+(delete|terminate|remove|purge|deregister)-'
+  - pattern: '\baws{flags}\S+\s+(delete|terminate|remove|purge|deregister)-'
     reason: AWS CLI destructive operation (catch-all)
 
   # ---------------------------------------------------------------------------
   # ASK CATCH-ALL: any "aws <service> create-/update-/put-/..." mutating op
   # ---------------------------------------------------------------------------
-  - pattern: '\baws\s+\S+\s+(create|update|put|modify|start|stop|reboot|invoke|run|execute|send|publish|attach|detach|associate|disassociate|enable|disable|register|tag|untag)-'
+  - pattern: '\baws{flags}\S+\s+(create|update|put|modify|start|stop|reboot|invoke|run|execute|send|publish|attach|detach|associate|disassociate|enable|disable|register|tag|untag)-'
     reason: AWS CLI mutating operation (catch-all)
     ask: true

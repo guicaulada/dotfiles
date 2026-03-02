@@ -4,46 +4,46 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   # CREDENTIAL / TOKEN EXPOSURE
   # ---------------------------------------------------------------------------
-  - pattern: '\bnpm\s+token\b'
+  - pattern: '\bnpm{flags}token\b'
     reason: npm token management (may expose authentication tokens)
 
   - pattern: '\bcomposer\s+config\b.*(http-basic|token|gitlab-token|github-oauth)\b'
     reason: Composer credential retrieval (may expose authentication tokens)
 
-  - pattern: '\bgem\s+credentials\b'
+  - pattern: '\bgem{flags}credentials\b'
     reason: gem credentials (exposes RubyGems API key)
 
   # ---------------------------------------------------------------------------
   # PACKAGE REGISTRY DESTRUCTIVE OPERATIONS
   # ---------------------------------------------------------------------------
-  - pattern: '\bnpm\s+unpublish\b'
+  - pattern: '\bnpm{flags}unpublish\b'
     reason: npm unpublish (removes package from registry)
 
-  - pattern: '\bnpm\s+deprecate\b'
+  - pattern: '\bnpm{flags}deprecate\b'
     reason: npm deprecate (marks package as deprecated in registry)
 
-  - pattern: '\bgem\s+yank\b'
+  - pattern: '\bgem{flags}yank\b'
     reason: gem yank (removes gem from RubyGems)
 
-  - pattern: '\bcargo\s+yank\b'
+  - pattern: '\bcargo{flags}yank\b'
     reason: cargo yank (yanks crate from crates.io)
 
   # ---------------------------------------------------------------------------
   # SYSTEM PACKAGE MANAGERS - REMOVAL (DESTRUCTIVE)
   # ---------------------------------------------------------------------------
-  - pattern: '\bsudo\s+(apt|apt-get)\s+(remove|purge|autoremove)\b'
+  - pattern: '{sudo}\b(apt|apt-get){flags}(remove|purge|autoremove)\b'
     reason: apt package removal (system-level)
 
-  - pattern: '\bsudo\s+(dnf|yum)\s+(remove|erase|autoremove)\b'
+  - pattern: '{sudo}\b(dnf|yum){flags}(remove|erase|autoremove)\b'
     reason: dnf/yum package removal (system-level)
 
-  - pattern: '\bsudo\s+pacman\s+-R'
+  - pattern: '{sudo}\bpacman{flags}-R'
     reason: pacman package removal (system-level)
 
-  - pattern: '\bsudo\s+zypper\s+(remove|rm)\b'
+  - pattern: '{sudo}\bzypper{flags}(remove|rm)\b'
     reason: zypper package removal (system-level)
 
-  - pattern: '\bsudo\s+apk\s+del\b'
+  - pattern: '{sudo}\bapk{flags}del\b'
     reason: apk package removal (system-level)
 
   - pattern: '\b(snap\s+(remove|uninstall)|flatpak\s+uninstall)\b'
@@ -52,46 +52,46 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   # SYSTEM PACKAGE MANAGERS - INSTALLATION (ask: true)
   # ---------------------------------------------------------------------------
-  - pattern: '\bsudo\s+(apt|apt-get)\s+install\b'
+  - pattern: '{sudo}\b(apt|apt-get){flags}install\b'
     reason: apt package installation (system-level)
     ask: true
 
-  - pattern: '\bsudo\s+(dnf|yum)\s+install\b'
+  - pattern: '{sudo}\b(dnf|yum){flags}install\b'
     reason: dnf/yum package installation (system-level)
     ask: true
 
-  - pattern: '\bsudo\s+pacman\s+-S'
+  - pattern: '{sudo}\bpacman{flags}-S'
     reason: pacman package installation (system-level)
     ask: true
 
-  - pattern: '\bsudo\s+zypper\s+(install|in)\b'
+  - pattern: '{sudo}\bzypper{flags}(install|in)\b'
     reason: zypper package installation (system-level)
     ask: true
 
-  - pattern: '\bsudo\s+apk\s+add\b'
+  - pattern: '{sudo}\bapk{flags}add\b'
     reason: apk package installation (system-level)
     ask: true
 
   # ---------------------------------------------------------------------------
   # HOMEBREW
   # ---------------------------------------------------------------------------
-  - pattern: '\bbrew\s+(uninstall|remove)\b'
+  - pattern: '\bbrew{flags}(uninstall|remove)\b'
     reason: Uninstalls Homebrew package
     ask: true
 
-  - pattern: '\bbrew\s+install\s+.*--force'
+  - pattern: '\bbrew{flags}install{args}\s+--force'
     reason: Homebrew force install (overwrites existing)
     ask: true
 
-  - pattern: '\bbrew\s+reinstall\b'
+  - pattern: '\bbrew{flags}reinstall\b'
     reason: Homebrew reinstall
     ask: true
 
-  - pattern: '\bbrew\s+install\s+--cask\b'
+  - pattern: '\bbrew{flags}install\s+--cask\b'
     reason: Homebrew cask install (macOS application)
     ask: true
 
-  - pattern: '\bbrew\s+(cleanup|autoremove)\b'
+  - pattern: '\bbrew{flags}(cleanup|autoremove)\b'
     reason: brew cleanup/autoremove (removes old versions or unused dependencies)
     ask: true
 
@@ -106,18 +106,18 @@ bashToolPatterns:
     reason: Uninstalls Python package
     ask: true
 
-  - pattern: '\bgem\s+uninstall\b'
+  - pattern: '\bgem{flags}uninstall\b'
     reason: Uninstalls Ruby gem
     ask: true
 
   # ---------------------------------------------------------------------------
   # CARGO / GO
   # ---------------------------------------------------------------------------
-  - pattern: '\bcargo\s+install\b'
+  - pattern: '\bcargo{flags}install\b'
     reason: cargo install (compiles and installs Rust binary)
     ask: true
 
-  - pattern: '\bgo\s+install\b'
+  - pattern: '\bgo{flags}install\b'
     reason: go install (downloads and installs Go binary)
     ask: true
 
@@ -134,7 +134,7 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   # PACKAGE REGISTRY PUBLISHING (ask: true)
   # ---------------------------------------------------------------------------
-  - pattern: '\bnpm\s+publish\b'
+  - pattern: '\bnpm{flags}publish\b'
     reason: Publishes package to npm registry
     ask: true
 
@@ -148,33 +148,33 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   # NPM / YARN / PNPM - GLOBAL INSTALLS (ask: true)
   # ---------------------------------------------------------------------------
-  - pattern: '\bnpm\s+(install|i)\s+(-\S+\s+)*-g\b'
+  - pattern: '\bnpm{flags}(install|i)\s+(-\S+\s+)*-g\b'
     reason: npm global install (modifies system-wide packages)
     ask: true
 
-  - pattern: '\byarn\s+global\s+add\b'
+  - pattern: '\byarn{flags}global\s+add\b'
     reason: yarn global install (modifies system-wide packages)
     ask: true
 
-  - pattern: '\bpnpm\s+add\s+(-\S+\s+)*-g\b'
+  - pattern: '\bpnpm{flags}add\s+(-\S+\s+)*-g\b'
     reason: pnpm global install (modifies system-wide packages)
     ask: true
 
   # ---------------------------------------------------------------------------
   # NPM / YARN - LINKING (ask: true)
   # ---------------------------------------------------------------------------
-  - pattern: '\b(npm|yarn)\s+link\b'
+  - pattern: '\b(npm|yarn){flags}link\b'
     reason: npm/yarn link (creates global symlink)
     ask: true
 
   # ---------------------------------------------------------------------------
   # VERSION MANAGERS (asdf / mise / proto)
   # ---------------------------------------------------------------------------
-  - pattern: '\basdf\s+uninstall\b'
+  - pattern: '\basdf{flags}uninstall\b'
     reason: asdf uninstall (removes language/tool version)
 
-  - pattern: '\bmise\s+(uninstall|prune)\b'
+  - pattern: '\bmise{flags}(uninstall|prune)\b'
     reason: mise uninstall/prune (removes tool versions)
 
-  - pattern: '\bproto\s+(uninstall|clean)\b'
+  - pattern: '\bproto{flags}(uninstall|clean)\b'
     reason: proto uninstall/clean (removes tool versions)

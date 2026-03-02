@@ -184,10 +184,41 @@ def get_config_path() -> Path:
 
 _CONFIG_KEYS = ("bashToolPatterns", "zeroAccessPaths", "readOnlyPaths", "noDeletePaths")
 
+# ============================================================================
+# CONFIGURABLE SHORTHANDS
+# ============================================================================
+
+_BUILTIN_SHORTHANDS: dict[str, str] = {
+    "flags": r"\b(?:\s+[^\s;|&)]+)*?\s+",  # global flags between tool and subcommand
+    "args": r"(?:\s+[^\s;|&)]+)*",  # boundary-safe arguments (replaces .*)
+    "sudo": r"(?:sudo\s+)?",  # optional sudo prefix
+}
+
+# Matches {name} placeholders but NOT regex constructs like \b{3} or [a-z]{2,4}
+_SHORTHAND_RE = re.compile(r"(?<![\[\\])\{([a-zA-Z_]\w*)\}(?![},?\d])")
+
+
+def _expand_shorthands(pattern: str, shorthands: dict[str, str]) -> str:
+    """Replace ``{name}`` placeholders with their regex expansions.
+
+    Skips regex quantifiers like ``\\b{3}`` or ``[a-z]{2,4}`` so only
+    actual shorthand placeholders are expanded.
+    """
+    merged = {**_BUILTIN_SHORTHANDS, **shorthands}
+
+    def _replace(m: re.Match) -> str:
+        name = m.group(1)
+        if name in merged:
+            return merged[name]
+        return m.group(0)  # leave unknown placeholders unchanged
+
+    return _SHORTHAND_RE.sub(_replace, pattern)
+
 
 def load_patterns_dir(patterns_dir: Path) -> dict[str, Any]:
     """Load and merge all YAML files from a patterns directory."""
     merged: dict[str, list] = {k: [] for k in _CONFIG_KEYS}
+    shorthands: dict[str, str] = {}
 
     # Sorted paths for deterministic load order; .yaml before .yml
     seen: set[Path] = set()
@@ -205,7 +236,11 @@ def load_patterns_dir(patterns_dir: Path) -> dict[str, Any]:
             items = data.get(key)
             if isinstance(items, list):
                 merged[key].extend(items)
+        file_shorthands = data.get("shorthands")
+        if isinstance(file_shorthands, dict):
+            shorthands.update(file_shorthands)
 
+    merged["shorthands"] = shorthands
     return merged
 
 
@@ -222,7 +257,15 @@ def load_config() -> dict[str, Any]:
         return {k: [] for k in _CONFIG_KEYS}
 
     with config_path.open() as f:
-        return yaml.safe_load(f) or {}
+        data = yaml.safe_load(f) or {}
+
+    shorthands = data.get("shorthands")
+    if isinstance(shorthands, dict):
+        data["shorthands"] = shorthands
+    else:
+        data["shorthands"] = {}
+
+    return data
 
 
 # ============================================================================
@@ -293,12 +336,16 @@ def handle_bash(tool_input: dict[str, Any], config: dict[str, Any]) -> None:
     zero_access_paths = config.get("zeroAccessPaths", [])
     read_only_paths = config.get("readOnlyPaths", [])
     no_delete_paths = config.get("noDeletePaths", [])
+    shorthands = config.get("shorthands", {})
 
     # 1. Check against regex patterns from YAML (may block or ask)
     for item in patterns:
         pattern = item.get("pattern", "")
         reason = item.get("reason", "Blocked by pattern")
         should_ask = item.get("ask", False)
+
+        # Expand {name} shorthand placeholders
+        pattern = _expand_shorthands(pattern, shorthands)
 
         if not item.get("match_anywhere", False):
             pattern = _CMD_POSITION_PREFIX + pattern

@@ -13,7 +13,7 @@ bashToolPatterns:
   - pattern: '\bdd\s+.*of=/dev/'
     reason: dd writing to device
 
-  - pattern: '\bdiskutil\s+(eraseDisk|eraseVolume|partitionDisk)\b'
+  - pattern: '\bdiskutil{flags}(eraseDisk|eraseVolume|partitionDisk)\b'
     reason: diskutil erase/partition (macOS disk destruction)
 
   - pattern: '\b(shutdown|reboot|halt|poweroff)\b'

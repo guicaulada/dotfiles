@@ -3,123 +3,123 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   # GIT CREDENTIAL EXPOSURE
   # ---------------------------------------------------------------------------
-  - pattern: '\bgit\s+credential\b'
+  - pattern: '\bgit{flags}credential\b'
     reason: git credential helper interaction (may expose stored credentials)
 
   # ---------------------------------------------------------------------------
   # GIT DESTRUCTIVE OPERATIONS (block)
   # ---------------------------------------------------------------------------
-  - pattern: '\bgit\s+reset\s+--hard\b'
+  - pattern: '\bgit{flags}reset\s+--hard\b'
     reason: git reset --hard (use --soft or stash)
 
-  - pattern: '\bgit\s+clean\s+.*(-[a-eg-zA-Z]*f|-[a-eg-zA-Z]*d|--force)\b'
+  - pattern: '\bgit{flags}clean{args}\s+(-[a-eg-zA-Z]*f|-[a-eg-zA-Z]*d|--force)\b'
     reason: git clean with force/directory flags
 
   # Catches --force and -f but NOT --force-with-lease
-  - pattern: '\bgit\s+push\b.*(\s--force(?!-with-lease)|\s-[a-eg-zA-Z]*f)\b'
+  - pattern: '\bgit{flags}push\b{args}(\s--force(?!-with-lease)|\s-[a-eg-zA-Z]*f)\b'
     reason: git push --force (use --force-with-lease)
 
-  - pattern: '\bgit\s+stash\s+clear\b'
+  - pattern: '\bgit{flags}stash\s+clear\b'
     reason: git stash clear (deletes ALL stashes)
 
-  - pattern: '\bgit\s+reflog\s+expire\b'
+  - pattern: '\bgit{flags}reflog\s+expire\b'
     reason: git reflog expire (destroys recovery mechanism)
 
-  - pattern: '\bgit\s+gc\s+.*--prune=now'
+  - pattern: '\bgit{flags}gc{args}\s+--prune=now'
     reason: git gc --prune=now (can lose dangling commits)
 
-  - pattern: '\bgit\s+filter-(branch|repo)\b'
+  - pattern: '\bgit{flags}filter-(branch|repo)\b'
     reason: git filter-branch/repo (rewrites entire history)
 
-  - pattern: '\bgit\s+(checkout|switch)\s+(-\S+\s+)*(-f|--force)\b'
+  - pattern: '\bgit{flags}(checkout|switch)\s+(-\S+\s+)*(-f|--force)\b'
     reason: git checkout/switch --force (silently discards uncommitted changes)
 
-  - pattern: '\bgit\s+submodule\s+deinit\s+.*--force'
+  - pattern: '\bgit{flags}submodule\s+deinit{args}\s+--force'
     reason: git submodule deinit --force (unregisters submodule)
 
-  - pattern: '\bgit\s+config\s+--system\b'
+  - pattern: '\bgit{flags}config\s+--system\b'
     reason: git config --system (modifies system-wide git configuration)
 
-  - pattern: '\bgit\s+update-ref\s+-d\b'
+  - pattern: '\bgit{flags}update-ref\s+-d\b'
     reason: git update-ref -d (deletes refs, can break repository)
 
   # ---------------------------------------------------------------------------
   # GIT OPERATIONS REQUIRING CONFIRMATION (ask: true)
   # ---------------------------------------------------------------------------
-  - pattern: '\bgit\s+checkout\s+--\s*\.'
+  - pattern: '\bgit{flags}checkout\s+--\s*\.'
     reason: Discards all uncommitted changes
     ask: true
 
-  - pattern: '\bgit\s+restore\s+\.'
+  - pattern: '\bgit{flags}restore\s+\.'
     reason: Discards all uncommitted changes
     ask: true
 
-  - pattern: '\bgit\s+stash\s+drop\b'
+  - pattern: '\bgit{flags}stash\s+drop\b'
     reason: Permanently deletes a stash
     ask: true
 
-  - pattern: '\bgit\s+branch\s+(-\S+\s+)*-D'
+  - pattern: '\bgit{flags}branch\s+(-\S+\s+)*-D'
     reason: Force deletes branch (even if unmerged)
     ask: true
 
-  - pattern: '\bgit\s+push\s+\S+\s+--delete\b'
+  - pattern: '\bgit{flags}push\s+\S+\s+--delete\b'
     reason: Deletes remote branch
     ask: true
 
-  - pattern: '\bgit\s+push\s+\S+\s+:\S+'
+  - pattern: '\bgit{flags}push\s+\S+\s+:\S+'
     reason: Deletes remote branch (old syntax)
     ask: true
 
-  - pattern: '\bgit\s+revert\b'
+  - pattern: '\bgit{flags}revert\b'
     reason: Creates revert commit (undoes changes)
     ask: true
 
-  - pattern: '\bgit\s+tag\s+-d\b'
+  - pattern: '\bgit{flags}tag\s+-d\b'
     reason: Deletes a local tag
     ask: true
 
-  - pattern: '\bgit\s+tag\s+(-\S+\s+)*-f\b'
+  - pattern: '\bgit{flags}tag\s+(-\S+\s+)*-f\b'
     reason: Force moves an existing tag
     ask: true
 
-  - pattern: '\bgit\s+notes\s+(remove|prune)\b'
+  - pattern: '\bgit{flags}notes\s+(remove|prune)\b'
     reason: Removes git notes (metadata loss)
     ask: true
 
-  - pattern: '\bgit\s+config\s+--global\b'
+  - pattern: '\bgit{flags}config\s+--global\b'
     reason: Modifies global git configuration
     ask: true
 
-  - pattern: '\bgit\s+remote\s+(remove|rm)\b'
+  - pattern: '\bgit{flags}remote\s+(remove|rm)\b'
     reason: Removes a remote from repository
     ask: true
 
-  - pattern: '\bgit\s+remote\s+set-url\b'
+  - pattern: '\bgit{flags}remote\s+set-url\b'
     reason: Changes remote URL
     ask: true
 
   # ---------------------------------------------------------------------------
   # GIT OPERATIONS WITH REMOTE SIDE EFFECTS (ask: true)
   # ---------------------------------------------------------------------------
-  - pattern: '\bgit\s+push\b'
+  - pattern: '\bgit{flags}push\b'
     reason: Pushes commits to remote repository
     ask: true
 
-  - pattern: '\bgit\s+fetch\s+.*--prune\b'
+  - pattern: '\bgit{flags}fetch{args}\s+--prune\b'
     reason: Prunes remote-tracking branches
     ask: true
 
   # ---------------------------------------------------------------------------
   # GIT HISTORY / WORKFLOW OPERATIONS (ask: true)
   # ---------------------------------------------------------------------------
-  - pattern: '\bgit\s+rebase\b'
+  - pattern: '\bgit{flags}rebase\b'
     reason: Rewrites commit history
     ask: true
 
-  - pattern: '\bgit\s+(cherry-pick|merge|rebase)\s+--abort\b'
+  - pattern: '\bgit{flags}(cherry-pick|merge|rebase)\s+--abort\b'
     reason: Aborts in-progress operation (discards conflict resolution work)
     ask: true
 
-  - pattern: '\bgit\s+worktree\s+remove\b'
+  - pattern: '\bgit{flags}worktree\s+remove\b'
     reason: Removes git worktree
     ask: true

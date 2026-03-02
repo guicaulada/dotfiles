@@ -3,22 +3,22 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   # macOS SERVICE/PREFERENCES DESTRUCTION
   # ---------------------------------------------------------------------------
-  - pattern: '\blaunchctl\s+(remove|bootout)\b'
+  - pattern: '\blaunchctl{flags}(remove|bootout)\b'
     reason: launchctl remove/bootout (disables macOS services)
 
-  - pattern: '\bdefaults\s+delete\b'
+  - pattern: '\bdefaults{flags}delete\b'
     reason: defaults delete (removes macOS preferences)
 
-  - pattern: '\bsecurity\s+delete-(keychain|generic-password|internet-password)\b'
+  - pattern: '\bsecurity{flags}delete-(keychain|generic-password|internet-password)\b'
     reason: security delete (deletes macOS keychain or keychain entry)
 
   - pattern: '\bgpg\s+--delete-(key|secret-key|secret-and-public-key)\b'
     reason: gpg key deletion
 
-  - pattern: '\blaunchctl\s+unload\b'
+  - pattern: '\blaunchctl{flags}unload\b'
     reason: launchctl unload (stops macOS service)
 
-  - pattern: '\bdiskutil\s+apfs\s+deleteVolume\b'
+  - pattern: '\bdiskutil{flags}apfs\s+deleteVolume\b'
     reason: diskutil APFS volume deletion
 
   # ---------------------------------------------------------------------------
@@ -51,7 +51,7 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   # macOS REQUIRING CONFIRMATION (ask: true)
   # ---------------------------------------------------------------------------
-  - pattern: '\bdefaults\s+write\b'
+  - pattern: '\bdefaults{flags}write\b'
     reason: Modifies macOS preferences
     ask: true
 
@@ -67,11 +67,11 @@ bashToolPatterns:
     reason: Modifies macOS power management settings
     ask: true
 
-  - pattern: '\blaunchctl\s+(load|bootstrap|submit)\b'
+  - pattern: '\blaunchctl{flags}(load|bootstrap|submit)\b'
     reason: Loads macOS service
     ask: true
 
-  - pattern: '\bdiskutil\s+(unmount|unmountDisk|mount|mountDisk)\b'
+  - pattern: '\bdiskutil{flags}(unmount|unmountDisk|mount|mountDisk)\b'
     reason: Mounts/unmounts macOS disk
     ask: true
 
