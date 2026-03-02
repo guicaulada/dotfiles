@@ -104,6 +104,11 @@ class TestZeroAccessCloudCredentials:
         code, _, _ = run_hook("Bash", {"command": "cat secrets/db-password.txt"})
         assert code == 2
 
+    def test_block_cat_nested_secrets_dir(self):
+        """'**/secrets/' glob should block nested secrets directories."""
+        code, _, _ = run_hook("Bash", {"command": "cat deploy/secrets/db-password.txt"})
+        assert code == 2
+
     def test_block_cat_docker_config(self):
         code, _, _ = run_hook("Bash", {"command": f"cat {HOME}/.docker/config.json"})
         assert code == 2
