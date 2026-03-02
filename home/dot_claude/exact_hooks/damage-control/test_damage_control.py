@@ -1,15 +1,34 @@
-"""Tests for damage_control.py — shorthands expansion and integration."""
+"""Tests for damage_control.py — comprehensive coverage."""
 
 from __future__ import annotations
 
+import io
+import json
+import os
 import re
 
 import pytest
+import yaml
 
 from damage_control import (
     _BUILTIN_SHORTHANDS,
     _CMD_POSITION_PREFIX,
+    _block,
     _expand_shorthands,
+    NO_DELETE_BLOCKED,
+    READ_ONLY_BLOCKED,
+    check_path_patterns,
+    glob_to_regex,
+    handle_bash,
+    handle_edit,
+    handle_grep,
+    handle_read,
+    handle_write,
+    is_glob_pattern,
+    load_config,
+    load_patterns_dir,
+    main,
+    match_path,
 )
 
 
@@ -433,3 +452,608 @@ class TestCustomShorthands:
         custom = {"flags": r"\s+"}
         result = _expand_shorthands(r"\bkubectl{flags}delete\b", custom)
         assert result == r"\bkubectl\s+delete\b"
+
+
+# ---------------------------------------------------------------------------
+# is_glob_pattern
+# ---------------------------------------------------------------------------
+
+
+class TestIsGlobPattern:
+    """Verify glob wildcard detection."""
+
+    def test_star_is_glob(self):
+        assert is_glob_pattern("*") is True
+
+    def test_question_mark_is_glob(self):
+        assert is_glob_pattern("?") is True
+
+    def test_bracket_is_glob(self):
+        assert is_glob_pattern("[") is True
+
+    def test_plain_path_not_glob(self):
+        assert is_glob_pattern("/etc/passwd") is False
+
+    def test_empty_string_not_glob(self):
+        assert is_glob_pattern("") is False
+
+
+# ---------------------------------------------------------------------------
+# glob_to_regex
+# ---------------------------------------------------------------------------
+
+
+class TestGlobToRegex:
+    """Verify glob-to-regex conversion."""
+
+    def test_star_becomes_non_greedy_non_slash(self):
+        assert glob_to_regex("*") == r"[^\s/]*"
+
+    def test_question_mark_becomes_single_char(self):
+        assert glob_to_regex("?") == r"[^\s/]"
+
+    def test_meta_chars_escaped(self):
+        for char in r"\.^$+{}[]|()":
+            assert glob_to_regex(char) == "\\" + char
+
+    def test_plain_chars_pass_through(self):
+        assert glob_to_regex("abc") == "abc"
+
+    def test_mixed_pattern(self):
+        result = glob_to_regex("*.log")
+        assert result == r"[^\s/]*\.log"
+
+    def test_resulting_regex_matches_expected(self):
+        pattern = glob_to_regex("*.py")
+        assert re.search(pattern, "script.py")
+        assert not re.search(pattern, "script.txt")
+
+
+# ---------------------------------------------------------------------------
+# match_path
+# ---------------------------------------------------------------------------
+
+
+class TestMatchPath:
+    """Verify file path matching against glob and prefix patterns."""
+
+    def test_glob_matches_basename(self):
+        assert match_path("/home/user/script.py", "*.py") is True
+
+    def test_glob_case_insensitive(self):
+        assert match_path("/tmp/FILE.txt", "*.TXT") is True
+
+    def test_glob_non_matching(self):
+        assert match_path("/home/user/script.py", "*.txt") is False
+
+    def test_prefix_matches(self):
+        assert match_path("/etc/passwd", "/etc/") is True
+
+    def test_prefix_exact_match(self):
+        assert match_path("/etc", "/etc") is True
+
+    def test_prefix_no_match_different_path(self):
+        assert match_path("/home/user", "/etc") is False
+
+    def test_tilde_expansion(self):
+        home = os.path.expanduser("~")
+        assert match_path(f"{home}/secrets/key", "~/secrets") is True
+
+
+# ---------------------------------------------------------------------------
+# check_path_patterns
+# ---------------------------------------------------------------------------
+
+
+class TestCheckPathPatterns:
+    """Verify command-vs-path pattern checking."""
+
+    def test_literal_path_write_match(self):
+        blocked, reason = check_path_patterns(
+            "> /etc/config", "/etc/config", READ_ONLY_BLOCKED, "read-only path"
+        )
+        assert blocked is True
+        assert "Blocked:" in reason
+
+    def test_literal_path_no_match(self):
+        blocked, reason = check_path_patterns(
+            "cat /etc/config", "/etc/other", READ_ONLY_BLOCKED, "read-only path"
+        )
+        assert blocked is False
+        assert reason == ""
+
+    def test_glob_path_delete_match(self):
+        blocked, reason = check_path_patterns(
+            "rm foo.log", "*.log", NO_DELETE_BLOCKED, "no-delete path"
+        )
+        assert blocked is True
+
+    def test_invalid_regex_swallowed(self):
+        bad_patterns = [(r"[invalid{path}", "test")]
+        blocked, reason = check_path_patterns(
+            "some command", "/path", bad_patterns, "test"
+        )
+        assert blocked is False
+
+    def test_both_expanded_and_original_tried(self):
+        home = os.path.expanduser("~")
+        blocked, reason = check_path_patterns(
+            f"> {home}/readonly/file",
+            "~/readonly/file",
+            READ_ONLY_BLOCKED,
+            "read-only path",
+        )
+        assert blocked is True
+
+
+# ---------------------------------------------------------------------------
+# _block
+# ---------------------------------------------------------------------------
+
+
+class TestBlock:
+    """Verify the _block output helper."""
+
+    def test_exits_with_code_2(self):
+        with pytest.raises(SystemExit) as exc_info:
+            _block("some reason", "some context")
+        assert exc_info.value.code == 2
+
+    def test_prints_security_and_target(self, capsys):
+        with pytest.raises(SystemExit):
+            _block("some reason", "some context")
+        captured = capsys.readouterr()
+        assert "SECURITY:" in captured.err
+        assert "Target:" in captured.err
+
+    def test_long_context_truncated(self, capsys):
+        long_context = "x" * 200
+        with pytest.raises(SystemExit):
+            _block("reason", long_context)
+        captured = capsys.readouterr()
+        assert "..." in captured.err
+
+    def test_context_at_100_chars_not_truncated(self, capsys):
+        context = "x" * 100
+        with pytest.raises(SystemExit):
+            _block("reason", context)
+        captured = capsys.readouterr()
+        assert "..." not in captured.err
+        assert "x" * 100 in captured.err
+
+
+# ---------------------------------------------------------------------------
+# handle_bash — all 4 phases
+# ---------------------------------------------------------------------------
+
+
+class TestHandleBash:
+    """Verify the Bash tool handler across all phases."""
+
+    def test_empty_command_exits_0(self):
+        with pytest.raises(SystemExit) as exc_info:
+            handle_bash({"command": ""}, {})
+        assert exc_info.value.code == 0
+
+    # Phase 1 — pattern matching
+    def test_pattern_block(self):
+        config = {
+            "bashToolPatterns": [{"pattern": r"\brm\s+-rf\b", "reason": "dangerous"}],
+        }
+        with pytest.raises(SystemExit) as exc_info:
+            handle_bash({"command": "rm -rf /"}, config)
+        assert exc_info.value.code == 2
+
+    def test_pattern_ask(self, capsys):
+        config = {
+            "bashToolPatterns": [
+                {"pattern": r"\bgit\s+push\b", "reason": "push check", "ask": True}
+            ],
+        }
+        with pytest.raises(SystemExit) as exc_info:
+            handle_bash({"command": "git push"}, config)
+        assert exc_info.value.code == 0
+        captured = capsys.readouterr()
+        output = json.loads(captured.out)
+        assert output["hookSpecificOutput"]["permissionDecision"] == "ask"
+
+    def test_match_anywhere_skips_position_prefix(self):
+        config = {
+            "bashToolPatterns": [
+                {
+                    "pattern": r">\s*/etc/secret",
+                    "reason": "redirect block",
+                    "match_anywhere": True,
+                }
+            ],
+        }
+        with pytest.raises(SystemExit) as exc_info:
+            handle_bash({"command": "echo data > /etc/secret"}, config)
+        assert exc_info.value.code == 2
+
+    def test_shorthand_expansion_in_pattern(self):
+        config = {
+            "bashToolPatterns": [
+                {"pattern": r"\bkubectl{flags}delete\b", "reason": "kubectl delete"}
+            ],
+            "shorthands": {},
+        }
+        with pytest.raises(SystemExit) as exc_info:
+            handle_bash({"command": "kubectl --context prod delete pod"}, config)
+        assert exc_info.value.code == 2
+
+    def test_bad_regex_swallowed_in_patterns(self):
+        config = {
+            "bashToolPatterns": [
+                {"pattern": "[invalid", "reason": "bad regex"},
+                {"pattern": r"\brm\b", "reason": "rm blocked"},
+            ],
+        }
+        with pytest.raises(SystemExit) as exc_info:
+            handle_bash({"command": "rm file.txt"}, config)
+        assert exc_info.value.code == 2
+
+    def test_no_pattern_match_falls_through(self):
+        config = {
+            "bashToolPatterns": [{"pattern": r"\brm\s+-rf\b", "reason": "dangerous"}],
+        }
+        with pytest.raises(SystemExit) as exc_info:
+            handle_bash({"command": "echo hello"}, config)
+        assert exc_info.value.code == 0
+
+    # Phase 2 — zero-access paths
+    def test_zero_access_glob_blocks(self):
+        config = {"zeroAccessPaths": ["*.pem"]}
+        with pytest.raises(SystemExit) as exc_info:
+            handle_bash({"command": "cat server.pem"}, config)
+        assert exc_info.value.code == 2
+
+    def test_zero_access_absolute_blocks(self):
+        config = {"zeroAccessPaths": ["/secrets/"]}
+        with pytest.raises(SystemExit) as exc_info:
+            handle_bash({"command": "cat /secrets/key"}, config)
+        assert exc_info.value.code == 2
+
+    def test_zero_access_relative_boundary(self):
+        """Relative zero-access path does not match inside longer names."""
+        config = {"zeroAccessPaths": ["secrets/"]}
+        with pytest.raises(SystemExit) as exc_info:
+            handle_bash({"command": "cat external-secrets/file"}, config)
+        assert exc_info.value.code == 0
+
+    # Phase 3 — read-only paths
+    def test_read_only_write_blocked(self):
+        config = {"readOnlyPaths": ["/readonly/"]}
+        with pytest.raises(SystemExit) as exc_info:
+            handle_bash({"command": "> /readonly/file"}, config)
+        assert exc_info.value.code == 2
+
+    def test_read_only_read_allowed(self):
+        config = {"readOnlyPaths": ["/readonly/"]}
+        with pytest.raises(SystemExit) as exc_info:
+            handle_bash({"command": "cat /readonly/file"}, config)
+        assert exc_info.value.code == 0
+
+    # Phase 4 — no-delete paths
+    def test_no_delete_rm_blocked(self):
+        config = {"noDeletePaths": ["/protected/"]}
+        with pytest.raises(SystemExit) as exc_info:
+            handle_bash({"command": "rm /protected/file"}, config)
+        assert exc_info.value.code == 2
+
+    def test_no_delete_write_allowed(self):
+        config = {"noDeletePaths": ["/protected/"]}
+        with pytest.raises(SystemExit) as exc_info:
+            handle_bash({"command": "> /protected/file"}, config)
+        assert exc_info.value.code == 0
+
+    # All clear
+    def test_all_clear_exits_0(self):
+        config = {
+            "bashToolPatterns": [{"pattern": r"\brm\s+-rf\b", "reason": "dangerous"}],
+            "zeroAccessPaths": ["/secrets/"],
+            "readOnlyPaths": ["/readonly/"],
+            "noDeletePaths": ["/protected/"],
+        }
+        with pytest.raises(SystemExit) as exc_info:
+            handle_bash({"command": "echo hello"}, config)
+        assert exc_info.value.code == 0
+
+
+# ---------------------------------------------------------------------------
+# handle_edit
+# ---------------------------------------------------------------------------
+
+
+class TestHandleEdit:
+    """Verify the Edit tool handler."""
+
+    def test_empty_file_path_exits_0(self):
+        with pytest.raises(SystemExit) as exc_info:
+            handle_edit({"file_path": ""}, {})
+        assert exc_info.value.code == 0
+
+    def test_zero_access_blocked(self):
+        config = {"zeroAccessPaths": ["/secrets/"]}
+        with pytest.raises(SystemExit) as exc_info:
+            handle_edit({"file_path": "/secrets/key"}, config)
+        assert exc_info.value.code == 2
+
+    def test_read_only_blocked(self):
+        config = {"readOnlyPaths": ["/readonly/"]}
+        with pytest.raises(SystemExit) as exc_info:
+            handle_edit({"file_path": "/readonly/config"}, config)
+        assert exc_info.value.code == 2
+
+    def test_allowed(self):
+        config = {"zeroAccessPaths": ["/secrets/"], "readOnlyPaths": ["/readonly/"]}
+        with pytest.raises(SystemExit) as exc_info:
+            handle_edit({"file_path": "/home/user/file.txt"}, config)
+        assert exc_info.value.code == 0
+
+
+# ---------------------------------------------------------------------------
+# handle_write
+# ---------------------------------------------------------------------------
+
+
+class TestHandleWrite:
+    """Verify the Write tool handler."""
+
+    def test_empty_file_path_exits_0(self):
+        with pytest.raises(SystemExit) as exc_info:
+            handle_write({"file_path": ""}, {})
+        assert exc_info.value.code == 0
+
+    def test_zero_access_blocked(self):
+        config = {"zeroAccessPaths": ["/secrets/"]}
+        with pytest.raises(SystemExit) as exc_info:
+            handle_write({"file_path": "/secrets/key"}, config)
+        assert exc_info.value.code == 2
+
+    def test_read_only_blocked(self):
+        config = {"readOnlyPaths": ["/readonly/"]}
+        with pytest.raises(SystemExit) as exc_info:
+            handle_write({"file_path": "/readonly/config"}, config)
+        assert exc_info.value.code == 2
+
+    def test_allowed(self):
+        config = {"zeroAccessPaths": ["/secrets/"], "readOnlyPaths": ["/readonly/"]}
+        with pytest.raises(SystemExit) as exc_info:
+            handle_write({"file_path": "/home/user/file.txt"}, config)
+        assert exc_info.value.code == 0
+
+
+# ---------------------------------------------------------------------------
+# handle_read
+# ---------------------------------------------------------------------------
+
+
+class TestHandleRead:
+    """Verify the Read tool handler (reads of read-only paths are fine)."""
+
+    def test_empty_file_path_exits_0(self):
+        with pytest.raises(SystemExit) as exc_info:
+            handle_read({"file_path": ""}, {})
+        assert exc_info.value.code == 0
+
+    def test_zero_access_blocked(self):
+        config = {"zeroAccessPaths": ["/secrets/"]}
+        with pytest.raises(SystemExit) as exc_info:
+            handle_read({"file_path": "/secrets/key"}, config)
+        assert exc_info.value.code == 2
+
+    def test_read_only_allowed(self):
+        config = {"readOnlyPaths": ["/readonly/"]}
+        with pytest.raises(SystemExit) as exc_info:
+            handle_read({"file_path": "/readonly/config"}, config)
+        assert exc_info.value.code == 0
+
+    def test_allowed(self):
+        config = {"zeroAccessPaths": ["/secrets/"]}
+        with pytest.raises(SystemExit) as exc_info:
+            handle_read({"file_path": "/home/user/file.txt"}, config)
+        assert exc_info.value.code == 0
+
+
+# ---------------------------------------------------------------------------
+# handle_grep
+# ---------------------------------------------------------------------------
+
+
+class TestHandleGrep:
+    """Verify the Grep tool handler."""
+
+    def test_empty_path_exits_0(self):
+        with pytest.raises(SystemExit) as exc_info:
+            handle_grep({"path": ""}, {})
+        assert exc_info.value.code == 0
+
+    def test_zero_access_blocked(self):
+        config = {"zeroAccessPaths": ["/secrets/"]}
+        with pytest.raises(SystemExit) as exc_info:
+            handle_grep({"path": "/secrets/key"}, config)
+        assert exc_info.value.code == 2
+
+    def test_allowed(self):
+        config = {"zeroAccessPaths": ["/secrets/"]}
+        with pytest.raises(SystemExit) as exc_info:
+            handle_grep({"path": "/home/user/file.txt"}, config)
+        assert exc_info.value.code == 0
+
+
+# ---------------------------------------------------------------------------
+# load_patterns_dir
+# ---------------------------------------------------------------------------
+
+
+class TestLoadPatternsDir:
+    """Verify multi-file YAML pattern loading."""
+
+    def test_single_yaml_all_keys(self, tmp_path):
+        (tmp_path / "config.yaml").write_text(
+            yaml.dump(
+                {
+                    "bashToolPatterns": [{"pattern": "test"}],
+                    "zeroAccessPaths": ["/secret"],
+                    "readOnlyPaths": ["/readonly"],
+                    "noDeletePaths": ["/nodelete"],
+                }
+            )
+        )
+        result = load_patterns_dir(tmp_path)
+        assert result["bashToolPatterns"] == [{"pattern": "test"}]
+        assert result["zeroAccessPaths"] == ["/secret"]
+        assert result["readOnlyPaths"] == ["/readonly"]
+        assert result["noDeletePaths"] == ["/nodelete"]
+
+    def test_multiple_yaml_concatenated(self, tmp_path):
+        (tmp_path / "a.yaml").write_text(yaml.dump({"zeroAccessPaths": ["/a"]}))
+        (tmp_path / "b.yaml").write_text(yaml.dump({"zeroAccessPaths": ["/b"]}))
+        result = load_patterns_dir(tmp_path)
+        assert result["zeroAccessPaths"] == ["/a", "/b"]
+
+    def test_shorthands_accumulated(self, tmp_path):
+        (tmp_path / "config.yaml").write_text(
+            yaml.dump({"shorthands": {"env": r"(?:env\s+)?"}})
+        )
+        result = load_patterns_dir(tmp_path)
+        assert result["shorthands"]["env"] == r"(?:env\s+)?"
+
+    def test_missing_keys_empty_lists(self, tmp_path):
+        (tmp_path / "config.yaml").write_text(
+            yaml.dump({"zeroAccessPaths": ["/secret"]})
+        )
+        result = load_patterns_dir(tmp_path)
+        assert result["bashToolPatterns"] == []
+        assert result["readOnlyPaths"] == []
+        assert result["noDeletePaths"] == []
+
+    def test_non_list_value_skipped(self, tmp_path):
+        (tmp_path / "config.yaml").write_text(
+            yaml.dump({"zeroAccessPaths": "not a list"})
+        )
+        result = load_patterns_dir(tmp_path)
+        assert result["zeroAccessPaths"] == []
+
+    def test_empty_yaml_file(self, tmp_path):
+        (tmp_path / "empty.yaml").write_text("")
+        result = load_patterns_dir(tmp_path)
+        assert result["bashToolPatterns"] == []
+
+    def test_yaml_and_yml_both_loaded(self, tmp_path):
+        (tmp_path / "a.yaml").write_text(yaml.dump({"zeroAccessPaths": ["/a"]}))
+        (tmp_path / "b.yml").write_text(yaml.dump({"zeroAccessPaths": ["/b"]}))
+        result = load_patterns_dir(tmp_path)
+        assert "/a" in result["zeroAccessPaths"]
+        assert "/b" in result["zeroAccessPaths"]
+        assert len(result["zeroAccessPaths"]) == 2
+
+
+# ---------------------------------------------------------------------------
+# load_config
+# ---------------------------------------------------------------------------
+
+
+class TestLoadConfig:
+    """Verify top-level config loading."""
+
+    def test_patterns_dir_delegates(self, monkeypatch, tmp_path):
+        patterns_dir = tmp_path / "patterns"
+        patterns_dir.mkdir()
+        (patterns_dir / "config.yaml").write_text(
+            yaml.dump({"zeroAccessPaths": ["/secret"]})
+        )
+        monkeypatch.setattr("damage_control.get_patterns_dir", lambda: patterns_dir)
+        result = load_config()
+        assert result["zeroAccessPaths"] == ["/secret"]
+
+    def test_single_yaml_with_shorthands(self, monkeypatch, tmp_path):
+        config_file = tmp_path / "patterns.yaml"
+        config_file.write_text(
+            yaml.dump({"zeroAccessPaths": ["/secret"], "shorthands": {"env": "test"}})
+        )
+        monkeypatch.setattr("damage_control.get_patterns_dir", lambda: None)
+        monkeypatch.setattr("damage_control.get_config_path", lambda: config_file)
+        result = load_config()
+        assert result["shorthands"]["env"] == "test"
+
+    def test_single_yaml_without_shorthands(self, monkeypatch, tmp_path):
+        config_file = tmp_path / "patterns.yaml"
+        config_file.write_text(yaml.dump({"zeroAccessPaths": ["/secret"]}))
+        monkeypatch.setattr("damage_control.get_patterns_dir", lambda: None)
+        monkeypatch.setattr("damage_control.get_config_path", lambda: config_file)
+        result = load_config()
+        assert result["shorthands"] == {}
+
+    def test_missing_config_returns_empty(self, monkeypatch, tmp_path, capsys):
+        missing = tmp_path / "nonexistent.yaml"
+        monkeypatch.setattr("damage_control.get_patterns_dir", lambda: None)
+        monkeypatch.setattr("damage_control.get_config_path", lambda: missing)
+        result = load_config()
+        for key in ("bashToolPatterns", "zeroAccessPaths", "readOnlyPaths", "noDeletePaths"):
+            assert result[key] == []
+        captured = capsys.readouterr()
+        assert "Warning" in captured.err
+
+
+# ---------------------------------------------------------------------------
+# main
+# ---------------------------------------------------------------------------
+
+
+class TestMain:
+    """Verify the main dispatcher."""
+
+    def test_valid_json_known_tool(self, monkeypatch):
+        input_data = json.dumps({"tool_name": "Bash", "tool_input": {"command": ""}})
+        monkeypatch.setattr("sys.stdin", io.StringIO(input_data))
+        monkeypatch.setattr("damage_control.load_config", lambda: {})
+        with pytest.raises(SystemExit) as exc_info:
+            main()
+        assert exc_info.value.code == 0
+
+    def test_valid_json_unknown_tool(self, monkeypatch):
+        input_data = json.dumps({"tool_name": "Unknown", "tool_input": {}})
+        monkeypatch.setattr("sys.stdin", io.StringIO(input_data))
+        monkeypatch.setattr("damage_control.load_config", lambda: {})
+        with pytest.raises(SystemExit) as exc_info:
+            main()
+        assert exc_info.value.code == 0
+
+    def test_invalid_json(self, monkeypatch, capsys):
+        monkeypatch.setattr("sys.stdin", io.StringIO("not json"))
+        monkeypatch.setattr("damage_control.load_config", lambda: {})
+        with pytest.raises(SystemExit) as exc_info:
+            main()
+        assert exc_info.value.code == 1
+        captured = capsys.readouterr()
+        assert "Error" in captured.err
+
+    def test_empty_stdin(self, monkeypatch):
+        monkeypatch.setattr("sys.stdin", io.StringIO(""))
+        monkeypatch.setattr("damage_control.load_config", lambda: {})
+        with pytest.raises(SystemExit) as exc_info:
+            main()
+        assert exc_info.value.code == 1
+
+
+# ---------------------------------------------------------------------------
+# _expand_shorthands edge cases
+# ---------------------------------------------------------------------------
+
+
+class TestExpandShorthandsEdgeCases:
+    """Additional edge cases for shorthand expansion."""
+
+    def test_escaped_backslash_before_brace_not_expanded(self):
+        r"""\\{flags} — backslash before brace prevents expansion."""
+        original = r"\\{flags}"
+        result = _expand_shorthands(original, {})
+        assert result == original
+
+    def test_range_quantifier_not_expanded(self):
+        """{3,5} range quantifier left untouched."""
+        original = r"[a-z]{3,5}"
+        result = _expand_shorthands(original, {})
+        assert result == original
