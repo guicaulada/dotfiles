@@ -11,6 +11,10 @@ When asked to create, write, or produce any document, plan, research summary, no
 - Knowledge base articles
 - Any markdown document not tied to a specific codebase
 
+## Vault Location
+
+The Obsidian vault is located at `~/Obsidian` for direct file access when needed.
+
 ## Exceptions
 
 - Code files, configs, and scripts belong in their project directory
