@@ -70,6 +70,16 @@ return {
     },
   },
 
+  -- Sort lines and delimited values
+  {
+    'sQVe/sort.nvim',
+    cmd = 'Sort',
+    opts = {},
+    keys = {
+      { 'go', '<Cmd>Sort<CR>', mode = 'x', desc = 'Sort selection' },
+    },
+  },
+
   -- Easy alignment
   {
     'junegunn/vim-easy-align',
