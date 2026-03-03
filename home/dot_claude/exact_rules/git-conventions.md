@@ -53,3 +53,4 @@ Consistent commit messages make history readable, enable automated changelogs, a
 - Make each commit self-explanatory from the message alone
 - Split unrelated changes into separate commits
 - Commit working code; avoid committing broken states
+- Base commit messages solely on the actual code diff — never reference or leak terminology, project names, or context from external sources like Obsidian vault notes, design docs, or planning artifacts
