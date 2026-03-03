@@ -27,6 +27,11 @@ fuck() {
   fuck "$@"
 }
 
+# pwdx (show working directory of a process by PID — macOS equivalent)
+pwdx() {
+  lsof -a -p "$1" -d cwd -n | tail -1 | awk '{print $NF}'
+}
+
 # Autosuggestions tuning
 ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
 ZSH_AUTOSUGGEST_MANUAL_REBIND=1
