@@ -13,7 +13,7 @@ When asked to create, write, or produce any document, plan, research summary, no
 
 ## Vault Location
 
-The Obsidian vault is located at `~/Obsidian` for direct file access when needed.
+The Obsidian vault is located at `~/Obsidian`. Always read, create, and edit files directly at this path using the Read, Write, and Edit tools — never use shell commands or the Obsidian CLI to manipulate vault files.
 
 ## Exceptions
 
