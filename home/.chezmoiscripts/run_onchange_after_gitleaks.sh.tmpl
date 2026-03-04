@@ -1,5 +1,7 @@
+{{- $gitleaksOutput := joinPath .chezmoi.sourceDir "../.github/linters/.gitleaks.toml" -}}
 #!/bin/bash
 # gitleaks template hash: {{ include ".gitleaks.toml.tmpl" | sha256sum }}
+# gitleaks output hash: {{ output "bash" "-c" (printf "cat '%s' 2>/dev/null || true" $gitleaksOutput) | sha256sum }}
 set -euo pipefail
 
 echo "==> Rendering .gitleaks.toml..."

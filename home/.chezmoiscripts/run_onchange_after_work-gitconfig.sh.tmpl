@@ -1,6 +1,8 @@
 {{- if .is_work -}}
+{{- $gitconfigOutput := joinPath .chezmoi.homeDir "Work" .company ".gitconfig" -}}
 #!/bin/bash
 # work gitconfig hash: {{ .company }}:{{ .work_email }}
+# work gitconfig output hash: {{ output "bash" "-c" (printf "cat '%s' 2>/dev/null || true" $gitconfigOutput) | sha256sum }}
 set -euo pipefail
 
 mkdir -p "$HOME/Work/{{ .company }}"
