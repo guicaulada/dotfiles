@@ -45,6 +45,14 @@ bashToolPatterns:
     reason: gh api with write method (mutating API call)
     ask: true
 
+  - pattern: '\bgh{flags}api\b{args}\s+(-f|--field|-F|--raw-field)\b'
+    reason: gh api with field flags (implies POST, mutating API call)
+    ask: true
+
+  - pattern: '\bgh{flags}api\b{args}\s+--input\b'
+    reason: gh api with --input (implies POST, mutating API call)
+    ask: true
+
   - pattern: '\bgh{flags}workflow\s+(enable|disable|run)\b'
     reason: Mutating GitHub Actions workflow operation
     ask: true
