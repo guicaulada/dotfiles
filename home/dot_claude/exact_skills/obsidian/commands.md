@@ -19,7 +19,7 @@ description: Complete Obsidian CLI command reference organized by category
 | `file`      | Show file metadata                  | `file=`                                                                            |
 | `files`     | List files in vault                 | `folder=`, `ext=`, `total`, `format=`                                              |
 | `wordcount` | Count words and characters          | `file=`                                                                            |
-| `outline`   | Show headings structure             | `file=`, `format=tree|md|json`                                                     |
+| `outline`   | Show headings structure             | `file=`, `format=tree\|md\|json`                                                   |
 
 ## Daily Notes
 
@@ -33,11 +33,11 @@ description: Complete Obsidian CLI command reference organized by category
 
 ## Search
 
-| Command          | Description                     | Key Parameters                                                  |
-|------------------|---------------------------------|-----------------------------------------------------------------|
-| `search`         | Full-text search                | `query=`, `path=`, `limit=`, `case`, `format=text|json`,`total` |
-| `search:context` | Search with surrounding context | `query=`, `limit=`, `format=`                                   |
-| `search:open`    | Open Obsidian search UI         | `query=`                                                        |
+| Command          | Description                     | Key Parameters                                                    |
+|------------------|---------------------------------|-------------------------------------------------------------------|
+| `search`         | Full-text search                | `query=`, `path=`, `limit=`, `case`, `format=text\|json`, `total` |
+| `search:context` | Search with surrounding context | `query=`, `limit=`, `format=`                                     |
+| `search:open`    | Open Obsidian search UI         | `query=`                                                          |
 
 ## Links and Graph
 
@@ -58,12 +58,12 @@ description: Complete Obsidian CLI command reference organized by category
 
 ## Properties (YAML Frontmatter)
 
-| Command           | Description           | Key Parameters                                                            |
-|-------------------|-----------------------|---------------------------------------------------------------------------|
-| `properties`      | List properties       | `file=`, `sort=count`, `counts`, `format=`                                |
-| `property:read`   | Read a property value | `name=`, `file=`                                                          |
-| `property:set`    | Set a property        | `name=`, `value=`, `type=text|list|number|checkbox|date|datetime`,`file=` |
-| `property:remove` | Remove a property     | `name=`, `file=`                                                          |
+| Command           | Description           | Key Parameters                                                                  |
+|-------------------|-----------------------|---------------------------------------------------------------------------------|
+| `properties`      | List properties       | `file=`, `sort=count`, `counts`, `format=`                                      |
+| `property:read`   | Read a property value | `name=`, `file=`                                                                |
+| `property:set`    | Set a property        | `name=`, `value=`, `type=text\|list\|number\|checkbox\|date\|datetime`, `file=` |
+| `property:remove` | Remove a property     | `name=`, `file=`                                                                |
 
 ## Tasks
 
@@ -104,26 +104,26 @@ description: Complete Obsidian CLI command reference organized by category
 
 ## Bases (Database Views)
 
-| Command       | Description           | Key Parameters                                   |
-|---------------|-----------------------|--------------------------------------------------|
-| `bases`       | List all .base files  | —                                                |
-| `base:views`  | List views in a base  | `file=`                                          |
-| `base:query`  | Query a base view     | `file=`, `view=`, `format=json|csv|tsv|md|paths` |
-| `base:create` | Create item in a base | `file=`, `name=`, `content=`, `open`             |
+| Command       | Description           | Key Parameters                                       |
+|---------------|-----------------------|------------------------------------------------------|
+| `bases`       | List all .base files  | —                                                    |
+| `base:views`  | List views in a base  | `file=`                                              |
+| `base:query`  | Query a base view     | `file=`, `view=`, `format=json\|csv\|tsv\|md\|paths` |
+| `base:create` | Create item in a base | `file=`, `name=`, `content=`, `open`                 |
 
 ## Plugins
 
-| Command            | Description              | Key Parameters                    |
-|--------------------|--------------------------|-----------------------------------|
-| `plugins`          | List installed plugins   | `filter=core|community`,`format=` |
-| `plugins:enabled`  | List enabled plugins     | —                                 |
-| `plugin`           | Plugin info              | `id=`                             |
-| `plugin:enable`    | Enable a plugin          | `id=`                             |
-| `plugin:disable`   | Disable a plugin         | `id=`                             |
-| `plugin:install`   | Install community plugin | `id=`, `enable`                   |
-| `plugin:uninstall` | Uninstall a plugin       | `id=`                             |
-| `plugin:reload`    | Reload a plugin (dev)    | `id=`                             |
-| `plugins:restrict` | Toggle restricted mode   | `on`, `off`                       |
+| Command            | Description              | Key Parameters                      |
+|--------------------|--------------------------|-------------------------------------|
+| `plugins`          | List installed plugins   | `filter=core\|community`, `format=` |
+| `plugins:enabled`  | List enabled plugins     | —                                   |
+| `plugin`           | Plugin info              | `id=`                               |
+| `plugin:enable`    | Enable a plugin          | `id=`                               |
+| `plugin:disable`   | Disable a plugin         | `id=`                               |
+| `plugin:install`   | Install community plugin | `id=`, `enable`                     |
+| `plugin:uninstall` | Uninstall a plugin       | `id=`                               |
+| `plugin:reload`    | Reload a plugin (dev)    | `id=`                               |
+| `plugins:restrict` | Toggle restricted mode   | `on`, `off`                         |
 
 ## Themes and CSS Snippets
 
@@ -206,11 +206,11 @@ description: Complete Obsidian CLI command reference organized by category
 
 ## Global Options
 
-| Option                    | Description                        |
-|---------------------------|------------------------------------|
-| `vault=<name>`            | Target a specific vault            |
-| `--copy`                  | Copy output to clipboard           |
-| `format=json|md|csv|text` | Output format (command-dependent)  |
-| `total`                   | Show count only (on list commands) |
-| `verbose`                 | Show additional details            |
-| `help`                    | Show help for any command          |
+| Option                       | Description                        |
+|------------------------------|------------------------------------|
+| `vault=<name>`               | Target a specific vault            |
+| `--copy`                     | Copy output to clipboard           |
+| `format=json\|md\|csv\|text` | Output format (command-dependent)  |
+| `total`                      | Show count only (on list commands) |
+| `verbose`                    | Show additional details            |
+| `help`                       | Show help for any command          |
