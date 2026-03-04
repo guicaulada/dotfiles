@@ -12,12 +12,12 @@ Create notes in an Obsidian vault using the CLI. Handles regular notes, daily no
 
 Identify the kind of note to create:
 
-| Type | Command | Typical Folder |
-|------|---------|----------------|
-| Regular note | `obsidian create` | Context-dependent |
-| Daily note | `obsidian daily` / `obsidian daily:append` | Daily Notes/ |
-| Templated note | `obsidian create template=<name>` | Template-dependent |
-| Quick capture | `obsidian daily:append content="..."` | Daily Notes/ |
+| Type           | Command                                    | Typical Folder     |
+|----------------|--------------------------------------------|--------------------|
+| Regular note   | `obsidian create`                          | Context-dependent  |
+| Daily note     | `obsidian daily` / `obsidian daily:append` | Daily Notes/       |
+| Templated note | `obsidian create template=<name>`          | Template-dependent |
+| Quick capture  | `obsidian daily:append content="..."`      | Daily Notes/       |
 
 If the user specifies a folder, use `path=`. If not, use `name=` and let Obsidian resolve placement.
 
@@ -45,33 +45,39 @@ obsidian create name="Meeting Notes" content="---\ntags:\n  - meeting\ndate: 202
 ## Step 3: Create the Note
 
 **Regular note:**
+
 ```bash
 obsidian create name="Note Title" content="..." open
 obsidian create path="Projects/Note Title.md" content="..." open
 ```
 
 **From template:**
+
 ```bash
 obsidian create name="Note Title" template="Template Name" open
 ```
 
 **Daily note (create/open today's):**
+
 ```bash
 obsidian daily
 ```
 
 **Append to daily note:**
+
 ```bash
 obsidian daily:append content="- Captured thought at $(date +%H:%M)"
 obsidian daily:append content="- [ ] New task"
 ```
 
 **Prepend to daily note:**
+
 ```bash
 obsidian daily:prepend content="## Morning Intentions\n- "
 ```
 
 Flags:
+
 - `open` — open in Obsidian after creation
 - `silent` — create without opening
 - `overwrite` — replace existing file
@@ -132,11 +138,13 @@ Links: [OUTGOING_LINKS_ADDED]
 **Input**: "Create a meeting note for today's standup"
 
 **Commands**:
+
 ```bash
 obsidian create name="2026-03-02 Standup" content="---\ntags:\n  - meeting\n  - standup\ndate: 2026-03-02\n---\n\n# Standup — March 2, 2026\n\n## Updates\n\n## Blockers\n\n## Action Items\n- [ ] " open
 ```
 
 **Output**:
+
 ```
 Created: 2026-03-02 Standup
 Path: Meetings/2026-03-02 Standup.md
@@ -144,27 +152,32 @@ Template: none
 Properties: tags (meeting, standup), date
 Links: none
 ```
+
 </example>
 
 <example>
 **Input**: "Add a quick thought to my daily note about refactoring the auth module"
 
 **Commands**:
+
 ```bash
 obsidian daily:append content="\n- Idea: refactor the auth module to use JWT instead of session cookies — see [[Auth Architecture]]"
 ```
 
 **Output**:
+
 ```
 Appended to daily note: 2026-03-02
 Content: idea capture with link to Auth Architecture
 ```
+
 </example>
 
 <example>
 **Input**: "Create a new project note for the API redesign"
 
 **Commands**:
+
 ```bash
 obsidian templates
 # If a project template exists:
@@ -172,6 +185,7 @@ obsidian create name="Project — API Redesign" template="Project" open
 # If not:
 obsidian create name="Project — API Redesign" content="---\ntags:\n  - project\n  - active\nstatus: active\nstart: 2026-03-02\n---\n\n# API Redesign\n\n## Goal\n\n## Scope\n\n## Tasks\n- [ ] \n\n## Notes\n\n## Related\n- [[API Architecture]]\n" open
 ```
+
 </example>
 
 </examples>

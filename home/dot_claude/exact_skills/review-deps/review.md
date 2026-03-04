@@ -416,6 +416,7 @@ Yes — follow the [React 18 upgrade guide](https://react.dev/blog/2022/03/08/re
 ### CI Status
 
 2 of 8 checks failing:
+
 - `test:unit` — 4 failures related to ReactDOM.render removal
 - `test:e2e` — 2 failures from state batching timing changes
 

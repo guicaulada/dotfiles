@@ -7,4 +7,3 @@ aliases:
     lt: "eza --tree --icons=auto --level=2"
     top: btop
     vim: nvim
-

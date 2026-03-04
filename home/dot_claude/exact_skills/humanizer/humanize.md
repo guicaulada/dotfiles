@@ -133,6 +133,7 @@ AI coding assistants can generate docs, tests, and simple refactors. They're use
 ## Audit
 
 Remaining tells:
+
 - Em dash usage in the second sentence
 - Slightly generic closer ("review what they produce")
 
@@ -173,6 +174,7 @@ File contents:
 ## Audit
 
 Remaining tells addressed:
+
 - Generic "developer experience and performance" claim replaced with specific metric
 - "Craft solutions" replaced with plain verb
 

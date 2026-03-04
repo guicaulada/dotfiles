@@ -22,8 +22,8 @@ Apply these when authoring or reviewing skills:
 
 | Field                      | Constraints                                       | Notes                                                                      |
 |----------------------------|---------------------------------------------------|----------------------------------------------------------------------------|
-| `name`                     | Kebab-case, max 64 chars, no `anthropic`/`claude` | Must match folder name. Consider gerund form (e.g., `reviewing-code`)     |
-| `description`              | Max 1024 chars, third person, non-empty           | Format: [what it does] + [when to use it] + [key capabilities]            |
+| `name`                     | Kebab-case, max 64 chars, no `anthropic`/`claude` | Must match folder name. Consider gerund form (e.g., `reviewing-code`)      |
+| `description`              | Max 1024 chars, third person, non-empty           | Format: [what it does] + [when to use it] + [key capabilities]             |
 | `allowed-tools`            | Comma-separated                                   | Scope Bash: `Bash(git *)` not `Bash`                                       |
 | `disable-model-invocation` | Boolean                                           | `true` for side effects on shared state (git push, API calls, deployments) |
 | `user-invocable`           | Boolean                                           | `false` only for pure background knowledge                                 |

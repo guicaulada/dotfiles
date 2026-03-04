@@ -10,36 +10,40 @@ Organize and maintain an Obsidian vault using the CLI. Handles moving/renaming f
 
 ## Step 1: Identify the Operation
 
-| Operation | Commands | Risk Level |
-|-----------|----------|------------|
-| Move/rename | `obsidian move`, `obsidian rename` | Medium — updates all backlinks automatically |
-| Delete | `obsidian delete` | High — confirm with user first |
-| Set properties | `obsidian property:set` | Low |
-| Remove properties | `obsidian property:remove` | Medium |
-| Toggle task | `obsidian task` | Low |
-| Plugin management | `obsidian plugin:*` | Medium |
-| Vault health audit | `obsidian orphans`, `obsidian unresolved`, `obsidian deadends` | Read-only |
+| Operation          | Commands                                                       | Risk Level                                   |
+|--------------------|----------------------------------------------------------------|----------------------------------------------|
+| Move/rename        | `obsidian move`, `obsidian rename`                             | Medium — updates all backlinks automatically |
+| Delete             | `obsidian delete`                                              | High — confirm with user first               |
+| Set properties     | `obsidian property:set`                                        | Low                                          |
+| Remove properties  | `obsidian property:remove`                                     | Medium                                       |
+| Toggle task        | `obsidian task`                                                | Low                                          |
+| Plugin management  | `obsidian plugin:*`                                            | Medium                                       |
+| Vault health audit | `obsidian orphans`, `obsidian unresolved`, `obsidian deadends` | Read-only                                    |
 
 ## Step 2: File Operations
 
 **Move a note (updates all backlinks across vault):**
+
 ```bash
 obsidian move file="Old Name" to="NewFolder/New Name.md"
 obsidian move path="OldFolder/Note.md" to="NewFolder/Note.md"
 ```
 
 **Rename a note:**
+
 ```bash
 obsidian rename file="Old Name" to="New Name"
 ```
 
 **Delete a note (moves to trash by default):**
+
 ```bash
 obsidian delete file="Note Name"
 obsidian delete file="Note Name" permanent   # skip trash — confirm with user
 ```
 
 **Append/prepend content:**
+
 ```bash
 obsidian append file="Note Name" content="\n## New Section\n"
 obsidian prepend file="Note Name" content="Status update: ...\n"
@@ -49,6 +53,7 @@ obsidian append file="Note Name" content="inline addition" inline   # no newline
 ## Step 3: Property Management
 
 **Read properties:**
+
 ```bash
 obsidian properties file="Note Name"
 obsidian properties file="Note Name" format=json
@@ -56,6 +61,7 @@ obsidian property:read name="status" file="Note Name"
 ```
 
 **Set a property:**
+
 ```bash
 obsidian property:set name="status" value="active" file="Note Name"
 obsidian property:set name="priority" value="3" type=number file="Note Name"
@@ -65,17 +71,20 @@ obsidian property:set name="tags" value="project,active" type=list file="Note Na
 ```
 
 **Remove a property:**
+
 ```bash
 obsidian property:remove name="status" file="Note Name"
 ```
 
 **Vault-wide property inventory:**
+
 ```bash
 obsidian properties sort=count counts
 obsidian aliases
 ```
 
 **Batch property updates (loop pattern):**
+
 ```bash
 obsidian search query="[status:draft]" format=json | jq -r '.[].path' | while read path; do
   obsidian property:set name="status" value="published" path="$path"
@@ -86,6 +95,7 @@ done
 ## Step 4: Task Management
 
 **List tasks:**
+
 ```bash
 obsidian tasks                     # all tasks
 obsidian tasks todo                # incomplete only
@@ -98,6 +108,7 @@ obsidian tasks verbose             # show file locations
 ```
 
 **Toggle/update a task:**
+
 ```bash
 obsidian task file="Note Name" line=5 toggle
 obsidian task file="Note Name" line=5 done
@@ -108,6 +119,7 @@ obsidian task daily line=3 toggle
 ## Step 5: Plugin and Theme Management
 
 **Plugins:**
+
 ```bash
 obsidian plugins                    # list all
 obsidian plugins:enabled            # list enabled
@@ -120,6 +132,7 @@ obsidian plugin:reload id=my-plugin # developer hot-reload
 ```
 
 **Themes and snippets:**
+
 ```bash
 obsidian themes
 obsidian theme:set name="Minimal"
@@ -142,6 +155,7 @@ echo "Open tasks: $(obsidian tasks todo total)"
 ```
 
 **Investigate specific issues:**
+
 ```bash
 obsidian orphans format=json          # notes nobody links to
 obsidian deadends format=json         # notes that link to nothing
@@ -149,6 +163,7 @@ obsidian unresolved verbose           # broken links with context
 ```
 
 **Fix broken links by creating missing notes:**
+
 ```bash
 obsidian unresolved format=json | jq -r '.[].link' | sort -u | while read link; do
   obsidian create name="$link" content="---\ntags:\n  - stub\n---\n\n# $link\n\nTODO: flesh out this note.\n" silent
@@ -189,13 +204,13 @@ Available runtime objects: `app.vault`, `app.metadataCache`, `app.workspace`, `a
 - [CHANGE_2]
 
 ### Health Summary (if audit)
-| Metric | Count | Status |
-|--------|-------|--------|
-| Total notes | [N] | — |
-| Orphans | [N] | [OK/ATTENTION] |
-| Dead ends | [N] | [OK/ATTENTION] |
-| Broken links | [N] | [OK/ATTENTION] |
-| Open tasks | [N] | — |
+| Metric       | Count | Status         |
+|--------------|-------|----------------|
+| Total notes  | [N]   | —              |
+| Orphans      | [N]   | [OK/ATTENTION] |
+| Dead ends    | [N]   | [OK/ATTENTION] |
+| Broken links | [N]   | [OK/ATTENTION] |
+| Open tasks   | [N]   | —              |
 ```
 
 </output>
@@ -218,6 +233,7 @@ Available runtime objects: `app.vault`, `app.metadataCache`, `app.workspace`, `a
 **Input**: "Move all my meeting notes into a Meetings folder"
 
 **Commands**:
+
 ```bash
 obsidian search query="#meeting" format=json | jq -r '.[].path'
 # Review list with user, then:
@@ -228,6 +244,7 @@ done
 ```
 
 **Output**:
+
 ```
 ## Vault Operation: Batch Move
 
@@ -239,12 +256,14 @@ done
 - ... (6 more)
 - All backlinks updated automatically
 ```
+
 </example>
 
 <example>
 **Input**: "Run a health check on my vault"
 
 **Commands**:
+
 ```bash
 obsidian files total
 obsidian orphans total
@@ -255,33 +274,37 @@ obsidian tasks todo total
 ```
 
 **Output**:
+
 ```
 ## Vault Health Audit
 
-| Metric | Count | Status |
-|--------|-------|--------|
-| Total notes | 342 | — |
-| Orphans | 28 | ATTENTION |
-| Dead ends | 15 | OK |
-| Broken links | 7 | ATTENTION |
-| Tags | 45 | — |
-| Open tasks | 19 | — |
+| Metric       | Count | Status    |
+|--------------|-------|-----------|
+| Total notes  | 342   | —         |
+| Orphans      | 28    | ATTENTION |
+| Dead ends    | 15    | OK        |
+| Broken links | 7     | ATTENTION |
+| Tags         | 45    | —         |
+| Open tasks   | 19    | —         |
 
 ### Recommendations
 1. **28 orphaned notes** have no incoming links — review with `obsidian orphans` and connect or archive
 2. **7 broken links** point to nonexistent notes — create stubs or fix with `obsidian unresolved verbose`
 ```
+
 </example>
 
 <example>
 **Input**: "Mark all notes in the Archive folder as status: archived"
 
 **Commands**:
+
 ```bash
 obsidian files folder=Archive format=json | jq -r '.[].path' | while read path; do
   obsidian property:set name="status" value="archived" path="$path"
 done
 ```
+
 </example>
 
 </examples>

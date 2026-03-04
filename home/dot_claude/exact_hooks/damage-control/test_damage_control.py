@@ -13,7 +13,6 @@ import yaml
 from damage_control import (
     _BUILTIN_SHORTHANDS,
     _CMD_POSITION_PREFIX,
-    _GLOB_BOUNDARY,
     _block,
     _expand_shorthands,
     NO_DELETE_BLOCKED,

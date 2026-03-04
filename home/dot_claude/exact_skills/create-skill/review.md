@@ -37,13 +37,13 @@ Read every file in the skill directory. Build a map of what the skill does, its 
 
 Check each frontmatter field against the reference table in SKILL.md:
 
-| Field                      | Check                                                                 |
-|----------------------------|-----------------------------------------------------------------------|
-| `name`                     | Kebab-case, under 64 chars, no `anthropic`/`claude`, matches folder name |
+| Field                      | Check                                                                                             |
+|----------------------------|---------------------------------------------------------------------------------------------------|
+| `name`                     | Kebab-case, under 64 chars, no `anthropic`/`claude`, matches folder name                          |
 | `description`              | Third person, specific, includes trigger terms, under 1024 chars, has negative triggers if needed |
-| `allowed-tools`            | Minimum required, Bash scoped with glob patterns                      |
-| `disable-model-invocation` | `true` for shared-state side effects                                  |
-| `user-invocable`           | `false` only for pure background knowledge                            |
+| `allowed-tools`            | Minimum required, Bash scoped with glob patterns                                                  |
+| `disable-model-invocation` | `true` for shared-state side effects                                                              |
+| `user-invocable`           | `false` only for pure background knowledge                                                        |
 
 Flag any deviation.
 

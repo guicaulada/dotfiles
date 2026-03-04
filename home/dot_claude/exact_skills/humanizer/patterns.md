@@ -159,6 +159,7 @@ Phrases bolded mechanically for emphasis without editorial purpose.
 Lists where each item starts with a bolded header and colon. Convert to prose when possible.
 
 > **Before:**
+>
 > - **User Experience:** The interface has been redesigned.
 > - **Performance:** Algorithms have been optimized.
 > - **Security:** End-to-end encryption has been added.
@@ -227,13 +228,13 @@ Overly positive, people-pleasing language.
 
 Common substitutions:
 
-| Filler | Replacement |
-|---|---|
-| In order to | To |
-| Due to the fact that | Because |
-| At this point in time | Now |
-| In the event that | If |
-| Has the ability to | Can |
+| Filler                       | Replacement      |
+|------------------------------|------------------|
+| In order to                  | To               |
+| Due to the fact that         | Because          |
+| At this point in time        | Now              |
+| In the event that            | If               |
+| Has the ability to           | Can              |
 | It is important to note that | _(cut entirely)_ |
 
 ### 23. Excessive hedging

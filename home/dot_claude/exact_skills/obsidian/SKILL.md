@@ -44,6 +44,7 @@ obsidian <command> [param=value ...] [flags]
 When creating notes, use these Obsidian-specific extensions:
 
 **Links and embeds:**
+
 ```markdown
 [[Note Name]]                    — wikilink
 [[Note Name|Display Text]]       — aliased link
@@ -55,6 +56,7 @@ When creating notes, use these Obsidian-specific extensions:
 ```
 
 **Callouts:**
+
 ```markdown
 > [!note] Optional Title
 > Content here.
@@ -66,6 +68,7 @@ When creating notes, use these Obsidian-specific extensions:
 Types: `note`, `abstract`/`summary`/`tldr`, `info`/`todo`, `tip`/`hint`/`important`, `success`/`check`/`done`, `question`/`help`/`faq`, `warning`/`caution`/`attention`, `failure`/`fail`/`missing`, `danger`/`error`, `bug`, `example`, `quote`/`cite`
 
 **Properties (YAML frontmatter):**
+
 ```yaml
 ---
 tags:
@@ -86,6 +89,7 @@ created: 2026-03-01T10:30:00
 Property types: text, number, checkbox (boolean), date (`YYYY-MM-DD`), datetime (`YYYY-MM-DDTHH:mm:ss`), list
 
 **Other extensions:**
+
 - Comments: `%% invisible in reading view %%`
 - Highlights: `==highlighted text==`
 - Tags: `#topic/subtopic` (nested with slashes)
