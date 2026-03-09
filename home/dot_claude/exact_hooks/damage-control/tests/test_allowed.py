@@ -99,3 +99,75 @@ class TestAllowedCommands:
         )
         assert code == 0
         assert stdout == ""
+
+    # --- Trusted npx commands ---
+
+    def test_allow_npx_vitest(self):
+        code, stdout, _ = run_hook("Bash", {"command": "npx vitest"})
+        assert code == 0
+        assert stdout == ""
+
+    def test_allow_npx_vitest_run(self):
+        code, stdout, _ = run_hook("Bash", {"command": "npx vitest run"})
+        assert code == 0
+        assert stdout == ""
+
+    def test_allow_npx_vitest_with_flags(self):
+        code, stdout, _ = run_hook("Bash", {"command": "npx --yes vitest"})
+        assert code == 0
+        assert stdout == ""
+
+    def test_allow_npx_eslint(self):
+        code, stdout, _ = run_hook("Bash", {"command": "npx eslint ."})
+        assert code == 0
+        assert stdout == ""
+
+    def test_allow_npx_prettier(self):
+        code, stdout, _ = run_hook("Bash", {"command": "npx prettier --write ."})
+        assert code == 0
+        assert stdout == ""
+
+    def test_allow_npx_tsc(self):
+        code, stdout, _ = run_hook("Bash", {"command": "npx tsc --noEmit"})
+        assert code == 0
+        assert stdout == ""
+
+    def test_allow_npx_jest(self):
+        code, stdout, _ = run_hook("Bash", {"command": "npx jest --coverage"})
+        assert code == 0
+        assert stdout == ""
+
+    def test_allow_npx_playwright(self):
+        code, stdout, _ = run_hook("Bash", {"command": "npx playwright test"})
+        assert code == 0
+        assert stdout == ""
+
+    def test_allow_bunx_vitest(self):
+        code, stdout, _ = run_hook("Bash", {"command": "bunx vitest"})
+        assert code == 0
+        assert stdout == ""
+
+    def test_allow_yarn_dlx_eslint(self):
+        code, stdout, _ = run_hook("Bash", {"command": "yarn dlx eslint ."})
+        assert code == 0
+        assert stdout == ""
+
+    def test_allow_pnpm_dlx_prettier(self):
+        code, stdout, _ = run_hook("Bash", {"command": "pnpm dlx prettier ."})
+        assert code == 0
+        assert stdout == ""
+
+    def test_allow_npx_next_build(self):
+        code, stdout, _ = run_hook("Bash", {"command": "npx next build"})
+        assert code == 0
+        assert stdout == ""
+
+    def test_allow_npx_prisma_migrate(self):
+        code, stdout, _ = run_hook("Bash", {"command": "npx prisma migrate dev"})
+        assert code == 0
+        assert stdout == ""
+
+    def test_allow_npx_turbo_run(self):
+        code, stdout, _ = run_hook("Bash", {"command": "npx turbo run build"})
+        assert code == 0
+        assert stdout == ""

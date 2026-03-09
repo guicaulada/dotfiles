@@ -140,8 +140,9 @@ bashToolPatterns:
 
   # ---------------------------------------------------------------------------
   # NPM / YARN / PNPM / BUN - REMOTE EXECUTION (ask: true)
+  # Trusted dev tools (defined in {trusted_npx} shorthand) are allowed through.
   # ---------------------------------------------------------------------------
-  - pattern: '\b(npx|bunx|yarn\s+dlx|pnpm\s+dlx)\b'
+  - pattern: '\b(npx|bunx|yarn\s+dlx|pnpm\s+dlx)\b(?!\s+(?:--?\S+\s+)*(?:{trusted_npx})\b)'
     reason: Downloads and executes arbitrary packages
     ask: true
 

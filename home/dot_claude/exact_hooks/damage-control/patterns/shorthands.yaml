@@ -12,4 +12,7 @@
 #             but does NOT cross ; | & boundaries
 #   {sudo}  — optional sudo prefix
 #             e.g. {sudo}\bapt{flags}remove\b  matches both  sudo apt remove  and  apt remove
-shorthands: {}
+shorthands:
+  # Trusted packages safe to run via npx/bunx/yarn dlx/pnpm dlx without prompting.
+  # Used in package-managers.yaml negative lookahead to skip the "ask" gate.
+  trusted_npx: "vitest|jest|mocha|playwright|cypress|eslint|prettier|biome|oxlint|stylelint|markdownlint|tsc|tsx|ts-node|vite|next|nuxi|astro|remix|wrangler|webpack|esbuild|rollup|tsup|turbo|swc|prisma|drizzle-kit|tailwindcss|postcss|autoprefixer|storybook|commitlint|lint-staged|sort-package-json|knip|depcheck|taze|serve|http-server|concurrently|cross-env"
