@@ -71,6 +71,39 @@ class TestAllowedCommands:
         assert code == 0
         assert stdout == ""
 
+    # --- Directory names in commit messages (not actual paths) ---
+
+    def test_allow_secrets_in_commit_message(self):
+        """'secrets' in a commit message should not trigger zero-access."""
+        code, stdout, _ = run_hook(
+            "Bash",
+            {
+                "command": 'git commit -m "feat(scripts): add admin page OAuth secrets creation script"'
+            },
+        )
+        assert code == 0
+        assert stdout == ""
+
+    def test_allow_secrets_word_in_heredoc_commit(self):
+        """'secrets' inside a heredoc commit message should not trigger zero-access."""
+        code, stdout, _ = run_hook(
+            "Bash",
+            {
+                "command": "git commit -m \"$(cat <<'EOF'\nfeat(scripts): add admin page OAuth secrets creation script\nEOF\n)\""
+            },
+        )
+        assert code == 0
+        assert stdout == ""
+
+    def test_allow_build_word_in_commit_message(self):
+        """'build' in a commit message should not trigger read-only path match."""
+        code, stdout, _ = run_hook(
+            "Bash",
+            {"command": 'git commit -m "fix(ci): update build pipeline config"'},
+        )
+        assert code == 0
+        assert stdout == ""
+
     # --- Paths containing "secrets" as substring (not a secrets dir) ---
 
     def test_allow_git_add_external_secrets(self):

@@ -295,6 +295,9 @@ def check_path_patterns(
                 continue
     else:
         expanded = str(Path(path).expanduser())
+        # Path() strips trailing slashes; preserve them for directory patterns
+        if path.endswith("/") and not expanded.endswith("/"):
+            expanded += "/"
         escaped_expanded = re.escape(expanded)
         escaped_original = re.escape(path)
 
@@ -387,6 +390,11 @@ def handle_bash(tool_input: dict[str, Any], config: dict[str, Any]) -> None:
                 continue
         else:
             expanded = str(Path(zero_path).expanduser())
+            # Path() strips trailing slashes; preserve them so directory
+            # patterns like "secrets/" don't match the bare word "secrets"
+            # inside commit messages or other free-form text.
+            if zero_path.endswith("/") and not expanded.endswith("/"):
+                expanded += "/"
             escaped_expanded = re.escape(expanded)
             escaped_original = re.escape(zero_path)
             # Use path-component boundary to avoid matching inside
