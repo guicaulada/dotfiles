@@ -162,12 +162,12 @@ bashToolPatterns:
     reason: Copies files to/from pod
     ask: true
 
-  - pattern: '\bkubectl{flags}label{args}\s+--overwrite'
-    reason: Overwrites existing labels
+  - pattern: '\bkubectl{flags}label\b'
+    reason: Modifies Kubernetes resource labels
     ask: true
 
-  - pattern: '\bkubectl{flags}annotate{args}\s+--overwrite'
-    reason: Overwrites existing annotations
+  - pattern: '\bkubectl{flags}annotate\b'
+    reason: Modifies Kubernetes resource annotations
     ask: true
 
   - pattern: '\bkubectl{flags}port-forward\b'
