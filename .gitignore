@@ -61,7 +61,6 @@ yarn-error.log*
 .env.local
 .env.*.local
 chezmoi.toml
-.github/linters/.gitleaks.toml
 
 # Worktrees
 .worktrees/
