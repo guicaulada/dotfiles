@@ -6,7 +6,8 @@ of other tools (e.g. docker exec).
 
 Patterns only match when the command word appears at:
   - Start of the command string (^)
-  - After a shell separator: ; | & && || or subshell (
+  - After a shell separator: ; | & && || subshell ( or group {
+  - After a shell keyword following a separator: ; do, ; then, ; else, ; elif
 
 Patterns with match_anywhere: true bypass this anchoring.
 """
@@ -77,6 +78,31 @@ class TestCommandPositionPrefix:
 
     def test_after_dollar_paren(self):
         assert self._matches("$(eval dangerous)", "eval")
+
+    # --- After open brace (group command) ---
+
+    def test_after_open_brace(self):
+        assert self._matches("{ eval dangerous; }", "eval")
+
+    def test_after_open_brace_no_space(self):
+        assert self._matches("{eval dangerous; }", "eval")
+
+    # --- After shell keywords (do, then, else, elif) ---
+
+    def test_after_semicolon_do(self):
+        assert self._matches("for x in a b; do eval x; done", "eval")
+
+    def test_after_semicolon_do_with_spaces(self):
+        assert self._matches("for x in a b;  do  eval x; done", "eval")
+
+    def test_after_semicolon_then(self):
+        assert self._matches("if true; then eval x; fi", "eval")
+
+    def test_after_semicolon_else(self):
+        assert self._matches("if true; then echo ok; else eval x; fi", "eval")
+
+    def test_after_semicolon_elif(self):
+        assert self._matches("if false; then echo a; elif true; then eval x; fi", "eval")
 
     # --- Non-matching positions ---
 
@@ -437,6 +463,61 @@ class TestAfterSeparators:
     def test_vault_after_double_ampersand(self):
         code, _, _ = run_hook(
             "Bash", {"command": "export VAULT_ADDR=http://localhost:8200 && vault read secret"}
+        )
+        assert code == 2
+
+
+# =============================================================================
+# Integration: true positives after shell keywords (do, then, else)
+# =============================================================================
+
+
+class TestAfterShellKeywords:
+    """Commands after do/then/else/elif must still be caught."""
+
+    def test_gh_pr_edit_in_for_loop(self):
+        code, stdout, _ = run_hook(
+            "Bash",
+            {
+                "command": "for pr in 514264 514270; do gh pr edit $pr "
+                "--add-reviewer user & done; wait"
+            },
+        )
+        assert code == 0
+        data = json.loads(stdout)
+        assert data["hookSpecificOutput"]["permissionDecision"] == "ask"
+
+    def test_rm_rf_in_for_loop(self):
+        code, _, _ = run_hook(
+            "Bash", {"command": "for d in /tmp/a /tmp/b; do rm -rf $d; done"}
+        )
+        assert code == 2
+
+    def test_eval_after_then(self):
+        code, _, _ = run_hook(
+            "Bash", {"command": 'if [ "$x" = "1" ]; then eval "$cmd"; fi'}
+        )
+        assert code == 2
+
+    def test_shutdown_after_else(self):
+        code, _, _ = run_hook(
+            "Bash",
+            {"command": "if check_health; then echo ok; else shutdown -h now; fi"},
+        )
+        assert code == 2
+
+    def test_source_after_then(self):
+        code, stdout, _ = run_hook(
+            "Bash",
+            {"command": "if [ -f ~/.env ]; then source ~/.env; fi"},
+        )
+        assert code == 0
+        data = json.loads(stdout)
+        assert data["hookSpecificOutput"]["permissionDecision"] == "ask"
+
+    def test_command_in_brace_group(self):
+        code, _, _ = run_hook(
+            "Bash", {"command": "{ eval dangerous; }"}
         )
         assert code == 2
 
