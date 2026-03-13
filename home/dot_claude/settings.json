@@ -29,7 +29,7 @@
     "ask": [],
     "defaultMode": "bypassPermissions"
   },
-  "model": "opus",
+  "model": "opus[1m]",
   "hooks": {
     "PreToolUse": [
       {
@@ -72,5 +72,6 @@
     }
   },
   "skipDangerousModePermissionPrompt": true,
-  "autoCompact": false
+  "autoCompact": false,
+  "effortLevel": "high"
 }
