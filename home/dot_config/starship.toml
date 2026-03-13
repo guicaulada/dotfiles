@@ -53,6 +53,12 @@ disabled = false
 disabled = false
 format = '[$time]($style)'
 
+[username]
+disabled = true
+
+[hostname]
+disabled = true
+
 # Disabled modules
 [aws]
 disabled = true
