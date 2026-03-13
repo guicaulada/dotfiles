@@ -65,6 +65,14 @@ bindkey -e
 MAGIC_ENTER_GIT_COMMAND='gst'
 MAGIC_ENTER_OTHER_COMMAND='ls'
 
+# claude (run inside a named tmux session: <dirname>-<key>)
+claude() {
+  local dir=${PWD##*/}
+  local key=$(head -c 3 /dev/urandom | xxd -p)
+  local session="claude-${dir}-${key}"
+  tmux new -As "$session" -- command claude "$@"
+}
+
 # Aliases
 {{- range $category, $cmds := .aliases }}
 # {{ $category }}
