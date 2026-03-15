@@ -74,6 +74,15 @@ brew "dtach"
 brew "tmux"
 brew "uv"
 
+# Security
+cask "blockblock"
+cask "knockknock"
+cask "little-snitch"
+cask "micro-snitch"
+
+# Network
+brew "wireshark"
+
 # Casks
 cask "ghostty"
 cask "1password-cli"
