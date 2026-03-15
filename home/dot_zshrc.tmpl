@@ -65,13 +65,50 @@ bindkey -e
 MAGIC_ENTER_GIT_COMMAND='gst'
 MAGIC_ENTER_OTHER_COMMAND='ls'
 
-# claude (run inside a named tmux session: <dirname>-<key>)
+# claude session management (dtach for persistence, fzf for selection)
+CLAUDE_SESSIONS="/tmp/claude-sessions"
+
 claude() {
+  mkdir -p "$CLAUDE_SESSIONS"
   local dir=${PWD##*/}
   local key=$(head -c 3 /dev/urandom | xxd -p)
-  local session="claude-${dir}-${key}"
-  tmux new -As "$session" -- command claude "$@"
+  local socket="${CLAUDE_SESSIONS}/${dir}-${key}"
+  dtach -A "$socket" -z command claude "$@"
 }
+
+claude-ls() {
+  local sockets=("${CLAUDE_SESSIONS}"/*(DN))
+  if (( ${#sockets} == 0 )); then
+    echo "No active claude sessions"
+    return
+  fi
+  for s in "${sockets[@]}"; do
+    echo "${s:t}"
+  done
+}
+
+claude-attach() {
+  local session="$1"
+  if [[ -z "$session" ]]; then
+    session=$(command ls -A "$CLAUDE_SESSIONS" 2>/dev/null | fzf --prompt="Attach session: ")
+    [[ -z "$session" ]] && return
+  fi
+  dtach -a "${CLAUDE_SESSIONS}/$session" -z
+}
+
+claude-kill() {
+  local session="$1"
+  if [[ -z "$session" ]]; then
+    session=$(command ls -A "$CLAUDE_SESSIONS" 2>/dev/null | fzf --prompt="Kill session: ")
+    [[ -z "$session" ]] && return
+  fi
+  rm -f "${CLAUDE_SESSIONS}/$session"
+}
+
+_claude_sessions() {
+  compadd -- "${CLAUDE_SESSIONS}"/*(DN:t)
+}
+compdef _claude_sessions claude-attach claude-kill ca ck
 
 # Aliases
 {{- range $category, $cmds := .aliases }}

@@ -70,6 +70,7 @@ brew "k9s"
 
 # Utilities
 brew "chezmoi"
+brew "dtach"
 brew "tmux"
 brew "uv"
 

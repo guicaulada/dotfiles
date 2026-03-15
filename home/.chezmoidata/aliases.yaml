@@ -7,10 +7,7 @@ aliases:
     lt: "eza --tree --icons=auto --level=2"
     top: btop
     vim: nvim
-  tmux:
-    ta: "tmux attach -t"
-    td: "tmux detach"
-    tk: "tmux kill-session -t"
-    tl: "tmux list-sessions"
-    tn: "tmux new-session -s"
-    ts: "tmux switch-client -t"
+  claude:
+    cl: claude-ls
+    ca: claude-attach
+    ck: claude-kill
