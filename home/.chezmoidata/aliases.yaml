@@ -11,3 +11,5 @@ aliases:
     cl: claude-ls
     ca: claude-attach
     ck: claude-kill
+  power:
+    nosleep: "sudo pmset -a disablesleep"
