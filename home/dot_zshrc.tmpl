@@ -27,6 +27,19 @@ fuck() {
   fuck "$@"
 }
 
+# SSH access (Tailscale SSH + sleep control)
+sshon() {
+  tailscale set --ssh
+  sudo pmset -a disablesleep 1
+  echo "SSH enabled, sleep disabled"
+}
+
+sshoff() {
+  tailscale set --ssh=false
+  sudo pmset -a disablesleep 0
+  echo "SSH disabled, sleep enabled"
+}
+
 # pwdx (show working directory of a process by PID — macOS equivalent)
 pwdx() {
   lsof -a -p "$1" -d cwd -n | tail -1 | awk '{print $NF}'
