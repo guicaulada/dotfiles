@@ -70,7 +70,10 @@ disabled = true
 disabled = true
 
 [kubernetes]
-disabled = true
+disabled = false
+detect_files = []
+detect_folders = []
+detect_extensions = []
 
 [docker_context]
 disabled = true
