@@ -67,6 +67,7 @@ brew "terraform"
 brew "kubernetes-cli"
 brew "helm"
 brew "k9s"
+brew "kubectx"
 
 # Utilities
 brew "chezmoi"
