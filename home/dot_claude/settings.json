@@ -54,7 +54,8 @@
     "gopls-lsp@claude-plugins-official": true,
     "rust-analyzer-lsp@claude-plugins-official": true,
     "claude-code-wakatime@wakatime": true,
-    "otel@guicaulada-plugins": true
+    "otel@guicaulada-plugins": true,
+    "clangd-lsp@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "wakatime": {
