@@ -1,5 +1,6 @@
 exclude = [
   "github\\.com/acme/",
+  "github\\.com/myorg/",
   "github\\.com/guicaulada/claude-plugins",
   "otlp-gateway.*\\.grafana\\.net",
   "^http://0\\.0\\.0\\.0",
