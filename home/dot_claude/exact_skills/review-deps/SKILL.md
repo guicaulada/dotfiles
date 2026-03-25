@@ -2,7 +2,6 @@
 name: review-deps
 description: Reviews dependency bump PRs with focus on compatibility and security issues. Use when user mentions review deps, review dependencies, dependency review, check deps, dependency prs, dep bumps, review deps prs, batch dep review.
 allowed-tools: Read, Bash(gh *), Bash(mktemp *), Bash(rm -rf /tmp/deps-review-*), Grep, Task, WebSearch
-disable-model-invocation: true
 argument-hint: [pr-number or url...]
 ---
 
