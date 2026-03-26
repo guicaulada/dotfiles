@@ -38,13 +38,13 @@ gh search issues --assignee=USERNAME --state=open --sort=updated --limit=30 --js
 **Authored PRs:**
 
 ```
-gh search prs --author=USERNAME --state=open --sort=updated --limit=30 --json repository,title,number,url,labels,updatedAt,state,reviewDecision,isDraft,additions,deletions
+gh search prs --author=USERNAME --state=open --sort=updated --limit=30 --json repository,title,number,url,labels,updatedAt,state,isDraft
 ```
 
 **PRs awaiting your review** (authenticated user only):
 
 ```
-gh search prs --review-requested=USERNAME --state=open --sort=updated --limit=30 --json repository,title,number,url,labels,updatedAt,state,author,additions,deletions
+gh search prs --review-requested=USERNAME --state=open --sort=updated --limit=30 --json repository,title,number,url,labels,updatedAt,state,author
 ```
 
 **PRs and issues where you are mentioned** (authenticated user only):
