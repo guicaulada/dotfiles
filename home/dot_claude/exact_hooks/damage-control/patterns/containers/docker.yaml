@@ -62,3 +62,31 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   - pattern: '\b(skopeo|crane){flags}delete\b'
     reason: Deletes container image from registry
+
+  - pattern: '\bcrane{flags}push\b'
+    reason: Pushes image to registry
+    ask: true
+
+  - pattern: '\bcrane{flags}(copy|cp)\b'
+    reason: Copies image between registries
+    ask: true
+
+  - pattern: '\bcrane{flags}tag\b'
+    reason: Tags image in registry
+    ask: true
+
+  - pattern: '\bcrane{flags}append\b'
+    reason: Appends layer to image and pushes to registry
+    ask: true
+
+  - pattern: '\bcrane{flags}mutate\b'
+    reason: Mutates image and pushes to registry
+    ask: true
+
+  - pattern: '\bcrane{flags}flatten\b'
+    reason: Flattens image layers and pushes to registry
+    ask: true
+
+  - pattern: '\bcrane{flags}rebase\b'
+    reason: Rebases image and pushes to registry
+    ask: true
