@@ -45,6 +45,12 @@ pwdx() {
   lsof -a -p "$1" -d cwd -n | tail -1 | awk '{print $NF}'
 }
 
+# Xbox controller (power cycle Bluetooth to clear stuck vibration)
+xbox-reset() {
+  blueutil --power 0 && sleep 1 && blueutil --power 1
+  echo "Press the Xbox button to reconnect."
+}
+
 # Autosuggestions tuning
 ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
 ZSH_AUTOSUGGEST_MANUAL_REBIND=1

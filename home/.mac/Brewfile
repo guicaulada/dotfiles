@@ -69,6 +69,9 @@ brew "helm"
 brew "k9s"
 brew "kubectx"
 
+# Bluetooth
+brew "blueutil"
+
 # Utilities
 brew "chezmoi"
 brew "dtach"
