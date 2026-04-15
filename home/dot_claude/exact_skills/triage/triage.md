@@ -76,84 +76,23 @@ For each PR, fetch all available REST fields:
 gh pr view NUMBER --repo OWNER/REPO --json additions,assignees,author,autoMergeRequest,baseRefName,body,changedFiles,closingIssuesReferences,comments,commits,createdAt,deletions,files,headRefName,isDraft,labels,latestReviews,mergeStateStatus,mergeable,milestone,number,projectItems,reactionGroups,reviewDecision,reviewRequests,reviews,state,statusCheckRollup,title,updatedAt,url
 ```
 
-Then fetch GraphQL-exclusive fields — review threads, per-check details, merge queue state, project field values, and viewer context:
+Then fetch additional details via REST:
+
+**Detailed check information:**
 
 ```
-gh api graphql -f query='
-query($owner: String!, $repo: String!, $number: Int!) {
-  repository(owner: $owner, name: $repo) {
-    pullRequest(number: $number) {
-      reviewThreads(first: 100) {
-        nodes {
-          isResolved
-          isOutdated
-          path
-          comments(first: 1) {
-            nodes { author { login } body }
-          }
-        }
-      }
-      commits(last: 1) {
-        nodes {
-          commit {
-            statusCheckRollup {
-              state
-              contexts(first: 50) {
-                nodes {
-                  ... on CheckRun {
-                    name
-                    conclusion
-                    status
-                    isRequired
-                    detailsUrl
-                  }
-                  ... on StatusContext {
-                    context
-                    state
-                    targetUrl
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-      isInMergeQueue
-      mergeQueueEntry { position estimatedTimeToMerge }
-      canBeRebased
-      viewerLatestReview { state submittedAt }
-      viewerLatestReviewRequest { requestedAt }
-      projectItems(first: 5) {
-        nodes {
-          project { title number url }
-          fieldValues(first: 10) {
-            nodes {
-              ... on ProjectV2ItemFieldSingleSelectValue {
-                name
-                field { ... on ProjectV2SingleSelectField { name } }
-              }
-              ... on ProjectV2ItemFieldIterationValue {
-                title
-                startDate
-                duration
-                field { ... on ProjectV2IterationField { name } }
-              }
-              ... on ProjectV2ItemFieldNumberValue {
-                number
-                field { ... on ProjectV2Field { name } }
-              }
-              ... on ProjectV2ItemFieldDateValue {
-                date
-                field { ... on ProjectV2Field { name } }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}' -f owner=OWNER -f repo=REPO -F number=NUMBER
+gh pr checks NUMBER --repo OWNER/REPO --json name,state,bucket,conclusion,detailsUrl,event,workflow,description
 ```
+
+**Inline review comments** (to analyze review threads):
+
+```
+gh api repos/OWNER/REPO/pulls/NUMBER/comments --paginate --jq '[.[] | {id, path, body, user: .user.login, in_reply_to_id, created_at, updated_at}]'
+```
+
+**Viewer context:**
+
+Derive the viewer's latest review and review request from the `reviews` and `reviewRequests` fields (already fetched by `gh pr view`) using the authenticated user's login from Step 1. Filter `reviews` where `author.login` matches the authenticated user and sort by `submittedAt` to find the latest.
 
 ### 3b: Analyze Review State
 
@@ -167,9 +106,15 @@ query($owner: String!, $repo: String!, $number: Int!) {
 
 If `reviewRequests` is non-empty, someone has been asked to review (or re-review). Combined with a stale approval, the PR is waiting for a new review cycle.
 
-**Unresolved review threads:**
+**Active review threads:**
 
-From the GraphQL `reviewThreads`, count threads where `isResolved == false` and `isOutdated == false`. These are active unresolved discussions that must be addressed.
+From the inline review comments, group comments by `in_reply_to_id` to reconstruct threads. A thread is potentially unresolved if:
+
+- The last comment is from a reviewer (not the PR author)
+- The comment contains a question or change request
+- There is no subsequent approval from that reviewer
+
+Cross-reference with `reviews` — if a reviewer left inline comments but later approved, their threads are likely resolved.
 
 **Outstanding changes-requested reviews:**
 
@@ -177,10 +122,10 @@ From `reviews`, identify reviewers whose latest review is `CHANGES_REQUESTED` wi
 
 **Review-requested PRs — viewer context:**
 
-For PRs where the user's review is requested, use `viewerLatestReview` and `viewerLatestReviewRequest` to determine:
+For PRs where the user's review is requested, use the derived viewer review data (from Step 3a) to determine:
 
 - If the user already submitted a review and was re-requested → this is a re-review after new commits
-- If `viewerLatestReviewRequest.requestedAt` is available → compute waiting duration
+- Compare the user's last review `submittedAt` against the latest commit date → determine if new commits were pushed since the review
 - If the PR has approvals from others but new commits → the author pushed fixes and wants another pass
 
 ### 3c: Analyze Merge State
@@ -202,27 +147,29 @@ If `autoMergeRequest` is non-null, auto-merge is enabled. Note the enabler and w
 
 **Merge queue:**
 
-If `isInMergeQueue` is true, the PR is already queued. Note the `position` and `estimatedTimeToMerge` from `mergeQueueEntry`. No action needed unless the queue is stuck.
+If auto-merge is enabled (`autoMergeRequest` is non-null) and all conditions are met, the PR may be in a merge queue. Note this in the output — no manual merge action needed.
 
 **Rebasability:**
 
-If `canBeRebased` is false and there are conflicts, a manual merge/conflict resolution is required — `git rebase` alone won't work.
+If `mergeable` is `CONFLICTING`, assume manual conflict resolution may be needed. If the PR is behind the base branch (`mergeStateStatus` is `BEHIND`), a rebase is recommended.
 
 ### 3d: Analyze CI State
 
-From the GraphQL `statusCheckRollup.contexts`, parse individual checks:
+From `gh pr checks` output and `statusCheckRollup` from the PR view, parse individual checks:
 
-- **Required failing checks**: `isRequired == true` and `conclusion` is not SUCCESS — these block merge
-- **Optional failing checks**: `isRequired == false` and failing — note but don't block
-- **Pending checks**: `status != "COMPLETED"` — still running, wait before concluding
-- **Specific check names**: Surface the names of failing required checks so the user knows what to fix
+- **Failing checks**: checks in the `fail` bucket — these likely block merge
+- **Pending checks**: checks in the `pending` bucket — still running, wait before concluding
+- **Passing checks**: checks in the `pass` bucket
+- **Specific check names**: Surface the names of failing checks so the user knows what to fix
+
+Cross-reference with `mergeStateStatus` — if it is `UNSTABLE` or `BLOCKED`, required checks are failing or incomplete.
 
 Classify CI overall:
 
-- `PASSING` — all required checks pass
-- `FAILING` — one or more required checks fail (list which ones)
-- `PENDING` — required checks still running
-- `MIXED` — required checks pass but optional checks fail
+- `PASSING` — all checks pass
+- `FAILING` — one or more checks fail (list which ones)
+- `PENDING` — checks still running
+- `MIXED` — some checks fail but `mergeStateStatus` is not `UNSTABLE`
 
 ### 3e: Analyze Context
 
@@ -252,12 +199,7 @@ If `baseRefName` contains `release`, `hotfix`, or version patterns, the PR has h
 
 **Project board context:**
 
-From `projectItems.fieldValues`, extract:
-
-- **Status** (e.g., "In Progress", "In Review", "Ready to Deploy")
-- **Priority** (e.g., "P0", "High", "Critical")
-- **Iteration** (name, start date, duration — compute if approaching end)
-- **Effort/Points** (if available)
+From `projectItems` (fetched via `gh pr view`), identify which projects the PR belongs to. For detailed field values (status, priority, iteration), cross-reference with project data fetched in Step 5.
 
 ### 3f: Classify Each PR
 
@@ -265,7 +207,7 @@ Apply these criteria **in order** — a PR gets the first matching state:
 
 | State                 | Criteria                                                                                                                                |
 |-----------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
-| **In merge queue**    | `isInMergeQueue` is true — already queued, note position                                                                                |
+| **In merge queue**    | Auto-merge enabled and `mergeStateStatus` indicates queued — already queued, note auto-merge status                                     |
 | **Draft**             | `isDraft` is true                                                                                                                       |
 | **Has conflicts**     | `mergeable` is CONFLICTING or `mergeStateStatus` is DIRTY                                                                               |
 | **Needs re-review**   | Stale approval (commits after approval) OR non-empty `reviewRequests` after approval                                                    |
@@ -290,84 +232,27 @@ REST fields:
 gh issue view NUMBER --repo OWNER/REPO --json assignees,author,body,closedByPullRequestsReferences,comments,createdAt,labels,milestone,projectItems,state,title,updatedAt,url
 ```
 
-GraphQL-exclusive fields — sub-issues, blocking relationships, linked branches, timeline, and project field values:
+Then fetch additional context via REST:
+
+**Timeline events** (cross-references, connected PRs):
 
 ```
-gh api graphql -f query='
-query($owner: String!, $repo: String!, $number: Int!) {
-  repository(owner: $owner, name: $repo) {
-    issue(number: $number) {
-      issueType { name }
-      subIssuesSummary { completed percentCompleted total }
-      linkedBranches(first: 5) {
-        nodes { ref { name } }
-      }
-      timelineItems(itemTypes: [CROSS_REFERENCED_EVENT, CONNECTED_EVENT], first: 20) {
-        nodes {
-          ... on CrossReferencedEvent {
-            willCloseTarget
-            source {
-              ... on PullRequest {
-                number title state url isDraft
-                repository { nameWithOwner }
-              }
-            }
-          }
-          ... on ConnectedEvent {
-            subject {
-              ... on PullRequest {
-                number title state url
-                repository { nameWithOwner }
-              }
-            }
-          }
-        }
-      }
-      projectItems(first: 5) {
-        nodes {
-          project { title number url }
-          fieldValues(first: 10) {
-            nodes {
-              ... on ProjectV2ItemFieldSingleSelectValue {
-                name
-                field { ... on ProjectV2SingleSelectField { name } }
-              }
-              ... on ProjectV2ItemFieldIterationValue {
-                title
-                startDate
-                duration
-                field { ... on ProjectV2IterationField { name } }
-              }
-              ... on ProjectV2ItemFieldNumberValue {
-                number
-                field { ... on ProjectV2Field { name } }
-              }
-              ... on ProjectV2ItemFieldDateValue {
-                date
-                field { ... on ProjectV2Field { name } }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}' -f owner=OWNER -f repo=REPO -F number=NUMBER
+gh api repos/OWNER/REPO/issues/NUMBER/timeline --paginate --jq '[.[] | select(.event == "cross-referenced" or .event == "connected") | {event, source: (.source.issue // null), actor: (.actor.login // null), created_at}]'
 ```
+
+**Sub-issue tracking:**
+
+Parse the issue body for task list syntax (`- [ ]` / `- [x]`) to determine progress. For GitHub sub-issue references, scan the body for linked issue patterns.
 
 ### 4b: Analyze Issue State
 
 **Linked PRs:**
 
-Combine `closedByPullRequestsReferences` (REST) and `timelineItems` CROSS_REFERENCED_EVENT where `willCloseTarget == true` and CONNECTED_EVENT (GraphQL). For each linked PR, note its state (open/closed/merged, draft, has conflicts, CI status). If the PR is from Step 3 enrichment, reuse that data.
-
-**Sub-issue progress:**
-
-From `subIssuesSummary`: if `total > 0`, report progress as "X/Y sub-issues complete (Z%)". This gives a progress bar for epic-style issues.
+Combine `closedByPullRequestsReferences` (from `gh issue view`) and timeline cross-referenced/connected events (from the REST timeline endpoint). For each linked PR, note its state (open/closed/merged, draft, has conflicts, CI status). If the PR is from Step 3 enrichment, reuse that data.
 
 **Task list progress:**
 
-Parse the issue `body` for GitHub task list syntax (`- [ ]` and `- [x]`). Count completed vs total. Report as "X/Y tasks complete" if task lists are present.
+Parse the issue `body` for GitHub task list syntax (`- [ ]` and `- [x]`). Count completed vs total. Report as "X/Y tasks complete" if task lists are present. This covers both inline checklists and sub-issue tracking.
 
 **Comment analysis:**
 
@@ -379,7 +264,7 @@ From `comments` (last 5), determine:
 
 **Linked branches:**
 
-From `linkedBranches`, check if there's an active branch for this issue. If so, the user has started work even if no PR exists yet.
+Check timeline events for branch references and cross-referenced PRs. If a PR targets or references this issue, the user has likely started work even if the PR is still in draft.
 
 **Milestone proximity:**
 
@@ -387,7 +272,7 @@ If `milestone` has a `dueOn` date, compute days remaining. Flag issues in milest
 
 **Project board context:**
 
-From `projectItems.fieldValues`, extract status, priority, iteration, and effort — same as PR enrichment.
+From `projectItems` (fetched via `gh issue view`), identify which projects the issue belongs to. For detailed field values, cross-reference with project data fetched in Step 5.
 
 ## Step 5: Discover and Fetch Project Data
 
@@ -540,7 +425,7 @@ If the user asked a specific question, lead with a direct answer before the full
 
 ### Your Issues
 - [REPO]#[NUMBER] — [TITLE] ([TYPE], [LABELS], updated [RELATIVE_TIME])
-  - [ALL APPLICABLE: linked PR (#N — state), sub-issues (X/Y, Z%), tasks (X/Y), milestone (due [DATE]), unanswered question from [USER], linked branch: [NAME]]
+  - [ALL APPLICABLE: linked PR (#N — state), tasks (X/Y), milestone (due [DATE]), unanswered question from [USER], linked branch: [NAME]]
   - Sprint: [NAME] ([N] days left) | Priority: [LEVEL] | Status: [PROJECT_STATUS]
 
 ## Mentioned
@@ -585,7 +470,7 @@ Omit any section that has no items. Keep the plan scannable — use one line per
 - Always fetch the authenticated user's username dynamically via `gh api user`
 - Run independent `gh` queries in parallel to minimize latency — batch as many concurrent calls as possible across Steps 2, 3, and 4
 - If a query fails, note the failure and continue with available data — never abort the whole plan
-- If a GraphQL query fails for any PR or issue (rate limits, missing permissions, schema mismatches), fall back to REST-only data for that item and classify using available fields — note reduced confidence when GraphQL-exclusive signals (review threads, check `isRequired`, merge queue state) are unavailable
+- If a REST API call fails for any PR or issue (rate limits, missing permissions), continue with available data and classify using the fields already fetched — note reduced confidence when supplementary data (review comments, detailed checks) is unavailable
 - Classify every PR into exactly one primary state using the classification table in Step 3f — apply criteria in order, first match wins
 - Attach all applicable secondary signals as annotations regardless of primary state
 - **The classification table in Step 3f is authoritative** — every condition in the "Ready to merge" row must be satisfied (non-stale approval, no pending review requests, no conflicts, no unresolved threads, all required checks passing). If any condition is violated, the PR is not ready to merge — classify it under the first matching earlier row instead
@@ -593,7 +478,6 @@ Omit any section that has no items. Keep the plan scannable — use one line per
 - Surface blockers explicitly in annotations — do not hide conflicts, stale approvals, failing CI, unresolved threads, or dependency blocks behind a generic state label
 - Name specific failing CI checks — "CI failing" alone is not actionable; "CI failing: lint, e2e-tests" is
 - When a PR has `autoMergeRequest` enabled, note it — the user may not need to take action
-- When a PR is `isInMergeQueue`, note position — the user should not try to merge manually
 - Detect stacked PRs via `baseRefName` and propagate blocking state through the chain
 - Deduplicate across all data sources — never show the same item in multiple sections without purpose
 - Omit empty sections from the output — do not show headers with no items
@@ -725,7 +609,7 @@ Omit any section that has no items. Keep the plan scannable — use one line per
 ### Their Issues
 
 - myorg/web#85 — Mobile nav broken on Safari (bug) — <https://github.com/myorg/web/issues/85>
-  - Sub-issues: 1/3 complete (33%)
+  - Tasks: 1/3 complete
 
 ### Collaboration Points
 
