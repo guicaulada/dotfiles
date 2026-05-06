@@ -2,22 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "env": {
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
-    "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1",
-    "CLAUDE_CODE_ENABLE_TELEMETRY": "1",
-    "OTEL_METRICS_EXPORTER": "otlp",
-    "OTEL_LOGS_EXPORTER": "otlp",
-    "OTEL_EXPORTER_OTLP_PROTOCOL": "http/protobuf",
-    "OTEL_EXPORTER_OTLP_ENDPOINT": "http://0.0.0.0:4318",
-    "OTEL_LOG_TOOL_DETAILS": "1",
-    "OTEL_LOG_USER_PROMPTS": "1",
-    "OTEL_METRIC_EXPORT_INTERVAL": "30000",
-    "OTEL_LOGS_EXPORT_INTERVAL": "5000",
-    "OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE": "delta",
-    "OTEL_METRICS_INCLUDE_SESSION_ID": "true",
-    "OTEL_METRICS_INCLUDE_VERSION": "true",
-    "OTEL_METRICS_INCLUDE_ACCOUNT_UUID": "true",
-    "OTEL_PLUGIN_METRICS_INCLUDE_HIGH_CARDINALITY": "true",
-    "OTEL_PLUGIN_DEBUG": "1"
+    "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1"
   },
   "attribution": {
     "commit": "",
@@ -54,7 +39,6 @@
     "gopls-lsp@claude-plugins-official": true,
     "rust-analyzer-lsp@claude-plugins-official": true,
     "claude-code-wakatime@wakatime": true,
-    "otel@guicaulada-plugins": true,
     "clangd-lsp@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
@@ -72,7 +56,8 @@
       "autoUpdate": true
     }
   },
+  "effortLevel": "high",
   "skipDangerousModePermissionPrompt": true,
-  "autoCompact": false,
-  "effortLevel": "high"
+  "autoCompactEnabled": false,
+  "autoCompact": false
 }
