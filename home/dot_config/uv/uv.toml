@@ -13,6 +13,16 @@ index-strategy = "first-index"
 # auth explicitly via env vars / project config instead.
 keyring-provider = "disabled"
 
+# Refuse to build any source distribution at the resolve layer. Applies to the native
+# uv commands (`uv add`, `uv sync`, `uv run`, `uv lock`). Source distributions execute
+# setup.py / PEP 517 build backends on install — disabling them is the Python equivalent
+# of npm's `ignore-scripts`.
+#
+# Opt-out per project: `tool.uv.no-build = false` in pyproject.toml.
+# Opt-out per package: `no-build-package = ["pkg-only-shipping-sdist"]` here or
+# `tool.uv.no-build-package` per project, after reviewing what build code runs.
+no-build = true
+
 [pip]
 # Prefer pre-built wheels over sdists — sdist installs execute setup.py / build backends,
 # which is the main script-execution vector for Python packages. Pair with `no-build = true`
