@@ -6,6 +6,9 @@
   "pre-commit": {
     "enabled": true
   },
+  "mise": {
+    "managerFilePatterns": ["/^home/dot_config/mise/config\\.toml$/"]
+  },
   "customManagers": [
     {
       "customType": "regex",
@@ -15,6 +18,58 @@
       ],
       "datasourceTemplate": "git-refs",
       "packageNameTemplate": "https://github.com/{{{depName}}}"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/home/dot_zsh_plugins\\.txt$/"],
+      "matchStrings": [
+        "(?<depName>[A-Za-z0-9._-]+/[A-Za-z0-9._-]+)\\s+[^\\n#]*?\\bpin:(?<currentDigest>[a-f0-9]{40})\\b[^\\n#]*?#\\s*release:(?<currentValue>v?\\d[\\w.-]*)"
+      ],
+      "datasourceTemplate": "github-releases",
+      "versioningTemplate": "loose"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/home/dot_zsh_plugins\\.txt$/"],
+      "matchStrings": [
+        "(?<depName>[A-Za-z0-9._-]+/[A-Za-z0-9._-]+)\\s+[^\\n#]*?\\bpin:(?<currentDigest>[a-f0-9]{40})\\b[^\\n#]*?#\\s*tag:(?<currentValue>v?\\d[\\w.-]*)"
+      ],
+      "datasourceTemplate": "github-tags",
+      "versioningTemplate": "loose"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/home/dot_zsh_plugins\\.txt$/"],
+      "matchStrings": [
+        "(?<depName>[A-Za-z0-9._-]+/[A-Za-z0-9._-]+)\\s+[^\\n#]*?\\bpin:(?<currentDigest>[a-f0-9]{40})\\b[^\\n#]*?#\\s*(?<currentValue>main|master|develop|trunk)\\b"
+      ],
+      "datasourceTemplate": "git-refs",
+      "packageNameTemplate": "https://github.com/{{{depName}}}"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/home/\\.chezmoiscripts/run_onchange_after_brew-bundle\\.sh\\.tmpl$/"
+      ],
+      "matchStrings": ["HOMEBREW_VERSION=\"(?<currentValue>[0-9.]+)\""],
+      "depNameTemplate": "Homebrew/brew",
+      "packageNameTemplate": "Homebrew/brew",
+      "datasourceTemplate": "github-releases"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchManagers": ["custom.regex"],
+      "matchFileNames": ["home/dot_zsh_plugins.txt"],
+      "addLabels": ["zsh-plugin"],
+      "commitMessageTopic": "antidote plugin {{depName}}"
+    },
+    {
+      "matchManagers": ["custom.regex"],
+      "matchDepNames": ["Homebrew/brew"],
+      "addLabels": ["homebrew"],
+      "commitMessageTopic": "Homebrew installer (.pkg)",
+      "description": "Renovate only bumps HOMEBREW_VERSION. The install script fetches the SHA-256 from GitHub's release-asset metadata at runtime and verifies the downloaded .pkg against it, then checks Apple's Developer ID signature and notarization independently."
     }
   ]
 }

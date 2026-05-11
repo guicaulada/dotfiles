@@ -1,1 +1,55 @@
+# .zshenv is sourced for every zsh invocation (interactive, login, scripts).
+# Put here only things that must be present unconditionally: PATH bootstrap and
+# environment hardening that needs to apply before any other tool runs.
+
 PATH=/opt/homebrew/bin/:$PATH
+
+# --- Homebrew supply-chain hardening ---------------------------------------------------
+# Brew respects these env vars, so they apply to interactive use and to any script that
+# inherits this shell environment (including chezmoi's run_onchange brew script).
+#
+# Block implicit `brew update` before every `brew install`. You'll run `brew update`
+# manually when you want new formula metadata.
+export HOMEBREW_NO_AUTO_UPDATE=1
+
+# Block implicit `brew upgrade` of an already-installed dependency when running
+# `brew install`. Without this, installing one package can silently bump unrelated ones.
+export HOMEBREW_NO_INSTALL_UPGRADE=1
+
+# Don't run `brew cleanup` after every install — destructive and unexpected.
+export HOMEBREW_NO_INSTALL_CLEANUP=1
+
+# Refuse to follow http→https redirects from bottles/casks — should be https end-to-end.
+export HOMEBREW_NO_INSECURE_REDIRECT=1
+
+# Disable anonymous analytics. Reduces network surface and information leakage.
+export HOMEBREW_NO_ANALYTICS=1
+
+# Require casks to declare a sha256 checksum. A cask with `sha256 :no_check` will refuse
+# to install — that flag is used by upstream for self-updating apps, and we'd rather know.
+export HOMEBREW_CASK_OPTS="--require-sha"
+
+# Suppress nagging "you should set HOMEBREW_X" hints; we've made our choices explicitly.
+export HOMEBREW_NO_ENV_HINTS=1
+
+# --- Corepack hardening ---------------------------------------------------------------
+# Corepack will silently download pnpm/yarn binaries when a project's package.json
+# specifies a `packageManager` field — that's a supply-chain bypass since the downloaded
+# binary is fresh from the npm registry and isn't pinned by your tooling.
+#
+# Make corepack prompt before downloading. You can also `corepack disable` to fully
+# opt out, but the prompt strikes a usable balance.
+export COREPACK_ENABLE_DOWNLOAD_PROMPT=1
+
+# Refuse to fetch a packageManager version whose integrity hash isn't pinned in
+# package.json. Forces the upstream project to ship a hash like
+# `pnpm@10.28.2+sha512.xxx`, not just `pnpm@10.28.2`.
+export COREPACK_ENABLE_STRICT=1
+
+# --- Other supply-chain env vars ------------------------------------------------------
+# Disable npm funding messages globally as a belt-and-suspenders against the .npmrc.
+export NO_UPDATE_NOTIFIER=1
+
+# Tell tools that respect XDG to read configs from the standard locations (some package
+# managers fall back to home-dir scanning if these are unset).
+export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"

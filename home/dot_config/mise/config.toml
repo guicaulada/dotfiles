@@ -1,3 +1,24 @@
+[settings]
+# Verify checksums and signatures when installing plugins and tools.
+paranoid = true
+
+# Do not enable experimental/unstable features.
+experimental = false
+
+# Generate mise.lock to pin transitive tool resolution.
+lockfile = true
+
+# `mise use` records exact versions, not ranges.
+pin = true
+
+# Do not auto-install a runtime when entering a directory that has a tool config.
+# Prevents a malicious .tool-versions / .mise.toml in a cloned repo from triggering installs.
+not_found_auto_install = false
+
+# Ignore .nvmrc / .python-version / .ruby-version etc. Only use mise's own config files,
+# so a dropped idiomatic version file in a third-party repo cannot select a runtime version.
+idiomatic_version_file = false
+
 [tools]
 bun = "1.3.10"
 go = "1.26.0"

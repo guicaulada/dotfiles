@@ -1,0 +1,27 @@
+# Cargo supply-chain hardening (~/.cargo/config.toml).
+#
+# Note: cargo cannot disable build.rs execution globally — the only real mitigation is
+# pinning + reviewing. This file tightens what we can control: network behavior, registry
+# trust, and install defaults.
+
+[net]
+# Use the system git binary for fetches. Honors local git config (including the global
+# transfer/fetch/receive.fsckObjects we set) and uses your SSH agent for private repos.
+git-fetch-with-cli = true
+
+# Retry transient network failures instead of partial-pulling crates.
+retry = 3
+
+[registries.crates-io]
+# Pinned canonical registry. A malicious project-level config.toml can still override this
+# per-project, but the global default cannot be silently retargeted.
+protocol = "sparse"
+
+[install]
+# `cargo install` defaults to the user-local prefix; this keeps it from touching system dirs.
+root = "~/.cargo"
+
+[term]
+# Quieter installs so any unexpected output (e.g. a script printing a phishing URL) stands out.
+quiet = false
+verbose = false

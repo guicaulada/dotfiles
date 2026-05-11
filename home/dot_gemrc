@@ -1,0 +1,18 @@
+# RubyGems global config (~/.gemrc).
+
+# Pin gem source to rubygems.org. A project-level Gemfile can still add sources, but the
+# global default cannot be silently retargeted by an env var.
+:sources:
+  - https://rubygems.org
+
+# Don't generate ri/rdoc on install — fewer commands run during install, faster too.
+gem: --no-document
+
+# Default install options. --minimal-deps avoids pulling optional dev dependencies of
+# gems we install globally (e.g. `gem install bundler`).
+install: --no-document --minimal-deps
+update: --no-document --minimal-deps
+
+# Suppress post-install messages so noisy phishing-style messages don't blend in with
+# regular install output. Still printed if -v is used.
+:verbose: false

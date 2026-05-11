@@ -3,9 +3,88 @@
 # Brewfile hash: {{ include ".mac/Brewfile" | sha256sum }}
 set -euo pipefail
 
+# Homebrew env hardening — set inline so this script behaves like an interactive shell
+# even when invoked by chezmoi without sourcing ~/.zshenv.
+export HOMEBREW_NO_AUTO_UPDATE=1
+export HOMEBREW_NO_INSTALL_UPGRADE=1
+export HOMEBREW_NO_INSTALL_CLEANUP=1
+export HOMEBREW_NO_INSECURE_REDIRECT=1
+export HOMEBREW_NO_ANALYTICS=1
+export HOMEBREW_NO_ENV_HINTS=1
+
 if ! command -v brew &>/dev/null; then
-  echo "==> Installing Homebrew..."
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  echo "==> Installing Homebrew via signed .pkg from GitHub Releases..."
+  # The version is the only thing pinned in the repo. Renovate (.github/renovate.json)
+  # bumps HOMEBREW_VERSION when a new release ships. At install time the script fetches
+  # the expected SHA-256 from GitHub's release-asset metadata and compares it to the
+  # downloaded .pkg, then independently verifies Apple's Developer ID signature and
+  # Gatekeeper notarization. No hash needs to live in the repo.
+  HOMEBREW_VERSION="5.1.11"
+  HOMEBREW_PKG_URL="https://github.com/Homebrew/brew/releases/download/${HOMEBREW_VERSION}/Homebrew.pkg"
+  HOMEBREW_API_URL="https://api.github.com/repos/Homebrew/brew/releases/tags/${HOMEBREW_VERSION}"
+
+  tmp=$(mktemp -t Homebrew.pkg)
+  trap 'rm -f "$tmp"' EXIT
+
+  echo "==> Fetching expected digest from GitHub API..."
+  # `python3` ships with macOS (/usr/bin/python3, gated by CLT). We avoid jq because brew
+  # isn't installed yet on a fresh box.
+  expected_sha256=$(curl -fsSL --proto '=https' --tlsv1.2 \
+      -H 'Accept: application/vnd.github+json' \
+      -H 'X-GitHub-Api-Version: 2022-11-28' \
+      "$HOMEBREW_API_URL" \
+    | /usr/bin/python3 -c '
+import json, sys
+release = json.load(sys.stdin)
+for asset in release["assets"]:
+    if asset["name"] == "Homebrew.pkg":
+        digest = asset["digest"]
+        if not digest.startswith("sha256:"):
+            sys.exit("unexpected digest algorithm: " + digest)
+        print(digest.split(":", 1)[1])
+        break
+else:
+    sys.exit("Homebrew.pkg asset not found in release " + release.get("tag_name", "?"))
+')
+  if [[ ${#expected_sha256} -ne 64 ]]; then
+    echo "ERROR: could not retrieve a valid SHA-256 digest from GitHub API" >&2
+    exit 1
+  fi
+
+  echo "==> Downloading Homebrew.pkg ${HOMEBREW_VERSION}..."
+  curl -fsSL --proto '=https' --tlsv1.2 -o "$tmp" "$HOMEBREW_PKG_URL"
+
+  echo "==> Verifying SHA-256 against GitHub's published digest..."
+  actual_sha256=$(shasum -a 256 "$tmp" | awk '{print $1}')
+  if [[ "$actual_sha256" != "$expected_sha256" ]]; then
+    echo "ERROR: Homebrew .pkg checksum mismatch" >&2
+    echo "  expected: $expected_sha256 (from $HOMEBREW_API_URL)" >&2
+    echo "  actual:   $actual_sha256 (from $HOMEBREW_PKG_URL)" >&2
+    exit 1
+  fi
+
+  echo "==> Verifying Apple Developer ID signature..."
+  sig_output=$(pkgutil --check-signature "$tmp" 2>&1)
+  if ! grep -q "Status: signed by a developer certificate issued by Apple" <<<"$sig_output"; then
+    echo "ERROR: Homebrew .pkg signature not recognized by macOS" >&2
+    echo "$sig_output" >&2
+    exit 1
+  fi
+  if ! grep -q "Developer ID Installer: Homebrew" <<<"$sig_output"; then
+    echo "ERROR: Homebrew .pkg signer is not 'Developer ID Installer: Homebrew'" >&2
+    echo "$sig_output" >&2
+    exit 1
+  fi
+
+  echo "==> Verifying notarization (Gatekeeper)..."
+  if ! spctl --assess --type install -vv "$tmp" 2>&1 | grep -q "source=Notarized Developer ID"; then
+    echo "ERROR: Homebrew .pkg failed Gatekeeper notarization check" >&2
+    spctl --assess --type install -vv "$tmp" >&2 || true
+    exit 1
+  fi
+
+  echo "==> Installing (requires sudo)..."
+  sudo installer -pkg "$tmp" -target /
   eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 

@@ -1,32 +1,56 @@
+# Antidote bundle file with supply-chain pinning.
+#
+# Each entry pins to a 40-char commit SHA via the `pin:` annotation. Antidote will
+# fetch (or check out, if already cloned) exactly that commit. The same repo MUST use
+# the same pin everywhere — antidote rejects conflicting pins.
+#
+# The `# <prefix>:<version>` trailing comment is read by Renovate (see
+# .github/renovate.json) and tells it which datasource to use for updates:
+#
+#   `# release:vX.Y.Z`  → github-releases datasource. Preferred: the cooldown is
+#                         driven by the release's publish timestamp, which is
+#                         harder to backdate than a raw git tag.
+#   `# tag:vX.Y.Z`      → github-tags datasource. Use when the upstream pushes git
+#                         tags but never makes a GitHub Release.
+#   `# main` / `# master`
+#                       → git-refs datasource. Bumps to the branch HEAD; only used
+#                         when there are no releases or tags at all.
+#
+# When Renovate proposes an update it rewrites both the SHA pin and the trailing
+# version label, so they stay in sync.
+#
+# Note: romkatv/zsh-defer is pulled transitively by antidote for `kind:defer`
+# entries and is not pinned here.
+
 # Deferred compinit (must be first, before any compdef calls)
-mattmc3/ez-compinit
+mattmc3/ez-compinit pin:5c9b6da88a463573e26e6846ff164026640ef2f6 # main
 
 # Git aliases
-ohmyzsh/ohmyzsh path:plugins/git
+ohmyzsh/ohmyzsh path:plugins/git pin:45dd7d006ab2650273d9859f7e3224cf757a9db3 # master
 
 # fzf (fuzzy finder)
-junegunn/fzf kind:path path:bin
-junegunn/fzf path:shell
+junegunn/fzf kind:path path:bin pin:6fefe025461b168eac2546ccba3403b70eb5da16 # release:v0.72.0
+junegunn/fzf path:shell pin:6fefe025461b168eac2546ccba3403b70eb5da16 # release:v0.72.0
 
 # Completions (add to fpath before compinit)
-zsh-users/zsh-completions kind:fpath
+zsh-users/zsh-completions kind:fpath pin:28c5bdcaf81bb89e56d0df8267d822c3b8aed9e0 # release:0.36.0
 
 # fzf-tab (completion widget activates on first Tab, after compinit)
-Aloxaf/fzf-tab
+Aloxaf/fzf-tab pin:d7e0234614dbe5369fdd760907d12c0e05a4dccc # release:v1.3.0
 
 # Universal archive extraction
-ohmyzsh/ohmyzsh path:plugins/extract
+ohmyzsh/ohmyzsh path:plugins/extract pin:45dd7d006ab2650273d9859f7e3224cf757a9db3 # master
 
 # Smart empty-Enter (runs git status in repos, eza otherwise)
-ohmyzsh/ohmyzsh path:plugins/magic-enter
+ohmyzsh/ohmyzsh path:plugins/magic-enter pin:45dd7d006ab2650273d9859f7e3224cf757a9db3 # master
 
 # Eval caching (faster startup by caching tool init output)
-mroth/evalcache
+mroth/evalcache pin:d6973f8c3ecde3eabd75c17b47e2222e24ab3e87 # release:v1.0.3
 
 # Deferred plugins (load after prompt for faster startup)
-hlissner/zsh-autopair kind:defer
-wfxr/forgit kind:defer
-junegunn/fzf-git.sh kind:defer
-MichaelAquilina/zsh-you-should-use kind:defer
-zsh-users/zsh-autosuggestions kind:defer
-zdharma-continuum/fast-syntax-highlighting kind:defer
+hlissner/zsh-autopair kind:defer pin:34a8bca0c18fcf3ab1561caef9790abffc1d3d49 # tag:v1.0
+wfxr/forgit kind:defer pin:7a37fadf921e89edac941dcc615342009149b07e # release:26.05.0
+junegunn/fzf-git.sh kind:defer pin:34cd6c9d315d9b59b94721bd602c5769e919d686 # main
+MichaelAquilina/zsh-you-should-use kind:defer pin:ff371d6a11b653e1fa8dda4e61c896c78de26bfa # tag:1.11.1
+zsh-users/zsh-autosuggestions kind:defer pin:e52ee8ca55bcc56a17c828767a3f98f22a68d4eb # tag:v0.7.1
+zdharma-continuum/fast-syntax-highlighting kind:defer pin:5ecd353c81214f82bdeca5483fab6ccc5a2d5494 # tag:v1.56

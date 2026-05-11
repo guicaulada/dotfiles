@@ -1,0 +1,23 @@
+# Bun supply-chain hardening. Bun reads ~/.bunfig.toml as the global config.
+
+[install]
+# Do not automatically install missing dependencies when running `bun <file>`.
+# Forces explicit `bun install`, so cloned code can't trigger a silent install on first run.
+auto = "disable"
+
+# Save exact versions in package.json.
+exact = true
+
+# Refuse to install package versions younger than 7 days (604800 seconds). Mirrors the
+# npm/uv cooldown so the whole JS toolchain has the same delay.
+minimumReleaseAge = 604800
+
+# Use the human-readable text lockfile (bun.lock) so lockfile diffs are reviewable in PRs.
+saveTextLockfile = true
+
+# Default registry — pinned to npm so a malicious .npmrc cannot redirect installs.
+registry = "https://registry.npmjs.org/"
+
+# Bun only runs lifecycle scripts for packages listed in `trustedDependencies` of the root
+# package.json, so the default is already script-safe. Keep `auto = "disable"` to prevent
+# implicit installs that could populate trustedDependencies before review.

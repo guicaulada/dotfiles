@@ -1,0 +1,20 @@
+# uv supply-chain hardening (~/.config/uv/uv.toml). Verified against uv 0.11.x.
+
+# Refuse to resolve package versions uploaded less than 7 days ago. Mirrors the npm/bun
+# cooldown so Python installs have the same buffer to catch malicious uploads.
+exclude-newer = "7 days"
+
+# When the same package exists across multiple indexes, only use the first index that
+# declares it. Prevents dependency-confusion attacks where an attacker publishes a
+# same-named package to a lower-precedence index.
+index-strategy = "first-index"
+
+# Do not allow keyring lookups to silently inject credentials into resolves. We surface
+# auth explicitly via env vars / project config instead.
+keyring-provider = "disabled"
+
+[pip]
+# Prefer pre-built wheels over sdists — sdist installs execute setup.py / build backends,
+# which is the main script-execution vector for Python packages. Pair with `no-build = true`
+# at the resolve layer when a project allows it.
+only-binary = [":all:"]

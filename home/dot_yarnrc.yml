@@ -1,0 +1,29 @@
+# Yarn Berry supply-chain hardening (~/.yarnrc.yml). Verified against yarn 4.x docs.
+
+# Block lifecycle scripts (preinstall/install/postinstall) from running during yarn install.
+enableScripts: false
+
+# Refuse to install package versions younger than 7 days. Mirrors npm/bun/uv cooldown.
+# Yarn rejects the entire install if no version satisfies the age gate, so an attacker
+# rushing out a malicious patch release cannot land before the window elapses.
+npmMinimalAgeGate: "7d"
+
+# No outbound telemetry.
+enableTelemetry: false
+
+# Pin exact versions — empty prefix means no ^ or ~ on saved deps.
+defaultSemverRangePrefix: ""
+
+# Throw on checksum mismatch rather than silently "update" the lockfile. Catches a
+# tampered or replaced cache entry instead of accepting it.
+checksumBehavior: "throw"
+
+# `false` (default) so bootstrap installs work locally; set to `true` in CI via env var
+# YARN_ENABLE_IMMUTABLE_INSTALLS=true to refuse lockfile drift.
+enableImmutableInstalls: false
+
+# Enforce TLS verification; never silently accept bad certs.
+enableStrictSsl: true
+
+# Use node-modules linker for compatibility; PnP can be re-enabled per-project.
+nodeLinker: node-modules

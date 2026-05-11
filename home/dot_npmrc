@@ -1,0 +1,45 @@
+# npm supply-chain hardening (~/.npmrc). Reference: npm 11.10+ docs.
+
+# Never run lifecycle scripts (preinstall, install, postinstall, prepare) on install.
+# This is the single highest-impact mitigation against npm worm-style attacks like
+# Shai-Hulud. Allow specific packages via `npm pkg set scripts.<name>` after review.
+ignore-scripts=true
+
+# Refuse to install package versions less than 7 days old. Buys community time to detect
+# and yank malicious releases before they enter your dependency graph.
+# Requires npm >= 11.10.0; older npm silently ignores the unknown key.
+min-release-age=7
+
+# Block git, github:, file:, link: dependency URLs — these bypass ignore-scripts because
+# they can re-enable lifecycle scripts and pull arbitrary post-clone code.
+# Requires npm >= 11.10.0.
+allow-git=none
+
+# Bail when CVE threshold exceeded on `npm audit`.
+audit-level=moderate
+
+# Refuse to install if the engines field doesn't match the active Node version. Prevents
+# accidentally pulling a wheel built for a different ABI / Node version.
+engine-strict=true
+
+# Disable funding messages — they're noise that can mask real warnings during install.
+fund=false
+
+# Save exact versions in package.json (no caret/tilde ranges). Pairs with lockfile to
+# make every install reproducible.
+save-exact=true
+save-prefix=""
+
+# Always generate / honor package-lock.json. Use `npm ci` (not `npm install`) in CI.
+package-lock=true
+
+# --- pnpm-specific (pnpm reads ~/.npmrc) ----------------------------------------------
+# Re-verify content-addressable store integrity before linking. Catches a tampered or
+# corrupted store entry rather than trusting cached state.
+verify-store-integrity=true
+
+# pnpm's per-project minimumReleaseAge belongs in pnpm-workspace.yaml; it cannot be set
+# globally in .npmrc. Add it to every pnpm project you maintain:
+#   # pnpm-workspace.yaml
+#   minimumReleaseAge: 10080         # 7 days in minutes
+#   minimumReleaseAgeStrict: true
