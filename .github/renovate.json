@@ -55,6 +55,17 @@
       "depNameTemplate": "Homebrew/brew",
       "packageNameTemplate": "Homebrew/brew",
       "datasourceTemplate": "github-releases"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/home/\\.chezmoiscripts/run_onchange_after_yarn-berry-activate\\.sh\\.tmpl$/"
+      ],
+      "matchStrings": ["YARN_BERRY_VERSION=\"(?<currentValue>[0-9.]+)\""],
+      "depNameTemplate": "@yarnpkg/cli",
+      "packageNameTemplate": "yarnpkg/berry",
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^@yarnpkg/cli/(?<version>.+)$"
     }
   ],
   "packageRules": [
@@ -70,6 +81,13 @@
       "addLabels": ["homebrew"],
       "commitMessageTopic": "Homebrew installer (.pkg)",
       "description": "Renovate only bumps HOMEBREW_VERSION. The install script fetches the SHA-256 from GitHub's release-asset metadata at runtime and verifies the downloaded .pkg against it, then checks Apple's Developer ID signature and notarization independently."
+    },
+    {
+      "matchManagers": ["custom.regex"],
+      "matchDepNames": ["@yarnpkg/cli"],
+      "addLabels": ["yarn-berry"],
+      "commitMessageTopic": "yarn berry (corepack)",
+      "description": "Renovate bumps YARN_BERRY_VERSION when a new @yarnpkg/cli release ships. The chezmoi run_onchange script then runs `corepack prepare yarn@<version> --activate` on next apply. Corepack verifies the downloaded artifact against its bundled integrity values."
     }
   ]
 }
