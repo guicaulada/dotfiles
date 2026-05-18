@@ -23,5 +23,5 @@ idiomatic_version_file = false
 bun = "1.3.10"
 go = "1.26.0"
 node = "24.14.0"
-ruby = "4.0.1"
+ruby = "4.0.4"
 rust = "1.93.1"
