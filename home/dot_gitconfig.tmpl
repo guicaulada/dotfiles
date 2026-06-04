@@ -26,6 +26,17 @@
 
 [fetch]
 	prune = true
+	# Verify the integrity of every object received on fetch. Catches malformed or
+	# tampered objects from a compromised remote before they enter your local repo.
+	fsckObjects = true
+
+[transfer]
+	# Apply the same object-integrity checks to both fetch and receive paths.
+	fsckObjects = true
+
+[receive]
+	# Reject pushes that introduce malformed or tampered objects.
+	fsckObjects = true
 
 [rerere]
 	enabled = true

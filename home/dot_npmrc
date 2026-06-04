@@ -25,6 +25,11 @@ engine-strict=true
 # Disable funding messages — they're noise that can mask real warnings during install.
 fund=false
 
+# Stream lifecycle/build script output to the terminal instead of buffering it. If a
+# package is ever allowlisted to run scripts (or a native node-gyp build runs), this
+# surfaces output that malware would otherwise silence with `> /dev/null 2>&1`.
+foreground-scripts=true
+
 # Save exact versions in package.json (no caret/tilde ranges). Pairs with lockfile to
 # make every install reproducible.
 save-exact=true
