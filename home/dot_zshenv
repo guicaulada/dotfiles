@@ -46,6 +46,26 @@ export COREPACK_ENABLE_DOWNLOAD_PROMPT=1
 # `pnpm@10.28.2+sha512.xxx`, not just `pnpm@10.28.2`.
 export COREPACK_ENABLE_STRICT=1
 
+# --- node-gyp hardening ---------------------------------------------------------------
+# Force node-gyp to a Python that can't run, with no fallback. node-gyp resolves its
+# Python interpreter (findPython) before it spawns gyp to parse binding.gyp — so a forced
+# bad interpreter aborts `configure` before the .gyp file is ever read. That parse is the
+# point where a malicious binding.gyp can run code via gyp command substitution
+# (`<!(node index.js ...)`) during an automatic `node-gyp rebuild`, a path not gated by
+# ignore-scripts on every client. No parse means that code never executes. Applies to npm,
+# yarn, pnpm, and bun alike, since they all shell out to the same node-gyp.
+#
+# /dev/null is used deliberately over a fake path: it always exists but can never be made
+# executable, so nothing can silently turn it back into a working interpreter.
+#
+# Fail-closed and loud: packages that compile from source error out visibly; packages
+# shipping prebuilt binaries (N-API prebuilds, prebuild-install, node-pre-gyp) don't touch
+# node-gyp and are unaffected. A dependency can't undo this — npm only reads the
+# project-root/user/global .npmrc, never a dependency's.
+#
+# Opt in per project after review: NODE_GYP_FORCE_PYTHON="$(which python3)" npm install
+export NODE_GYP_FORCE_PYTHON=/dev/null
+
 # --- Other supply-chain env vars ------------------------------------------------------
 # Disable npm funding messages globally as a belt-and-suspenders against the .npmrc.
 export NO_UPDATE_NOTIFIER=1
