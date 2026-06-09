@@ -1,0 +1,19 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+set -euo pipefail
+
+# Application firewall: block unsolicited inbound connections, and stealth
+# mode so the machine doesn't answer probes (ICMP, closed-port scans).
+# Outbound control is handled separately by Little Snitch.
+SFW=/usr/libexec/ApplicationFirewall/socketfilterfw
+
+if ! "$SFW" --getglobalstate | grep -q enabled; then
+  echo "==> Enabling application firewall (requires sudo)..."
+  sudo "$SFW" --setglobalstate on
+fi
+
+if ! "$SFW" --getstealthmode | grep -q enabled; then
+  echo "==> Enabling stealth mode (requires sudo)..."
+  sudo "$SFW" --setstealthmode on
+fi
+{{ end -}}
