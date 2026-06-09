@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/oxsecurity/megalinter
-    rev: v9.4.0
+    rev: 8fbdead70d1409964ab3d5afa885e18ee85388bb # frozen: v9.4.0
     hooks:
       - id: megalinter-incremental
         stages: [pre-commit]
@@ -8,7 +8,7 @@ repos:
         stages: [pre-push]
 
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
-    rev: v1.22.0
+    rev: b546b77c44c466a54a42af5499dcc0dcc1a3193f # frozen: v1.22.0
     hooks:
       - id: zizmor
 
