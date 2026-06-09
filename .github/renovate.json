@@ -48,6 +48,17 @@
     },
     {
       "customType": "regex",
+      "managerFilePatterns": ["/home/dot_config/nvim/lua/config/lazy\\.lua$/"],
+      "matchStrings": [
+        "'(?<currentDigest>[a-f0-9]{40})' -- release:(?<currentValue>v?\\d[\\w.-]*)"
+      ],
+      "depNameTemplate": "folke/lazy.nvim",
+      "packageNameTemplate": "folke/lazy.nvim",
+      "datasourceTemplate": "github-releases",
+      "versioningTemplate": "loose"
+    },
+    {
+      "customType": "regex",
       "managerFilePatterns": [
         "/home/\\.chezmoiscripts/run_onchange_after_brew-bundle\\.sh\\.tmpl$/"
       ],
