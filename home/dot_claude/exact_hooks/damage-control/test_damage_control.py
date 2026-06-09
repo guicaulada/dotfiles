@@ -4,19 +4,18 @@ from __future__ import annotations
 
 import io
 import json
-import os
 import re
+from pathlib import Path
 
 import pytest
 import yaml
-
 from damage_control import (
     _BUILTIN_SHORTHANDS,
     _CMD_POSITION_PREFIX,
-    _block,
-    _expand_shorthands,
     NO_DELETE_BLOCKED,
     READ_ONLY_BLOCKED,
+    _block,
+    _expand_shorthands,
     check_path_patterns,
     glob_to_regex,
     handle_bash,
@@ -30,7 +29,6 @@ from damage_control import (
     main,
     match_path,
 )
-
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -102,7 +100,7 @@ class TestExpandShorthands:
     def test_custom_shorthand_overrides_builtin(self):
         custom = {"flags": r"\s+"}
         result = _expand_shorthands(r"\bkubectl{flags}delete\b", custom)
-        assert r"\bkubectl\s+delete\b" == result
+        assert result == r"\bkubectl\s+delete\b"
 
     def test_custom_shorthand_new_name(self):
         custom = {"env": r"(?:env\s+\S+=\S+\s+)?"}
@@ -536,7 +534,7 @@ class TestMatchPath:
         assert match_path("/home/user", "/etc") is False
 
     def test_tilde_expansion(self):
-        home = os.path.expanduser("~")
+        home = str(Path.home())
         assert match_path(f"{home}/secrets/key", "~/secrets") is True
 
 
@@ -576,7 +574,7 @@ class TestCheckPathPatterns:
         assert blocked is False
 
     def test_both_expanded_and_original_tried(self):
-        home = os.path.expanduser("~")
+        home = str(Path.home())
         blocked, reason = check_path_patterns(
             f"> {home}/readonly/file",
             "~/readonly/file",
