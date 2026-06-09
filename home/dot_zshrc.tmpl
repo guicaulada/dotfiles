@@ -85,7 +85,8 @@ MAGIC_ENTER_GIT_COMMAND='gst'
 MAGIC_ENTER_OTHER_COMMAND='ls'
 
 # claude session management (dtach for persistence, fzf for selection)
-CLAUDE_SESSIONS="/tmp/claude-sessions"
+# Sockets live in the per-user temp dir, not the shared /tmp.
+CLAUDE_SESSIONS="${TMPDIR:-/tmp}/claude-sessions"
 
 claude() {
   mkdir -p "$CLAUDE_SESSIONS"

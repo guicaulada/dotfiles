@@ -74,8 +74,9 @@ format_tokens() {
   fi
 }
 
-# Git information (with caching for performance)
-cache_file="/tmp/claude_statusline_git_$(echo "$cwd" | shasum 2>/dev/null | cut -d' ' -f1 || echo "default")"
+# Git information (with caching for performance). Use the per-user temp dir —
+# a predictable path in the shared /tmp is a symlink/pre-creation target.
+cache_file="${TMPDIR:-/tmp}/claude_statusline_git_$(echo "$cwd" | shasum 2>/dev/null | cut -d' ' -f1 || echo "default")"
 cache_ttl=5
 
 get_git_info() {
