@@ -1,0 +1,4 @@
+# Files previously managed by chezmoi that should be deleted from targets.
+# Removing a file from the source tree only unmanages it; entries here make
+# `chezmoi apply` remove the deployed copy on every machine.
+.claude/otel_headers.sh
