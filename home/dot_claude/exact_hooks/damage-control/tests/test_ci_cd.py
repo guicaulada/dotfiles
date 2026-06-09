@@ -2,7 +2,7 @@
 
 import json
 
-from tests.conftest import run_hook
+from tests.conftest import assert_asks, run_hook
 
 # =============================================================================
 # BLOCK PATTERNS
@@ -13,63 +13,46 @@ class TestBlockGlabProjectDelete:
     """Tests for glab project delete."""
 
     def test_block_glab_project_delete(self):
-        code, _, _ = run_hook("Bash", {"command": "glab project delete my-project"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'glab project delete my-project'})
 
     def test_block_glab_project_delete_with_flags(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "glab project delete my-group/my-project --yes"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'glab project delete my-group/my-project --yes'})
 
 
 class TestBlockCircleci:
     """Tests for CircleCI context destructive operations."""
 
     def test_block_circleci_context_delete(self):
-        code, _, _ = run_hook("Bash", {"command": "circleci context delete my-context"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'circleci context delete my-context'})
 
     def test_block_circleci_context_remove_secret(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "circleci context remove-secret my-context MY_KEY"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'circleci context remove-secret my-context MY_KEY'})
 
     def test_block_circleci_context_store_secret(self):
-        code, _, _ = run_hook(
-            "Bash",
-            {"command": "circleci context store-secret my-context MY_KEY"},
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'circleci context store-secret my-context MY_KEY'})
 
 
 class TestBlockHg:
     """Tests for Mercurial destructive operations."""
 
     def test_block_hg_strip(self):
-        code, _, _ = run_hook("Bash", {"command": "hg strip 1234"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'hg strip 1234'})
 
     def test_block_hg_purge(self):
-        code, _, _ = run_hook("Bash", {"command": "hg purge"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'hg purge'})
 
     def test_block_hg_rollback(self):
-        code, _, _ = run_hook("Bash", {"command": "hg rollback"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'hg rollback'})
 
 
 class TestBlockSstRemove:
     """Tests for sst remove."""
 
     def test_block_sst_remove(self):
-        code, _, _ = run_hook("Bash", {"command": "sst remove"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'sst remove'})
 
     def test_block_sst_remove_with_stage(self):
-        code, _, _ = run_hook("Bash", {"command": "sst remove --stage prod"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'sst remove --stage prod'})
 
 
 # =============================================================================

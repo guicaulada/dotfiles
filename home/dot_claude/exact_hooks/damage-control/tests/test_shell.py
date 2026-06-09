@@ -2,7 +2,7 @@
 
 import json
 
-from tests.conftest import run_hook
+from tests.conftest import assert_asks, run_hook
 
 
 class TestShellBlock:
@@ -11,160 +11,112 @@ class TestShellBlock:
     # --- Process destruction ---
 
     def test_block_kill_9_all_processes(self):
-        code, _, _ = run_hook("Bash", {"command": "kill -9 -1"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'kill -9 -1'})
 
     def test_block_kill_KILL_all_processes(self):
-        code, _, _ = run_hook("Bash", {"command": "kill -KILL -1"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'kill -KILL -1'})
 
     def test_block_kill_SIGKILL_all_processes(self):
-        code, _, _ = run_hook("Bash", {"command": "kill -SIGKILL -1"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'kill -SIGKILL -1'})
 
     def test_block_kill_9_job_group(self):
-        code, _, _ = run_hook("Bash", {"command": "kill -9 %1"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'kill -9 %1'})
 
     def test_block_kill_KILL_job_group(self):
-        code, _, _ = run_hook("Bash", {"command": "kill -KILL %2"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'kill -KILL %2'})
 
     def test_block_killall_9(self):
-        code, _, _ = run_hook("Bash", {"command": "killall -9 node"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'killall -9 node'})
 
     def test_block_pkill_9(self):
-        code, _, _ = run_hook("Bash", {"command": "pkill -9 python"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'pkill -9 python'})
 
     def test_block_nohup_rm(self):
-        code, _, _ = run_hook("Bash", {"command": "nohup rm -rf /tmp/data &"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'nohup rm -rf /tmp/data &'})
 
     def test_block_nohup_shred(self):
-        code, _, _ = run_hook("Bash", {"command": "nohup shred /dev/sda &"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'nohup shred /dev/sda &'})
 
     def test_block_nohup_dd(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "nohup dd if=/dev/zero of=/dev/sda &"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'nohup dd if=/dev/zero of=/dev/sda &'})
 
     def test_block_nohup_wipe(self):
-        code, _, _ = run_hook("Bash", {"command": "nohup wipe /tmp/data &"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'nohup wipe /tmp/data &'})
 
     def test_block_nohup_mkfs(self):
-        code, _, _ = run_hook("Bash", {"command": "nohup mkfs.ext4 /dev/sda &"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'nohup mkfs.ext4 /dev/sda &'})
 
     def test_block_xargs_kill(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "ps aux | grep node | awk '{print $2}' | xargs kill"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': "ps aux | grep node | awk '{print $2}' | xargs kill"})
 
     # --- Crontab destruction ---
 
     def test_block_crontab_r(self):
-        code, _, _ = run_hook("Bash", {"command": "crontab -r"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'crontab -r'})
 
     # --- History manipulation ---
 
     def test_block_history_clear(self):
-        code, _, _ = run_hook("Bash", {"command": "history -c"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'history -c'})
 
     def test_block_history_clear_with_other_flags(self):
-        code, _, _ = run_hook("Bash", {"command": "history -wc"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'history -wc'})
 
     # --- Shell evaluation and code injection ---
 
     def test_block_eval(self):
-        code, _, _ = run_hook("Bash", {"command": "eval $(echo dangerous)"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'eval $(echo dangerous)'})
 
     def test_block_eval_variable(self):
-        code, _, _ = run_hook("Bash", {"command": 'eval "$CMD"'})
-        assert code == 2
+        assert_asks('Bash', {'command': 'eval "$CMD"'})
 
     def test_block_base64_decode_pipe_bash(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "echo cm0gLXJmIC8= | base64 -d | bash"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'echo cm0gLXJmIC8= | base64 -d | bash'})
 
     def test_block_base64_decode_pipe_sh(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "echo payload | base64 --decode | sh"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'echo payload | base64 --decode | sh'})
 
     def test_block_base64_decode_pipe_python(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "echo cHJpbnQoJ2hpJyk= | base64 -d | python"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'echo cHJpbnQoJ2hpJyk= | base64 -d | python'})
 
     def test_block_base64_decode_pipe_zsh(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "cat encoded.txt | base64 --decode | zsh"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'cat encoded.txt | base64 --decode | zsh'})
 
     def test_block_backslash_rm(self):
-        code, _, _ = run_hook("Bash", {"command": "\\rm -rf /tmp/data"})
-        assert code == 2
+        assert_asks('Bash', {'command': '\\rm -rf /tmp/data'})
 
     def test_block_command_rm(self):
-        code, _, _ = run_hook("Bash", {"command": "command rm /tmp/file"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'command rm /tmp/file'})
 
     def test_block_xargs_shred(self):
-        code, _, _ = run_hook("Bash", {"command": "find . -name '*.tmp' | xargs shred"})
-        assert code == 2
+        assert_asks('Bash', {'command': "find . -name '*.tmp' | xargs shred"})
 
     def test_block_xargs_chmod(self):
-        code, _, _ = run_hook("Bash", {"command": "find . | xargs chmod 777"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'find . | xargs chmod 777'})
 
     def test_block_xargs_chown(self):
-        code, _, _ = run_hook("Bash", {"command": "find . | xargs chown root:root"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'find . | xargs chown root:root'})
 
     def test_block_xargs_dd(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "ls /dev/sd* | xargs dd if=/dev/zero"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'ls /dev/sd* | xargs dd if=/dev/zero'})
 
     def test_block_xargs_mkfs(self):
-        code, _, _ = run_hook("Bash", {"command": "echo /dev/sda | xargs mkfs.ext4"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'echo /dev/sda | xargs mkfs.ext4'})
 
     def test_block_unset_path(self):
-        code, _, _ = run_hook("Bash", {"command": "unset PATH"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'unset PATH'})
 
     def test_block_unset_home(self):
-        code, _, _ = run_hook("Bash", {"command": "unset HOME"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'unset HOME'})
 
     def test_block_unset_user(self):
-        code, _, _ = run_hook("Bash", {"command": "unset USER"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'unset USER'})
 
     def test_block_unset_shell(self):
-        code, _, _ = run_hook("Bash", {"command": "unset SHELL"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'unset SHELL'})
 
     def test_block_export_path_overwrite(self):
-        code, _, _ = run_hook("Bash", {"command": "export PATH=/usr/local/bin"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'export PATH=/usr/local/bin'})
 
     def test_allow_export_path_append(self):
         """Appending to PATH should be allowed."""
@@ -179,72 +131,39 @@ class TestShellBlock:
     # --- Python one-liners ---
 
     def test_block_python_rmtree(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "python -c 'import shutil; shutil.rmtree(\"/tmp\")'"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'python -c \'import shutil; shutil.rmtree("/tmp")\''})
 
     def test_block_python3_os_remove(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "python3 -c 'import os; os.remove(\"/tmp/f\")'"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'python3 -c \'import os; os.remove("/tmp/f")\''})
 
     def test_block_python_os_unlink(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "python -c 'import os; os.unlink(\"/tmp/f\")'"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'python -c \'import os; os.unlink("/tmp/f")\''})
 
     def test_block_python_os_system(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "python3 -c 'import os; os.system(\"rm -rf /\")'"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'python3 -c \'import os; os.system("rm -rf /")\''})
 
     def test_block_python_subprocess(self):
-        code, _, _ = run_hook(
-            "Bash",
-            {
-                "command": 'python -c \'import subprocess; subprocess.run(["rm", "-rf", "/"])\''
-            },
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'python -c \'import subprocess; subprocess.run(["rm", "-rf", "/"])\''})
 
     def test_block_python_exec(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "python3 -c 'exec(open(\"exploit.py\").read())'"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'python3 -c \'exec(open("exploit.py").read())\''})
 
     def test_block_python_import(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": 'python -c \'__import__("os").system("id")\''}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'python -c \'__import__("os").system("id")\''})
 
     def test_block_python_pathlib_unlink(self):
-        code, _, _ = run_hook(
-            "Bash",
-            {
-                "command": "python3 -c 'from pathlib import Path; Path(\"/tmp/f\").unlink()'"
-            },
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'python3 -c \'from pathlib import Path; Path("/tmp/f").unlink()\''})
 
     # --- printf pipe to shell ---
 
     def test_block_printf_pipe_bash(self):
-        code, _, _ = run_hook("Bash", {"command": "printf 'rm -rf /tmp' | bash"})
-        assert code == 2
+        assert_asks('Bash', {'command': "printf 'rm -rf /tmp' | bash"})
 
     def test_block_printf_pipe_sh(self):
-        code, _, _ = run_hook("Bash", {"command": "printf '%s\\n' 'echo pwned' | sh"})
-        assert code == 2
+        assert_asks('Bash', {'command': "printf '%s\\n' 'echo pwned' | sh"})
 
     def test_block_printf_pipe_zsh(self):
-        code, _, _ = run_hook("Bash", {"command": "printf 'malicious command' | zsh"})
-        assert code == 2
+        assert_asks('Bash', {'command': "printf 'malicious command' | zsh"})
 
 
 class TestShellAsk:

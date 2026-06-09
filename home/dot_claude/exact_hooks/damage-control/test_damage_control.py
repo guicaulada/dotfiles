@@ -684,28 +684,43 @@ class TestHandleBash:
         assert exc_info.value.code == 0
 
     # Phase 1 — pattern matching
-    def test_pattern_block(self):
+    def test_pattern_ask_default(self, capsys):
+        """A matching command pattern emits an "ask" decision (exit 0)."""
         config = {
             "bashToolPatterns": [{"pattern": r"\brm\s+-rf\b", "reason": "dangerous"}],
         }
         with pytest.raises(SystemExit) as exc_info:
             handle_bash({"command": "rm -rf /"}, config)
-        assert exc_info.value.code == 2
+        assert exc_info.value.code == 0
+        output = json.loads(capsys.readouterr().out)
+        assert output["hookSpecificOutput"]["permissionDecision"] == "ask"
 
-    def test_pattern_ask(self, capsys):
+    def test_pattern_block_opt_in(self, capsys):
+        """A pattern with block: true hard-blocks (exit 2) instead of asking."""
         config = {
             "bashToolPatterns": [
-                {"pattern": r"\bgit\s+push\b", "reason": "push check", "ask": True}
+                {"pattern": r"\bgit\s+push\b", "reason": "no pushing", "block": True}
             ],
         }
         with pytest.raises(SystemExit) as exc_info:
             handle_bash({"command": "git push"}, config)
-        assert exc_info.value.code == 0
-        captured = capsys.readouterr()
-        output = json.loads(captured.out)
-        assert output["hookSpecificOutput"]["permissionDecision"] == "ask"
+        assert exc_info.value.code == 2
+        assert "SECURITY" in capsys.readouterr().err
 
-    def test_match_anywhere_skips_position_prefix(self):
+    def test_path_protection_precedes_pattern(self, capsys):
+        """A zero-access path hard-blocks even when a command pattern would ask."""
+        config = {
+            "bashToolPatterns": [
+                {"pattern": r"\bcat\b", "reason": "reading", "block": False}
+            ],
+            "zeroAccessPaths": [".env"],
+        }
+        with pytest.raises(SystemExit) as exc_info:
+            handle_bash({"command": "cat .env"}, config)
+        assert exc_info.value.code == 2
+        assert "zero-access" in capsys.readouterr().err.lower()
+
+    def test_match_anywhere_skips_position_prefix(self, capsys):
         config = {
             "bashToolPatterns": [
                 {
@@ -717,9 +732,11 @@ class TestHandleBash:
         }
         with pytest.raises(SystemExit) as exc_info:
             handle_bash({"command": "echo data > /etc/secret"}, config)
-        assert exc_info.value.code == 2
+        assert exc_info.value.code == 0
+        output = json.loads(capsys.readouterr().out)
+        assert output["hookSpecificOutput"]["permissionDecision"] == "ask"
 
-    def test_shorthand_expansion_in_pattern(self):
+    def test_shorthand_expansion_in_pattern(self, capsys):
         config = {
             "bashToolPatterns": [
                 {"pattern": r"\bkubectl{flags}delete\b", "reason": "kubectl delete"}
@@ -728,9 +745,11 @@ class TestHandleBash:
         }
         with pytest.raises(SystemExit) as exc_info:
             handle_bash({"command": "kubectl --context prod delete pod"}, config)
-        assert exc_info.value.code == 2
+        assert exc_info.value.code == 0
+        output = json.loads(capsys.readouterr().out)
+        assert output["hookSpecificOutput"]["permissionDecision"] == "ask"
 
-    def test_bad_regex_swallowed_in_patterns(self):
+    def test_bad_regex_swallowed_in_patterns(self, capsys):
         config = {
             "bashToolPatterns": [
                 {"pattern": "[invalid", "reason": "bad regex"},
@@ -739,7 +758,9 @@ class TestHandleBash:
         }
         with pytest.raises(SystemExit) as exc_info:
             handle_bash({"command": "rm file.txt"}, config)
-        assert exc_info.value.code == 2
+        assert exc_info.value.code == 0
+        output = json.loads(capsys.readouterr().out)
+        assert output["hookSpecificOutput"]["permissionDecision"] == "ask"
 
     def test_no_pattern_match_falls_through(self):
         config = {
@@ -1010,6 +1031,44 @@ class TestLoadPatternsDir:
         assert "/a" in result["zeroAccessPaths"]
         assert "/b" in result["zeroAccessPaths"]
         assert len(result["zeroAccessPaths"]) == 2
+
+
+class TestPatternCache:
+    """The merged config is cached in TMPDIR and invalidated on file change."""
+
+    def test_cache_invalidated_on_edit(self, tmp_path, monkeypatch):
+        monkeypatch.setattr("tempfile.tempdir", str(tmp_path / "cache"))
+        (tmp_path / "cache").mkdir()
+        (tmp_path / "c.yaml").write_text(yaml.dump({"zeroAccessPaths": ["/x"]}))
+        first = load_patterns_dir(tmp_path)
+        assert first["zeroAccessPaths"] == ["/x"]
+        # Editing the source changes the mtime/size key, forcing a re-parse —
+        # proving stale data is never served after an edit.
+        (tmp_path / "c.yaml").write_text("THIS IS NOT VALID YAML: [")
+        with pytest.raises(yaml.YAMLError):
+            load_patterns_dir(tmp_path)
+
+    def test_cache_reused_when_unchanged(self, tmp_path, monkeypatch):
+        monkeypatch.setattr("tempfile.tempdir", str(tmp_path / "cache"))
+        (tmp_path / "cache").mkdir()
+        (tmp_path / "c.yaml").write_text(yaml.dump({"zeroAccessPaths": ["/x"]}))
+
+        calls = {"n": 0}
+        real_load = yaml.safe_load
+
+        def counting_load(stream):
+            calls["n"] += 1
+            return real_load(stream)
+
+        monkeypatch.setattr("yaml.safe_load", counting_load)
+
+        first = load_patterns_dir(tmp_path)
+        parses_after_first = calls["n"]
+        assert parses_after_first > 0  # cold load parsed the file
+
+        second = load_patterns_dir(tmp_path)
+        assert second == first
+        assert calls["n"] == parses_after_first  # warm load did not re-parse
 
 
 # ---------------------------------------------------------------------------

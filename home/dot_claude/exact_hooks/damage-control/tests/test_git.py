@@ -2,7 +2,7 @@
 
 import json
 
-from tests.conftest import run_hook
+from tests.conftest import assert_asks, run_hook
 
 
 class TestGitBlock:
@@ -11,52 +11,41 @@ class TestGitBlock:
     # --- git credential (credential exposure) ---
 
     def test_block_git_credential_fill(self):
-        code, _, _ = run_hook("Bash", {"command": "git credential fill"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'git credential fill'})
 
     def test_block_git_credential_approve(self):
-        code, _, _ = run_hook("Bash", {"command": "git credential approve"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'git credential approve'})
 
     def test_block_git_credential_reject(self):
-        code, _, _ = run_hook("Bash", {"command": "git credential reject"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'git credential reject'})
 
     # --- git reset --hard ---
 
     def test_block_git_reset_hard(self):
-        code, _, _ = run_hook("Bash", {"command": "git reset --hard HEAD~1"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'git reset --hard HEAD~1'})
 
     def test_block_git_reset_hard_no_ref(self):
-        code, _, _ = run_hook("Bash", {"command": "git reset --hard"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'git reset --hard'})
 
     # --- git clean with force/directory flags ---
 
     def test_block_git_clean_f(self):
-        code, _, _ = run_hook("Bash", {"command": "git clean -f"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'git clean -f'})
 
     def test_block_git_clean_fd(self):
-        code, _, _ = run_hook("Bash", {"command": "git clean -fd"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'git clean -fd'})
 
     def test_block_git_clean_df(self):
-        code, _, _ = run_hook("Bash", {"command": "git clean -df"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'git clean -df'})
 
     def test_block_git_clean_force(self):
-        code, _, _ = run_hook("Bash", {"command": "git clean --force"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'git clean --force'})
 
     def test_block_git_clean_xfd(self):
-        code, _, _ = run_hook("Bash", {"command": "git clean -xfd"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'git clean -xfd'})
 
     def test_block_git_clean_d(self):
-        code, _, _ = run_hook("Bash", {"command": "git clean -d"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'git clean -d'})
 
     def test_allow_git_clean_dry_run(self):
         """git clean -n (dry run) should NOT be blocked."""
@@ -66,20 +55,16 @@ class TestGitBlock:
     # --- git push --force (consolidated pattern) ---
 
     def test_block_git_push_force(self):
-        code, _, _ = run_hook("Bash", {"command": "git push --force origin main"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'git push --force origin main'})
 
     def test_block_git_push_f(self):
-        code, _, _ = run_hook("Bash", {"command": "git push -f origin main"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'git push -f origin main'})
 
     def test_block_git_push_force_trailing(self):
-        code, _, _ = run_hook("Bash", {"command": "git push origin main --force"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'git push origin main --force'})
 
     def test_block_git_push_f_trailing(self):
-        code, _, _ = run_hook("Bash", {"command": "git push origin main -f"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'git push origin main -f'})
 
     def test_allow_git_push_force_with_lease(self):
         """--force-with-lease should trigger ask (git push), not block."""
@@ -94,86 +79,60 @@ class TestGitBlock:
     # --- git stash clear ---
 
     def test_block_git_stash_clear(self):
-        code, _, _ = run_hook("Bash", {"command": "git stash clear"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'git stash clear'})
 
     # --- git reflog expire ---
 
     def test_block_git_reflog_expire(self):
-        code, _, _ = run_hook("Bash", {"command": "git reflog expire --all"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'git reflog expire --all'})
 
     def test_block_git_reflog_expire_unreachable(self):
-        code, _, _ = run_hook(
-            "Bash",
-            {"command": "git reflog expire --expire=now --all"},
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'git reflog expire --expire=now --all'})
 
     # --- git gc --prune=now ---
 
     def test_block_git_gc_prune_now(self):
-        code, _, _ = run_hook("Bash", {"command": "git gc --prune=now"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'git gc --prune=now'})
 
     def test_block_git_gc_aggressive_prune_now(self):
-        code, _, _ = run_hook("Bash", {"command": "git gc --aggressive --prune=now"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'git gc --aggressive --prune=now'})
 
     # --- git filter-branch/repo (consolidated) ---
 
     def test_block_git_filter_branch(self):
-        code, _, _ = run_hook("Bash", {"command": "git filter-branch --all"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'git filter-branch --all'})
 
     def test_block_git_filter_repo(self):
-        code, _, _ = run_hook(
-            "Bash",
-            {"command": "git filter-repo --invert-paths --path secret"},
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'git filter-repo --invert-paths --path secret'})
 
     # --- git checkout/switch --force (consolidated) ---
 
     def test_block_git_checkout_force(self):
-        code, _, _ = run_hook("Bash", {"command": "git checkout --force main"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'git checkout --force main'})
 
     def test_block_git_checkout_f(self):
-        code, _, _ = run_hook("Bash", {"command": "git checkout -f main"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'git checkout -f main'})
 
     def test_block_git_switch_force(self):
-        code, _, _ = run_hook("Bash", {"command": "git switch --force main"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'git switch --force main'})
 
     def test_block_git_switch_f(self):
-        code, _, _ = run_hook("Bash", {"command": "git switch -f main"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'git switch -f main'})
 
     # --- git submodule deinit --force ---
 
     def test_block_git_submodule_deinit_force(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "git submodule deinit --force submod"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'git submodule deinit --force submod'})
 
     # --- git config --system ---
 
     def test_block_git_config_system(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "git config --system core.editor vim"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'git config --system core.editor vim'})
 
     # --- git update-ref -d ---
 
     def test_block_git_update_ref_delete(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "git update-ref -d refs/heads/feature"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'git update-ref -d refs/heads/feature'})
 
 
 class TestGitAsk:

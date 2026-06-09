@@ -2,7 +2,7 @@
 
 import json
 
-from tests.conftest import run_hook
+from tests.conftest import assert_asks, run_hook
 
 # =============================================================================
 # BLOCK PATTERNS
@@ -13,134 +13,106 @@ class TestBlockTerraformDestroy:
     """Tests for terraform/tofu/terragrunt destroy (consolidated pattern)."""
 
     def test_block_terraform_destroy(self):
-        code, _, _ = run_hook("Bash", {"command": "terraform destroy"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'terraform destroy'})
 
     def test_block_terraform_destroy_with_target(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "terraform destroy -target=aws_instance.web"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'terraform destroy -target=aws_instance.web'})
 
     def test_block_tofu_destroy(self):
-        code, _, _ = run_hook("Bash", {"command": "tofu destroy"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'tofu destroy'})
 
     def test_block_terragrunt_destroy(self):
-        code, _, _ = run_hook("Bash", {"command": "terragrunt destroy"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'terragrunt destroy'})
 
 
 class TestBlockTerragruntRunAllDestroy:
     """Tests for terragrunt run-all destroy."""
 
     def test_block_terragrunt_run_all_destroy(self):
-        code, _, _ = run_hook("Bash", {"command": "terragrunt run-all destroy"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'terragrunt run-all destroy'})
 
 
 class TestBlockPulumiDestroy:
     """Tests for pulumi destroy."""
 
     def test_block_pulumi_destroy(self):
-        code, _, _ = run_hook("Bash", {"command": "pulumi destroy"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'pulumi destroy'})
 
     def test_block_pulumi_destroy_with_stack(self):
-        code, _, _ = run_hook("Bash", {"command": "pulumi destroy --stack prod"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'pulumi destroy --stack prod'})
 
 
 class TestBlockServerlessRemove:
     """Tests for serverless/sls remove (consolidated pattern)."""
 
     def test_block_serverless_remove(self):
-        code, _, _ = run_hook("Bash", {"command": "serverless remove"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'serverless remove'})
 
     def test_block_sls_remove(self):
-        code, _, _ = run_hook("Bash", {"command": "sls remove"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'sls remove'})
 
     def test_block_serverless_remove_with_stage(self):
-        code, _, _ = run_hook("Bash", {"command": "serverless remove --stage prod"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'serverless remove --stage prod'})
 
     def test_block_sls_remove_with_stage(self):
-        code, _, _ = run_hook("Bash", {"command": "sls remove --stage dev"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'sls remove --stage dev'})
 
 
 class TestBlockSamDelete:
     """Tests for sam delete."""
 
     def test_block_sam_delete(self):
-        code, _, _ = run_hook("Bash", {"command": "sam delete"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'sam delete'})
 
     def test_block_sam_delete_with_flags(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "sam delete --stack-name my-app --no-prompts"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'sam delete --stack-name my-app --no-prompts'})
 
 
 class TestBlockStateRm:
     """Tests for terraform/tofu state rm (consolidated pattern)."""
 
     def test_block_terraform_state_rm(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "terraform state rm aws_instance.web"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'terraform state rm aws_instance.web'})
 
     def test_block_tofu_state_rm(self):
-        code, _, _ = run_hook("Bash", {"command": "tofu state rm aws_instance.web"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'tofu state rm aws_instance.web'})
 
 
 class TestBlockForceUnlock:
     """Tests for terraform/tofu force-unlock (consolidated pattern)."""
 
     def test_block_terraform_force_unlock(self):
-        code, _, _ = run_hook("Bash", {"command": "terraform force-unlock 12345-abcde"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'terraform force-unlock 12345-abcde'})
 
     def test_block_tofu_force_unlock(self):
-        code, _, _ = run_hook("Bash", {"command": "tofu force-unlock 12345"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'tofu force-unlock 12345'})
 
 
 class TestBlockCdkDestroy:
     """Tests for cdk/cdktf destroy (consolidated pattern)."""
 
     def test_block_cdk_destroy(self):
-        code, _, _ = run_hook("Bash", {"command": "cdk destroy MyStack"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'cdk destroy MyStack'})
 
     def test_block_cdktf_destroy(self):
-        code, _, _ = run_hook("Bash", {"command": "cdktf destroy"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'cdktf destroy'})
 
 
 class TestBlockTerraformWorkspaceDelete:
     """Tests for terraform workspace delete."""
 
     def test_block_terraform_workspace_delete(self):
-        code, _, _ = run_hook("Bash", {"command": "terraform workspace delete staging"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'terraform workspace delete staging'})
 
 
 class TestBlockPulumiStackRm:
     """Tests for pulumi stack rm."""
 
     def test_block_pulumi_stack_rm(self):
-        code, _, _ = run_hook("Bash", {"command": "pulumi stack rm dev"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'pulumi stack rm dev'})
 
     def test_block_pulumi_stack_rm_force(self):
-        code, _, _ = run_hook("Bash", {"command": "pulumi stack rm --force prod"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'pulumi stack rm --force prod'})
 
 
 class TestBlockStatePushReplaceProvider:
@@ -153,26 +125,14 @@ class TestBlockStatePushReplaceProvider:
         assert code == 2
 
     def test_block_terraform_state_replace_provider(self):
-        code, _, _ = run_hook(
-            "Bash",
-            {
-                "command": "terraform state replace-provider hashicorp/aws registry.acme.corp/acme/aws"
-            },
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'terraform state replace-provider hashicorp/aws registry.acme.corp/acme/aws'})
 
     def test_block_tofu_state_push(self):
         code, _, _ = run_hook("Bash", {"command": "tofu state push errored.tfstate"})
         assert code == 2
 
     def test_block_tofu_state_replace_provider(self):
-        code, _, _ = run_hook(
-            "Bash",
-            {
-                "command": "tofu state replace-provider hashicorp/aws registry.acme.corp/acme/aws"
-            },
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'tofu state replace-provider hashicorp/aws registry.acme.corp/acme/aws'})
 
 
 # =============================================================================

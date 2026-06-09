@@ -46,26 +46,22 @@ bashToolPatterns:
     reason: GPG secret key export (exposes private keys)
 
   # ---------------------------------------------------------------------------
-  # ENVIRONMENT VARIABLE DUMPING (ask: true)
+  # ENVIRONMENT VARIABLE DUMPING
   # ---------------------------------------------------------------------------
   - pattern: '\bprintenv\s*($|\|)'
     reason: printenv dumps all environment variables (may contain secrets)
-    ask: true
 
   - pattern: '\b(export\s+-p|declare\s+-x)\b'
     reason: Dumps all exported environment variables (may contain secrets)
-    ask: true
 
   # ---------------------------------------------------------------------------
-  # SCHEDULED EXECUTION REQUIRING CONFIRMATION (ask: true)
+  # SCHEDULED EXECUTION REQUIRING CONFIRMATION
   # ---------------------------------------------------------------------------
   - pattern: '\bcrontab\s+[^-\s]'
     reason: Replaces entire crontab from file
-    ask: true
 
   - pattern: '\b(at|batch)\b'
     reason: Schedules command for later execution
-    ask: true
 
   # ---------------------------------------------------------------------------
   # MISCELLANEOUS
@@ -75,8 +71,6 @@ bashToolPatterns:
 
   - pattern: '\bchattr\b'
     reason: chattr (changes file attributes)
-    ask: true
 
   - pattern: '\bsystemctl\s+(start|restart|enable|unmask)\b'
     reason: Starts/enables system service
-    ask: true

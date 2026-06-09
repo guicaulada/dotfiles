@@ -2,7 +2,7 @@
 
 import json
 
-from tests.conftest import run_hook
+from tests.conftest import assert_asks, run_hook
 
 # =============================================================================
 # SYSTEM-LEVEL DESTRUCTION (block)
@@ -11,171 +11,121 @@ from tests.conftest import run_hook
 
 class TestSystemBlock:
     def test_block_shutdown(self):
-        code, _, _ = run_hook("Bash", {"command": "shutdown -h now"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'shutdown -h now'})
 
     def test_block_reboot(self):
-        code, _, _ = run_hook("Bash", {"command": "reboot"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'reboot'})
 
     def test_block_halt(self):
-        code, _, _ = run_hook("Bash", {"command": "halt"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'halt'})
 
     def test_block_poweroff(self):
-        code, _, _ = run_hook("Bash", {"command": "poweroff"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'poweroff'})
 
     def test_block_systemctl_stop(self):
-        code, _, _ = run_hook("Bash", {"command": "systemctl stop nginx"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'systemctl stop nginx'})
 
     def test_block_systemctl_disable(self):
-        code, _, _ = run_hook("Bash", {"command": "systemctl disable docker"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'systemctl disable docker'})
 
     def test_block_systemctl_mask(self):
-        code, _, _ = run_hook("Bash", {"command": "systemctl mask sshd"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'systemctl mask sshd'})
 
     def test_block_iptables_flush(self):
-        code, _, _ = run_hook("Bash", {"command": "iptables -F"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'iptables -F'})
 
     def test_block_iptables_flush_long(self):
-        code, _, _ = run_hook("Bash", {"command": "iptables --flush"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'iptables --flush'})
 
     def test_block_pfctl_disable(self):
-        code, _, _ = run_hook("Bash", {"command": "pfctl -d"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'pfctl -d'})
 
     def test_block_tmutil_delete(self):
-        code, _, _ = run_hook("Bash", {"command": "tmutil delete /backup/2024"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'tmutil delete /backup/2024'})
 
     def test_block_tmutil_disable(self):
-        code, _, _ = run_hook("Bash", {"command": "tmutil disable"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'tmutil disable'})
 
     def test_block_tmutil_disablelocal(self):
-        code, _, _ = run_hook("Bash", {"command": "tmutil disablelocal"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'tmutil disablelocal'})
 
     def test_block_fdisk(self):
-        code, _, _ = run_hook("Bash", {"command": "fdisk /dev/sda"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'fdisk /dev/sda'})
 
     def test_block_parted(self):
-        code, _, _ = run_hook("Bash", {"command": "parted /dev/sda"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'parted /dev/sda'})
 
     def test_block_mkfs(self):
-        code, _, _ = run_hook("Bash", {"command": "mkfs.ext4 /dev/sda1"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'mkfs.ext4 /dev/sda1'})
 
     def test_block_dd_device(self):
-        code, _, _ = run_hook("Bash", {"command": "dd if=/dev/zero of=/dev/sda"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'dd if=/dev/zero of=/dev/sda'})
 
     def test_block_diskutil_erase_disk(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "diskutil eraseDisk JHFS+ Untitled /dev/disk2"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'diskutil eraseDisk JHFS+ Untitled /dev/disk2'})
 
     def test_block_diskutil_erase_volume(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "diskutil eraseVolume APFS Untitled disk2s1"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'diskutil eraseVolume APFS Untitled disk2s1'})
 
     def test_block_diskutil_partition_disk(self):
-        code, _, _ = run_hook(
-            "Bash",
-            {"command": "diskutil partitionDisk /dev/disk2 GPT JHFS+ Untitled 0b"},
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'diskutil partitionDisk /dev/disk2 GPT JHFS+ Untitled 0b'})
 
     def test_block_redirect_to_device(self):
-        code, _, _ = run_hook("Bash", {"command": "echo data > /dev/sda"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'echo data > /dev/sda'})
 
     def test_block_redirect_append_to_device(self):
-        code, _, _ = run_hook("Bash", {"command": "echo data >> /dev/sdb"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'echo data >> /dev/sdb'})
 
     def test_block_badblocks_write(self):
-        code, _, _ = run_hook("Bash", {"command": "badblocks -w /dev/sda"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'badblocks -w /dev/sda'})
 
     def test_block_blkdiscard(self):
-        code, _, _ = run_hook("Bash", {"command": "blkdiscard /dev/sda"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'blkdiscard /dev/sda'})
 
     def test_block_sgdisk_zap_all(self):
-        code, _, _ = run_hook("Bash", {"command": "sgdisk --zap-all /dev/sda"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'sgdisk --zap-all /dev/sda'})
 
     def test_block_sgdisk_clear(self):
-        code, _, _ = run_hook("Bash", {"command": "sgdisk --clear /dev/sda"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'sgdisk --clear /dev/sda'})
 
     def test_block_sgdisk_delete(self):
-        code, _, _ = run_hook("Bash", {"command": "sgdisk --delete=1 /dev/sda"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'sgdisk --delete=1 /dev/sda'})
 
     def test_block_sgdisk_z(self):
-        code, _, _ = run_hook("Bash", {"command": "sgdisk -z /dev/sda"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'sgdisk -z /dev/sda'})
 
     def test_block_sgdisk_o(self):
-        code, _, _ = run_hook("Bash", {"command": "sgdisk -o /dev/sda"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'sgdisk -o /dev/sda'})
 
     def test_block_cryptsetup_close(self):
-        code, _, _ = run_hook("Bash", {"command": "cryptsetup close myvolume"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'cryptsetup close myvolume'})
 
     def test_block_cryptsetup_luks_erase(self):
-        code, _, _ = run_hook("Bash", {"command": "cryptsetup luksErase /dev/sda1"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'cryptsetup luksErase /dev/sda1'})
 
     def test_block_cryptsetup_erase(self):
-        code, _, _ = run_hook("Bash", {"command": "cryptsetup erase /dev/sda1"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'cryptsetup erase /dev/sda1'})
 
     def test_block_cryptsetup_luks_close(self):
-        code, _, _ = run_hook("Bash", {"command": "cryptsetup luksClose myvolume"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'cryptsetup luksClose myvolume'})
 
     def test_block_hdparm_security_erase(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "hdparm --security-erase password /dev/sda"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'hdparm --security-erase password /dev/sda'})
 
     def test_block_hdparm_sanitize_freeze(self):
-        code, _, _ = run_hook("Bash", {"command": "hdparm --sanitize-freeze /dev/sda"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'hdparm --sanitize-freeze /dev/sda'})
 
     def test_block_hdparm_trim_sector_ranges(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "hdparm --trim-sector-ranges 0:100 /dev/sda"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'hdparm --trim-sector-ranges 0:100 /dev/sda'})
 
     def test_block_nvme_format(self):
-        code, _, _ = run_hook("Bash", {"command": "nvme format /dev/nvme0n1"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'nvme format /dev/nvme0n1'})
 
     def test_block_nvme_sanitize(self):
-        code, _, _ = run_hook("Bash", {"command": "nvme sanitize /dev/nvme0n1"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'nvme sanitize /dev/nvme0n1'})
 
     def test_block_swapoff_a(self):
-        code, _, _ = run_hook("Bash", {"command": "swapoff -a"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'swapoff -a'})
 
 
 # =============================================================================
@@ -185,16 +135,13 @@ class TestSystemBlock:
 
 class TestUserGroupBlock:
     def test_block_userdel(self):
-        code, _, _ = run_hook("Bash", {"command": "userdel testuser"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'userdel testuser'})
 
     def test_block_groupdel(self):
-        code, _, _ = run_hook("Bash", {"command": "groupdel testgroup"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'groupdel testgroup'})
 
     def test_block_deluser(self):
-        code, _, _ = run_hook("Bash", {"command": "deluser testuser"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'deluser testuser'})
 
 
 # =============================================================================
@@ -253,32 +200,25 @@ class TestUserGroupAsk:
 
 class TestKernelBlock:
     def test_block_rmmod(self):
-        code, _, _ = run_hook("Bash", {"command": "rmmod mymodule"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'rmmod mymodule'})
 
     def test_block_modprobe_remove_short(self):
-        code, _, _ = run_hook("Bash", {"command": "modprobe -r mymodule"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'modprobe -r mymodule'})
 
     def test_block_modprobe_remove_long(self):
-        code, _, _ = run_hook("Bash", {"command": "modprobe --remove mymodule"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'modprobe --remove mymodule'})
 
     def test_block_telinit(self):
-        code, _, _ = run_hook("Bash", {"command": "telinit 6"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'telinit 6'})
 
     def test_block_init_0(self):
-        code, _, _ = run_hook("Bash", {"command": "init 0"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'init 0'})
 
     def test_block_init_1(self):
-        code, _, _ = run_hook("Bash", {"command": "init 1"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'init 1'})
 
     def test_block_init_6(self):
-        code, _, _ = run_hook("Bash", {"command": "init 6"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'init 6'})
 
 
 # =============================================================================
@@ -301,28 +241,19 @@ class TestKernelAsk:
 
 class TestMACBlock:
     def test_block_setenforce_0(self):
-        code, _, _ = run_hook("Bash", {"command": "setenforce 0"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'setenforce 0'})
 
     def test_block_aa_disable(self):
-        code, _, _ = run_hook("Bash", {"command": "aa-disable /etc/apparmor.d/profile"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'aa-disable /etc/apparmor.d/profile'})
 
     def test_block_aa_teardown(self):
-        code, _, _ = run_hook("Bash", {"command": "aa-teardown"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'aa-teardown'})
 
     def test_block_apparmor_parser_remove_short(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "apparmor_parser -R /etc/apparmor.d/profile"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'apparmor_parser -R /etc/apparmor.d/profile'})
 
     def test_block_apparmor_parser_remove_long(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "apparmor_parser --remove /etc/apparmor.d/profile"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'apparmor_parser --remove /etc/apparmor.d/profile'})
 
 
 # =============================================================================
@@ -332,36 +263,28 @@ class TestMACBlock:
 
 class TestDiskVolumeBlock:
     def test_block_mount(self):
-        code, _, _ = run_hook("Bash", {"command": "mount /dev/sda1 /mnt"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'mount /dev/sda1 /mnt'})
 
     def test_block_umount(self):
-        code, _, _ = run_hook("Bash", {"command": "umount /mnt"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'umount /mnt'})
 
     def test_block_lvremove(self):
-        code, _, _ = run_hook("Bash", {"command": "lvremove /dev/vg0/lv0"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'lvremove /dev/vg0/lv0'})
 
     def test_block_vgremove(self):
-        code, _, _ = run_hook("Bash", {"command": "vgremove vg0"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'vgremove vg0'})
 
     def test_block_pvremove(self):
-        code, _, _ = run_hook("Bash", {"command": "pvremove /dev/sda1"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'pvremove /dev/sda1'})
 
     def test_block_mdadm_stop(self):
-        code, _, _ = run_hook("Bash", {"command": "mdadm --stop /dev/md0"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'mdadm --stop /dev/md0'})
 
     def test_block_mdadm_zero_superblock(self):
-        code, _, _ = run_hook("Bash", {"command": "mdadm --zero-superblock /dev/sda1"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'mdadm --zero-superblock /dev/sda1'})
 
     def test_block_wipefs(self):
-        code, _, _ = run_hook("Bash", {"command": "wipefs -a /dev/sda1"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'wipefs -a /dev/sda1'})
 
 
 # =============================================================================
@@ -371,18 +294,13 @@ class TestDiskVolumeBlock:
 
 class TestLogBlock:
     def test_block_journalctl_vacuum(self):
-        code, _, _ = run_hook("Bash", {"command": "journalctl --vacuum-time=1d"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'journalctl --vacuum-time=1d'})
 
     def test_block_journalctl_rotate(self):
-        code, _, _ = run_hook("Bash", {"command": "journalctl --rotate"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'journalctl --rotate'})
 
     def test_block_logrotate_force(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "logrotate --force /etc/logrotate.conf"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'logrotate --force /etc/logrotate.conf'})
 
     def test_block_redirect_truncate_log(self):
         code, _, _ = run_hook("Bash", {"command": "> /var/log/syslog"})
@@ -400,24 +318,19 @@ class TestLogBlock:
 
 class TestBackupBlock:
     def test_block_restic_forget(self):
-        code, _, _ = run_hook("Bash", {"command": "restic forget --keep-last 1"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'restic forget --keep-last 1'})
 
     def test_block_restic_prune(self):
-        code, _, _ = run_hook("Bash", {"command": "restic prune"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'restic prune'})
 
     def test_block_borg_delete(self):
-        code, _, _ = run_hook("Bash", {"command": "borg delete repo::archive"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'borg delete repo::archive'})
 
     def test_block_borg_prune(self):
-        code, _, _ = run_hook("Bash", {"command": "borg prune --keep-daily 7"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'borg prune --keep-daily 7'})
 
     def test_block_borg_compact(self):
-        code, _, _ = run_hook("Bash", {"command": "borg compact repo"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'borg compact repo'})
 
 
 # =============================================================================

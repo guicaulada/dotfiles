@@ -21,6 +21,8 @@ select = [
 
 [lint.per-file-ignores]
 "conftest.py" = [
+  "S101",  # assert used (test helpers wrap assertions)
+  "S404",  # import subprocess (test helper)
   "S603",  # subprocess call with controlled input (test helper)
   "S607",  # partial executable path for uv (test helper)
 ]

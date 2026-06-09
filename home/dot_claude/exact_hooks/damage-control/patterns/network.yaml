@@ -68,7 +68,7 @@ bashToolPatterns:
     reason: rclone delete/purge (destroys remote data)
 
   # ===========================================================================
-  # ASK PATTERNS (ask: true = prompt for confirmation)
+  # ASK PATTERNS (all matches prompt for confirmation)
   # ===========================================================================
 
   # ---------------------------------------------------------------------------
@@ -76,68 +76,66 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   - pattern: '\bnmap\b'
     reason: Network scanner (reconnaissance tool)
-    ask: true
 
   - pattern: '\btcpdump\b'
     reason: Captures network traffic (potential credential capture)
-    ask: true
 
   # ---------------------------------------------------------------------------
   # Firewall (individual rule changes)
   # ---------------------------------------------------------------------------
   - pattern: '\biptables\s+.*(-A|--append|-D|--delete|-I|--insert)\b'
     reason: Modifies individual firewall rules
-    ask: true
 
   # ---------------------------------------------------------------------------
   # SSH operations
   # ---------------------------------------------------------------------------
   - pattern: '\bssh\b.*\S+@\S+\s+\S+'
     reason: SSH remote command execution
-    ask: true
 
   - pattern: '\bssh-keygen\b'
     reason: SSH key generation (may overwrite existing keys)
-    ask: true
 
   - pattern: '\bssh-add\b'
     reason: Loads private key into SSH agent
-    ask: true
 
   # ---------------------------------------------------------------------------
   # Encryption / signing
   # ---------------------------------------------------------------------------
   - pattern: '\bgpg\s+--(encrypt|sign|clearsign|detach-sign)\b'
     reason: GPG encryption/signing operation
-    ask: true
 
   - pattern: '\bopenssl\s+(genrsa|genpkey|req|x509|pkcs12)\b'
     reason: OpenSSL key/certificate generation
-    ask: true
 
   # ---------------------------------------------------------------------------
   # Data transfer (remote)
   # ---------------------------------------------------------------------------
   - pattern: '\bscp\b.*\S+:\S+'
     reason: scp to remote host (potential data exfiltration)
-    ask: true
 
   - pattern: '\brsync\s+.*\S+:\S+'
     reason: rsync to/from remote host
-    ask: true
 
   - pattern: '\bsftp\b'
     reason: SFTP file transfer
-    ask: true
 
   - pattern: '\b(ftp|tftp)\b'
     reason: Unencrypted file transfer protocol
-    ask: true
 
   - pattern: '\bsocat\b'
     reason: socat (bidirectional data relay)
-    ask: true
 
   - pattern: '\brclone\s+(copy|sync|move)\b'
     reason: rclone data transfer
-    ask: true
+
+  # ---------------------------------------------------------------------------
+  # VPN / TUNNEL STATE
+  # ---------------------------------------------------------------------------
+  - pattern: '{sudo}tailscale\s+(up|down|set|login|logout|switch|serve|funnel|cert|file)\b'
+    reason: tailscale changes VPN, SSH, or network exposure state
+
+  - pattern: '\bssh\b(?:\s+\S+)*\s+-[DLR]\b'
+    reason: ssh tunnel/port forwarding (-D/-L/-R changes network exposure)
+
+  - pattern: '\bssh-copy-id\b'
+    reason: ssh-copy-id installs your public key on a remote host

@@ -2,7 +2,7 @@
 
 import json
 
-from tests.conftest import run_hook
+from tests.conftest import assert_asks, run_hook
 
 # =============================================================================
 # BLOCK PATTERNS
@@ -13,169 +13,132 @@ class TestBlockRm:
     """Tests for rm with recursive/force flags."""
 
     def test_block_rm_rf(self):
-        code, _, stderr = run_hook("Bash", {"command": "rm -rf /"})
-        assert code == 2
-        assert "SECURITY" in stderr
+        assert_asks('Bash', {'command': 'rm -rf /'})
 
     def test_block_rm_r(self):
-        code, _, _ = run_hook("Bash", {"command": "rm -r /tmp/data"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'rm -r /tmp/data'})
 
     def test_block_rm_R(self):
-        code, _, _ = run_hook("Bash", {"command": "rm -R /tmp/data"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'rm -R /tmp/data'})
 
     def test_block_rm_f(self):
-        code, _, _ = run_hook("Bash", {"command": "rm -f file.txt"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'rm -f file.txt'})
 
     def test_block_rm_recursive_long(self):
-        code, _, _ = run_hook("Bash", {"command": "rm --recursive /tmp/data"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'rm --recursive /tmp/data'})
 
     def test_block_rm_force_long(self):
-        code, _, _ = run_hook("Bash", {"command": "rm --force file.txt"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'rm --force file.txt'})
 
     def test_block_rm_combined_flags(self):
-        code, _, _ = run_hook("Bash", {"command": "rm -rfv /tmp/data"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'rm -rfv /tmp/data'})
 
     def test_block_rm_separated_flags(self):
-        code, _, _ = run_hook("Bash", {"command": "rm -v -r /tmp/data"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'rm -v -r /tmp/data'})
 
 
 class TestBlockSudoRm:
     """Tests for sudo rm."""
 
     def test_block_sudo_rm(self):
-        code, _, _ = run_hook("Bash", {"command": "sudo rm /important"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'sudo rm /important'})
 
     def test_block_sudo_rm_rf(self):
-        code, _, _ = run_hook("Bash", {"command": "sudo rm -rf /var/data"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'sudo rm -rf /var/data'})
 
 
 class TestBlockRmdir:
     """Tests for rmdir with ignore-fail-on-non-empty."""
 
     def test_block_rmdir_ignore_fail(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "rmdir --ignore-fail-on-non-empty /tmp/dir"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'rmdir --ignore-fail-on-non-empty /tmp/dir'})
 
 
 class TestBlockAbsolutePathRm:
     """Tests for absolute path rm (bypasses aliases)."""
 
     def test_block_bin_rm(self):
-        code, _, _ = run_hook("Bash", {"command": "/bin/rm file.txt"})
-        assert code == 2
+        assert_asks('Bash', {'command': '/bin/rm file.txt'})
 
     def test_block_usr_bin_rm(self):
-        code, _, _ = run_hook("Bash", {"command": "/usr/bin/rm file.txt"})
-        assert code == 2
+        assert_asks('Bash', {'command': '/usr/bin/rm file.txt'})
 
 
 class TestBlockFind:
     """Tests for find with -delete and -exec rm."""
 
     def test_block_find_delete(self):
-        code, _, _ = run_hook("Bash", {"command": "find . -name '*.tmp' -delete"})
-        assert code == 2
+        assert_asks('Bash', {'command': "find . -name '*.tmp' -delete"})
 
     def test_block_find_exec_rm(self):
-        code, _, _ = run_hook("Bash", {"command": "find /tmp -exec rm {} \\;"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'find /tmp -exec rm {} \\;'})
 
     def test_block_find_exec_bin_rm(self):
-        code, _, _ = run_hook("Bash", {"command": "find /tmp -exec /bin/rm {} \\;"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'find /tmp -exec /bin/rm {} \\;'})
 
     def test_block_find_exec_usr_bin_rm(self):
-        code, _, _ = run_hook("Bash", {"command": "find /tmp -exec /usr/bin/rm {} \\;"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'find /tmp -exec /usr/bin/rm {} \\;'})
 
     def test_block_find_exec_shred(self):
-        code, _, _ = run_hook("Bash", {"command": "find /tmp -exec shred {} \\;"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'find /tmp -exec shred {} \\;'})
 
     def test_block_find_exec_wipe(self):
-        code, _, _ = run_hook("Bash", {"command": "find /data -exec wipe {} \\;"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'find /data -exec wipe {} \\;'})
 
     def test_block_find_exec_srm(self):
-        code, _, _ = run_hook("Bash", {"command": "find /data -exec srm {} \\;"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'find /data -exec srm {} \\;'})
 
     def test_block_find_exec_sfill(self):
-        code, _, _ = run_hook("Bash", {"command": "find /mnt -exec sfill {} \\;"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'find /mnt -exec sfill {} \\;'})
 
     def test_block_find_exec_nwipe(self):
-        code, _, _ = run_hook("Bash", {"command": "find /dev -exec nwipe {} \\;"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'find /dev -exec nwipe {} \\;'})
 
 
 class TestBlockXargsRm:
     """Tests for xargs piped to rm."""
 
     def test_block_xargs_rm(self):
-        code, _, _ = run_hook("Bash", {"command": "find . -name '*.tmp' | xargs rm"})
-        assert code == 2
+        assert_asks('Bash', {'command': "find . -name '*.tmp' | xargs rm"})
 
     def test_block_xargs_rm_with_flags(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "find . -name '*.log' | xargs -I{} rm {}"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': "find . -name '*.log' | xargs -I{} rm {}"})
 
 
 class TestBlockShred:
     """Tests for shred."""
 
     def test_block_shred(self):
-        code, _, _ = run_hook("Bash", {"command": "shred -u secret.txt"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'shred -u secret.txt'})
 
     def test_block_shred_no_flags(self):
-        code, _, _ = run_hook("Bash", {"command": "shred file.txt"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'shred file.txt'})
 
 
 class TestBlockSecureDelete:
     """Tests for sfill, srm, nwipe, wipe (consolidated pattern)."""
 
     def test_block_sfill(self):
-        code, _, _ = run_hook("Bash", {"command": "sfill /tmp"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'sfill /tmp'})
 
     def test_block_srm(self):
-        code, _, _ = run_hook("Bash", {"command": "srm secret.txt"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'srm secret.txt'})
 
     def test_block_nwipe(self):
-        code, _, _ = run_hook("Bash", {"command": "nwipe /dev/sda"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'nwipe /dev/sda'})
 
     def test_block_wipe(self):
-        code, _, _ = run_hook("Bash", {"command": "wipe -r /tmp/sensitive"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'wipe -r /tmp/sensitive'})
 
 
 class TestBlockRsyncDelete:
     """Tests for rsync --delete."""
 
     def test_block_rsync_delete(self):
-        code, _, _ = run_hook("Bash", {"command": "rsync -av --delete src/ dest/"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'rsync -av --delete src/ dest/'})
 
     def test_block_rsync_delete_before(self):
-        code, _, _ = run_hook("Bash", {"command": "rsync --delete -av src/ dest/"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'rsync --delete -av src/ dest/'})
 
 
 class TestBlockTruncate:
@@ -194,64 +157,51 @@ class TestBlockChmod:
     """Tests for chmod 777 and symbolic equivalents."""
 
     def test_block_chmod_777(self):
-        code, _, _ = run_hook("Bash", {"command": "chmod 777 /tmp/file"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'chmod 777 /tmp/file'})
 
     def test_block_chmod_0777(self):
-        code, _, _ = run_hook("Bash", {"command": "chmod 0777 /tmp/file"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'chmod 0777 /tmp/file'})
 
     def test_block_chmod_recursive_777(self):
-        code, _, _ = run_hook("Bash", {"command": "chmod -R 777 /tmp/dir"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'chmod -R 777 /tmp/dir'})
 
     def test_block_chmod_a_plus_rwx(self):
-        code, _, _ = run_hook("Bash", {"command": "chmod a+rwx /tmp/file"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'chmod a+rwx /tmp/file'})
 
     def test_block_chmod_ugo_plus_rwx(self):
-        code, _, _ = run_hook("Bash", {"command": "chmod ugo+rwx /tmp/file"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'chmod ugo+rwx /tmp/file'})
 
     def test_block_chmod_plus_rwx(self):
-        code, _, _ = run_hook("Bash", {"command": "chmod +rwx /tmp/file"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'chmod +rwx /tmp/file'})
 
     def test_block_chmod_recursive_a_plus_rwx(self):
-        code, _, _ = run_hook("Bash", {"command": "chmod -R a+rwx /tmp/dir"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'chmod -R a+rwx /tmp/dir'})
 
 
 class TestBlockChown:
     """Tests for recursive chown to root."""
 
     def test_block_chown_r_root(self):
-        code, _, _ = run_hook("Bash", {"command": "chown -R root /var/data"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'chown -R root /var/data'})
 
     def test_block_chown_r_root_colon_root(self):
-        code, _, _ = run_hook("Bash", {"command": "chown -R root:root /var/data"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'chown -R root:root /var/data'})
 
     def test_block_chown_uppercase_r_root(self):
-        code, _, _ = run_hook("Bash", {"command": "chown -r root /var/data"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'chown -r root /var/data'})
 
 
 class TestBlockTar:
     """Tests for destructive tar operations."""
 
     def test_block_tar_overwrite(self):
-        code, _, _ = run_hook("Bash", {"command": "tar xf archive.tar --overwrite"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'tar xf archive.tar --overwrite'})
 
     def test_block_tar_extract_to_root(self):
-        code, _, _ = run_hook("Bash", {"command": "tar xf archive.tar -C /"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'tar xf archive.tar -C /'})
 
     def test_block_tar_extract_long_flag_to_root(self):
-        code, _, _ = run_hook("Bash", {"command": "tar --extract -f archive.tar -C /"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'tar --extract -f archive.tar -C /'})
 
 
 # =============================================================================

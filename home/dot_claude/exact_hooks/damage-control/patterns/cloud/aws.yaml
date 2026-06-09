@@ -48,21 +48,17 @@ bashToolPatterns:
   # but deleting a hosted zone should ASK (recoverable, requires confirmation)
   - pattern: '\baws{flags}route53\s+delete-hosted-zone\b'
     reason: Deletes Route53 hosted zone (all DNS records)
-    ask: true
 
   # Route53 change- is not in the ask catch-all verb list
   - pattern: '\baws{flags}route53\s+change-resource-record-sets\b'
     reason: Modifies DNS records
-    ask: true
 
   # Standalone mutating verbs without hyphen suffix (catch-all requires hyphen)
   - pattern: '\baws{flags}lambda\s+invoke\b'
     reason: Invokes Lambda function
-    ask: true
 
   - pattern: '\baws{flags}sns\s+publish\b'
     reason: Publishes SNS message
-    ask: true
 
   # ---------------------------------------------------------------------------
   # BLOCK CATCH-ALL: any "aws <service> delete-/terminate-/remove-/purge-/deregister-"
@@ -75,4 +71,12 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   - pattern: '\baws{flags}\S+\s+(create|update|put|modify|start|stop|reboot|invoke|run|execute|send|publish|attach|detach|associate|disassociate|enable|disable|register|tag|untag)-'
     reason: AWS CLI mutating operation (catch-all)
-    ask: true
+
+  # ---------------------------------------------------------------------------
+  # SESSIONS AND CREDENTIAL CONFIGURATION
+  # ---------------------------------------------------------------------------
+  - pattern: '\baws{flags}ssm\s+start-session\b'
+    reason: aws ssm start-session opens a remote shell on an instance
+
+  - pattern: '\baws{flags}configure\s+(set|import)\b'
+    reason: aws configure set writes credentials or profile configuration

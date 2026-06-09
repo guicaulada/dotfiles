@@ -2,185 +2,129 @@
 
 import json
 
-from tests.conftest import run_hook
+from tests.conftest import assert_asks, run_hook
 
 
 class TestMacosBlock:
     # --- launchctl remove/bootout ---
 
     def test_block_launchctl_remove(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "launchctl remove com.example.daemon"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'launchctl remove com.example.daemon'})
 
     def test_block_launchctl_bootout(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "launchctl bootout system/com.example.daemon"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'launchctl bootout system/com.example.daemon'})
 
     # --- defaults delete ---
 
     def test_block_defaults_delete(self):
-        code, _, _ = run_hook("Bash", {"command": "defaults delete com.apple.finder"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'defaults delete com.apple.finder'})
 
     def test_block_defaults_delete_key(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "defaults delete com.apple.dock autohide"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'defaults delete com.apple.dock autohide'})
 
     # --- security delete (consolidated) ---
 
     def test_block_security_delete_keychain(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "security delete-keychain login.keychain"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'security delete-keychain login.keychain'})
 
     def test_block_security_delete_generic_password(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "security delete-generic-password -s myservice"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'security delete-generic-password -s myservice'})
 
     def test_block_security_delete_internet_password(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "security delete-internet-password -s example.com"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'security delete-internet-password -s example.com'})
 
     # --- gpg key deletion ---
 
     def test_block_gpg_delete_key(self):
-        code, _, _ = run_hook("Bash", {"command": "gpg --delete-key ABCD1234"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'gpg --delete-key ABCD1234'})
 
     def test_block_gpg_delete_secret_key(self):
-        code, _, _ = run_hook("Bash", {"command": "gpg --delete-secret-key ABCD1234"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'gpg --delete-secret-key ABCD1234'})
 
     def test_block_gpg_delete_secret_and_public_key(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "gpg --delete-secret-and-public-key ABCD1234"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'gpg --delete-secret-and-public-key ABCD1234'})
 
     # --- launchctl unload ---
 
     def test_block_launchctl_unload(self):
-        code, _, _ = run_hook(
-            "Bash",
-            {"command": "launchctl unload /Library/LaunchDaemons/com.test.plist"},
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'launchctl unload /Library/LaunchDaemons/com.test.plist'})
 
     # --- diskutil apfs deleteVolume ---
 
     def test_block_diskutil_apfs_delete_volume(self):
-        code, _, _ = run_hook("Bash", {"command": "diskutil apfs deleteVolume disk1s2"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'diskutil apfs deleteVolume disk1s2'})
 
     # --- csrutil ---
 
     def test_block_csrutil_disable(self):
-        code, _, _ = run_hook("Bash", {"command": "csrutil disable"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'csrutil disable'})
 
     def test_block_csrutil_enable(self):
-        code, _, _ = run_hook("Bash", {"command": "csrutil enable"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'csrutil enable'})
 
     def test_block_csrutil_status(self):
-        code, _, _ = run_hook("Bash", {"command": "csrutil status"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'csrutil status'})
 
     # --- spctl ---
 
     def test_block_spctl_master_disable(self):
-        code, _, _ = run_hook("Bash", {"command": "spctl --master-disable"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'spctl --master-disable'})
 
     # --- dscl ---
 
     def test_block_dscl_create(self):
-        code, _, _ = run_hook("Bash", {"command": "dscl . create /Users/test"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'dscl . create /Users/test'})
 
     def test_block_dscl_delete(self):
-        code, _, _ = run_hook("Bash", {"command": "dscl . -delete /Users/test"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'dscl . -delete /Users/test'})
 
     def test_block_dscl_merge(self):
-        code, _, _ = run_hook("Bash", {"command": "dscl . merge /Users/test key value"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'dscl . merge /Users/test key value'})
 
     def test_block_dscl_change(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "dscl . change /Users/test key old new"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'dscl . change /Users/test key old new'})
 
     # --- xattr quarantine ---
 
     def test_block_xattr_quarantine(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "xattr -d com.apple.quarantine /Applications/app.app"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'xattr -d com.apple.quarantine /Applications/app.app'})
 
     # --- nvram ---
 
     def test_block_nvram(self):
-        code, _, _ = run_hook("Bash", {"command": "nvram boot-args=-v"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'nvram boot-args=-v'})
 
     def test_block_nvram_delete(self):
-        code, _, _ = run_hook("Bash", {"command": "nvram -d boot-args"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'nvram -d boot-args'})
 
     # --- bless ---
 
     def test_block_bless(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "bless --mount /Volumes/Macintosh\\ HD --setBoot"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'bless --mount /Volumes/Macintosh\\ HD --setBoot'})
 
     # --- fdesetup ---
 
     def test_block_fdesetup_destroy(self):
-        code, _, _ = run_hook("Bash", {"command": "fdesetup destroy"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'fdesetup destroy'})
 
     def test_block_fdesetup_remove(self):
-        code, _, _ = run_hook("Bash", {"command": "fdesetup remove -user testuser"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'fdesetup remove -user testuser'})
 
     def test_block_fdesetup_disable(self):
-        code, _, _ = run_hook("Bash", {"command": "fdesetup disable"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'fdesetup disable'})
 
     # --- kextunload ---
 
     def test_block_kextunload(self):
-        code, _, _ = run_hook(
-            "Bash",
-            {"command": "kextunload /Library/Extensions/MyDriver.kext"},
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'kextunload /Library/Extensions/MyDriver.kext'})
 
     # --- port uninstall/deactivate ---
 
     def test_block_port_uninstall(self):
-        code, _, _ = run_hook("Bash", {"command": "port uninstall python39"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'port uninstall python39'})
 
     def test_block_port_deactivate(self):
-        code, _, _ = run_hook("Bash", {"command": "port deactivate python39"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'port deactivate python39'})
 
 
 class TestMacosAsk:
@@ -400,3 +344,25 @@ class TestMacosAllow:
         code, stdout, _ = run_hook("Bash", {"command": "fdesetup status"})
         assert code == 0
         assert "permissionDecision" not in stdout
+
+
+class TestMacosAdditionalStateAsk:
+    """Additional macOS state mutations prompt for confirmation."""
+
+    def test_ask_launchctl_disable(self):
+        assert_asks("Bash", {"command": "launchctl disable user/501/com.example"})
+
+    def test_ask_codesign(self):
+        assert_asks("Bash", {"command": "codesign -s 'Developer ID' app.app"})
+
+    def test_ask_tmutil_addexclusion(self):
+        assert_asks("Bash", {"command": "tmutil addexclusion /Users/me/big"})
+
+    def test_ask_profiles_install(self):
+        assert_asks("Bash", {"command": "profiles install -type configuration -path x.mobileconfig"})
+
+    def test_ask_xattr_write(self):
+        assert_asks("Bash", {"command": "xattr -w com.example.flag value file"})
+
+    def test_ask_port_install(self):
+        assert_asks("Bash", {"command": "port install wget"})

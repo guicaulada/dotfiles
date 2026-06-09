@@ -2,175 +2,114 @@
 
 import json
 
-from tests.conftest import run_hook
+from tests.conftest import assert_asks, run_hook
 
 
 class TestKubernetesBlock:
     def test_block_kubectl_delete_namespace(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "kubectl delete namespace production"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'kubectl delete namespace production'})
 
     def test_block_kubectl_delete_ns(self):
-        code, _, _ = run_hook("Bash", {"command": "kubectl delete ns production"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'kubectl delete ns production'})
 
     def test_block_kubectl_delete_pv(self):
-        code, _, _ = run_hook("Bash", {"command": "kubectl delete pv my-volume"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'kubectl delete pv my-volume'})
 
     def test_block_kubectl_delete_persistentvolume(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "kubectl delete persistentvolume my-volume"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'kubectl delete persistentvolume my-volume'})
 
     def test_block_kubectl_delete_pvc(self):
-        code, _, _ = run_hook("Bash", {"command": "kubectl delete pvc my-claim"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'kubectl delete pvc my-claim'})
 
     def test_block_kubectl_delete_persistentvolumeclaim(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "kubectl delete persistentvolumeclaim my-claim"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'kubectl delete persistentvolumeclaim my-claim'})
 
     def test_block_kubectl_delete_all(self):
-        code, _, _ = run_hook("Bash", {"command": "kubectl delete pods --all"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'kubectl delete pods --all'})
 
     def test_block_kubectl_delete_all_namespaces_short(self):
-        code, _, _ = run_hook("Bash", {"command": "kubectl delete pods -A"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'kubectl delete pods -A'})
 
     def test_block_kubectl_delete_all_namespaces_long(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "kubectl delete pods --all-namespaces"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'kubectl delete pods --all-namespaces'})
 
     def test_block_kubectl_delete_force(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "kubectl delete pod my-pod --force --grace-period=0"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'kubectl delete pod my-pod --force --grace-period=0'})
 
     def test_block_kubectl_config_delete_context(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "kubectl config delete-context my-context"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'kubectl config delete-context my-context'})
 
     def test_block_kubectl_config_delete_cluster(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "kubectl config delete-cluster my-cluster"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'kubectl config delete-cluster my-cluster'})
 
     def test_block_kubectl_config_delete_user(self):
-        code, _, _ = run_hook("Bash", {"command": "kubectl config delete-user my-user"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'kubectl config delete-user my-user'})
 
     def test_block_kubectl_config_unset(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "kubectl config unset current-context"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'kubectl config unset current-context'})
 
     def test_block_kubectl_drain_force(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "kubectl drain node01 --force --ignore-daemonsets"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'kubectl drain node01 --force --ignore-daemonsets'})
 
     def test_block_kubectl_drain_delete_emptydir(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "kubectl drain node01 --delete-emptydir-data"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'kubectl drain node01 --delete-emptydir-data'})
 
     def test_block_kubectl_replace_force(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "kubectl replace --force -f deployment.yaml"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'kubectl replace --force -f deployment.yaml'})
 
     def test_block_kubectl_delete_namespace_precedence(self):
-        """kubectl delete namespace must hit hard block, not the ask catch-all."""
-        code, _, stderr = run_hook(
-            "Bash", {"command": "kubectl delete namespace production"}
-        )
-        assert code == 2
-        assert "SECURITY" in stderr
+        """kubectl delete namespace is a command pattern: prompt to confirm."""
+        assert_asks('Bash', {'command': 'kubectl delete namespace production'})
 
 
 class TestHelmBlock:
     def test_block_helm_uninstall(self):
-        code, _, _ = run_hook("Bash", {"command": "helm uninstall my-release"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'helm uninstall my-release'})
 
     def test_block_helm_delete(self):
-        code, _, _ = run_hook("Bash", {"command": "helm delete my-release"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'helm delete my-release'})
 
 
 class TestServiceMeshBlock:
     def test_block_istioctl_uninstall(self):
-        code, _, _ = run_hook("Bash", {"command": "istioctl uninstall --purge"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'istioctl uninstall --purge'})
 
     def test_block_istioctl_remove_from_cluster(self):
-        code, _, _ = run_hook("Bash", {"command": "istioctl remove-from-cluster"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'istioctl remove-from-cluster'})
 
     def test_block_linkerd_uninstall(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "linkerd uninstall | kubectl apply -f -"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'linkerd uninstall | kubectl apply -f -'})
 
     def test_block_consul_leave(self):
-        code, _, _ = run_hook("Bash", {"command": "consul leave"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'consul leave'})
 
     def test_block_consul_force_leave(self):
-        code, _, _ = run_hook("Bash", {"command": "consul force-leave node01"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'consul force-leave node01'})
 
     def test_block_consul_kv_delete(self):
-        code, _, _ = run_hook("Bash", {"command": "consul kv delete my-key"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'consul kv delete my-key'})
 
 
 class TestLocalKubernetes:
     def test_block_kind_delete_cluster(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "kind delete cluster --name mycluster"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'kind delete cluster --name mycluster'})
 
     def test_block_minikube_delete(self):
-        code, _, _ = run_hook("Bash", {"command": "minikube delete"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'minikube delete'})
 
     def test_block_k3d_cluster_delete(self):
-        code, _, _ = run_hook("Bash", {"command": "k3d cluster delete mycluster"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'k3d cluster delete mycluster'})
 
 
 class TestNomadBlock:
     def test_block_nomad_job_stop(self):
-        code, _, _ = run_hook("Bash", {"command": "nomad job stop my-job"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'nomad job stop my-job'})
 
     def test_block_nomad_namespace_delete(self):
-        code, _, _ = run_hook("Bash", {"command": "nomad namespace delete my-ns"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'nomad namespace delete my-ns'})
 
     def test_block_nomad_volume_delete(self):
-        code, _, _ = run_hook("Bash", {"command": "nomad volume delete my-vol"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'nomad volume delete my-vol'})
 
 
 class TestKubernetesSecretExposure:
@@ -464,3 +403,11 @@ class TestKubernetesAsk:
         assert code == 0
         data = json.loads(stdout)
         assert data["hookSpecificOutput"]["permissionDecision"] == "ask"
+
+
+class TestHelmRepoAsk:
+    def test_ask_helm_repo_add(self):
+        assert_asks("Bash", {"command": "helm repo add bitnami https://charts.bitnami.com/bitnami"})
+
+    def test_ask_helm_repo_update(self):
+        assert_asks("Bash", {"command": "helm repo update"})

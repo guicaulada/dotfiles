@@ -65,27 +65,22 @@ bashToolPatterns:
     reason: user/group deletion command
 
   # ---------------------------------------------------------------------------
-  # USER AND GROUP MANAGEMENT REQUIRING CONFIRMATION (ask: true)
+  # USER AND GROUP MANAGEMENT REQUIRING CONFIRMATION
   # ---------------------------------------------------------------------------
   - pattern: '\b(useradd|adduser)\b'
     reason: Adds a new user account
-    ask: true
 
   - pattern: '\busermod\b'
     reason: Modifies an existing user account
-    ask: true
 
   - pattern: '\b(passwd|chpasswd)\b'
     reason: Changes user password
-    ask: true
 
   - pattern: '\bgroupadd\b'
     reason: Creates a new group
-    ask: true
 
   - pattern: '\bgroupmod\b'
     reason: Modifies an existing group
-    ask: true
 
   # ---------------------------------------------------------------------------
   # KERNEL MODULES
@@ -104,7 +99,6 @@ bashToolPatterns:
 
   - pattern: '\binsmod\b'
     reason: Inserts kernel module (arbitrary code in kernel space)
-    ask: true
 
   # ---------------------------------------------------------------------------
   # MANDATORY ACCESS CONTROL
@@ -159,16 +153,13 @@ bashToolPatterns:
     reason: borg delete/prune (destroys backup archives)
 
   # ---------------------------------------------------------------------------
-  # ADDITIONAL SYSTEM TOOLS (ask: true)
+  # ADDITIONAL SYSTEM TOOLS
   # ---------------------------------------------------------------------------
   - pattern: '\bvisudo\b'
     reason: visudo (edits sudoers file - misconfiguration locks out access)
-    ask: true
 
   - pattern: '\bvipw\b'
     reason: vipw (edits /etc/passwd directly)
-    ask: true
 
   - pattern: '\bchsh\b'
     reason: chsh (changes user default shell)
-    ask: true

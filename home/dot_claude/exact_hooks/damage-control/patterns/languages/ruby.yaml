@@ -8,7 +8,6 @@ bashToolPatterns:
 
   - pattern: '\bbundle{flags}clean\b'
     reason: bundle clean (removes unused gems)
-    ask: true
 
   # ---------------------------------------------------------------------------
   # RAILS DATABASE
@@ -21,4 +20,6 @@ bashToolPatterns:
 
   - pattern: '\b(bin/rails|rails|bin/rake|rake)\s+db:rollback\b'
     reason: rails db:rollback (rolls back last migration)
-    ask: true
+
+  - pattern: '\bgem\s+(install|uninstall|update|push|yank)\b'
+    reason: gem install/uninstall/push mutates installed gems or the registry

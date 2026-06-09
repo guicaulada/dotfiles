@@ -69,4 +69,3 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   - pattern: '\bunzip\s+.*-o\b'
     reason: unzip -o (overwrites files without prompting)
-    ask: true

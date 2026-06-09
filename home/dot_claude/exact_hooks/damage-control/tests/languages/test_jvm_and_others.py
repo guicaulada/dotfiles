@@ -2,7 +2,7 @@
 
 import json
 
-from tests.conftest import run_hook
+from tests.conftest import assert_asks, run_hook
 
 
 # ---------------------------------------------------------------------------
@@ -10,8 +10,7 @@ from tests.conftest import run_hook
 # ---------------------------------------------------------------------------
 class TestGoBlock:
     def test_block_go_clean_modcache(self):
-        code, _, _ = run_hook("Bash", {"command": "go clean -modcache"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'go clean -modcache'})
 
 
 class TestGoAsk:
@@ -39,8 +38,7 @@ class TestGoAsk:
 # ---------------------------------------------------------------------------
 class TestRustBlock:
     def test_block_rustup_self_uninstall(self):
-        code, _, _ = run_hook("Bash", {"command": "rustup self uninstall"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'rustup self uninstall'})
 
 
 class TestRustAsk:
@@ -78,18 +76,13 @@ class TestRustAsk:
 # ---------------------------------------------------------------------------
 class TestJvmBlock:
     def test_block_mvn_purge_local_repository(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "mvn dependency:purge-local-repository"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'mvn dependency:purge-local-repository'})
 
     def test_block_sdk_uninstall(self):
-        code, _, _ = run_hook("Bash", {"command": "sdk uninstall java 17.0.1-tem"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'sdk uninstall java 17.0.1-tem'})
 
     def test_block_sdk_rm(self):
-        code, _, _ = run_hook("Bash", {"command": "sdk rm java 17.0.1-tem"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'sdk rm java 17.0.1-tem'})
 
 
 class TestJvmAsk:
@@ -123,16 +116,13 @@ class TestJvmAsk:
 # ---------------------------------------------------------------------------
 class TestPhpBlock:
     def test_block_artisan_migrate_fresh(self):
-        code, _, _ = run_hook("Bash", {"command": "php artisan migrate:fresh"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'php artisan migrate:fresh'})
 
     def test_block_artisan_db_wipe(self):
-        code, _, _ = run_hook("Bash", {"command": "php artisan db:wipe"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'php artisan db:wipe'})
 
     def test_block_artisan_migrate_reset(self):
-        code, _, _ = run_hook("Bash", {"command": "php artisan migrate:reset"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'php artisan migrate:reset'})
 
 
 class TestPhpAsk:
@@ -156,16 +146,13 @@ class TestPhpAsk:
 # ---------------------------------------------------------------------------
 class TestElixirBlock:
     def test_block_mix_ecto_drop(self):
-        code, _, _ = run_hook("Bash", {"command": "mix ecto.drop"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'mix ecto.drop'})
 
     def test_block_mix_ecto_reset(self):
-        code, _, _ = run_hook("Bash", {"command": "mix ecto.reset"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'mix ecto.reset'})
 
     def test_block_mix_deps_clean_all(self):
-        code, _, _ = run_hook("Bash", {"command": "mix deps.clean --all"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'mix deps.clean --all'})
 
 
 class TestElixirAsk:
@@ -181,8 +168,7 @@ class TestElixirAsk:
 # ---------------------------------------------------------------------------
 class TestSwiftBlock:
     def test_block_swift_package_reset(self):
-        code, _, _ = run_hook("Bash", {"command": "swift package reset"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'swift package reset'})
 
 
 class TestSwiftAsk:
@@ -198,10 +184,7 @@ class TestSwiftAsk:
 # ---------------------------------------------------------------------------
 class TestDotnetBlock:
     def test_block_dotnet_nuget_delete(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "dotnet nuget delete MyPackage 1.0.0"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'dotnet nuget delete MyPackage 1.0.0'})
 
 
 class TestDotnetAsk:
@@ -217,8 +200,7 @@ class TestDotnetAsk:
 # ---------------------------------------------------------------------------
 class TestHaskellBlock:
     def test_block_stack_purge(self):
-        code, _, _ = run_hook("Bash", {"command": "stack purge"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'stack purge'})
 
 
 class TestHaskellAsk:
@@ -251,8 +233,7 @@ class TestDartAsk:
 # ---------------------------------------------------------------------------
 class TestLuaBlock:
     def test_block_luarocks_purge(self):
-        code, _, _ = run_hook("Bash", {"command": "luarocks purge"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'luarocks purge'})
 
 
 class TestLuaAsk:
@@ -286,3 +267,8 @@ class TestInlineCodeAsk:
         assert code == 0
         data = json.loads(stdout)
         assert data["hookSpecificOutput"]["permissionDecision"] == "ask"
+
+
+class TestCargoPublishAsk:
+    def test_ask_cargo_publish(self):
+        assert_asks("Bash", {"command": "cargo publish"})

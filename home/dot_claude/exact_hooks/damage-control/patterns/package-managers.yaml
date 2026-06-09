@@ -50,76 +50,61 @@ bashToolPatterns:
     reason: snap/flatpak package removal
 
   # ---------------------------------------------------------------------------
-  # SYSTEM PACKAGE MANAGERS - INSTALLATION (ask: true)
+  # SYSTEM PACKAGE MANAGERS - INSTALLATION
   # ---------------------------------------------------------------------------
   - pattern: '{sudo}\b(apt|apt-get){flags}install\b'
     reason: apt package installation (system-level)
-    ask: true
 
   - pattern: '{sudo}\b(dnf|yum){flags}install\b'
     reason: dnf/yum package installation (system-level)
-    ask: true
 
   - pattern: '{sudo}\bpacman{flags}-S'
     reason: pacman package installation (system-level)
-    ask: true
 
   - pattern: '{sudo}\bzypper{flags}(install|in)\b'
     reason: zypper package installation (system-level)
-    ask: true
 
   - pattern: '{sudo}\bapk{flags}add\b'
     reason: apk package installation (system-level)
-    ask: true
 
   # ---------------------------------------------------------------------------
   # HOMEBREW
   # ---------------------------------------------------------------------------
   - pattern: '\bbrew{flags}(uninstall|remove)\b'
     reason: Uninstalls Homebrew package
-    ask: true
 
   - pattern: '\bbrew{flags}install{args}\s+--force'
     reason: Homebrew force install (overwrites existing)
-    ask: true
 
   - pattern: '\bbrew{flags}reinstall\b'
     reason: Homebrew reinstall
-    ask: true
 
   - pattern: '\bbrew{flags}install\s+--cask\b'
     reason: Homebrew cask install (macOS application)
-    ask: true
 
   - pattern: '\bbrew{flags}(cleanup|autoremove)\b'
     reason: brew cleanup/autoremove (removes old versions or unused dependencies)
-    ask: true
 
   # ---------------------------------------------------------------------------
   # PIP / GEM
   # ---------------------------------------------------------------------------
   - pattern: '\bpip3?\s+install\b'
     reason: pip install (arbitrary code execution from PyPI)
-    ask: true
 
   - pattern: '\bpip\s+uninstall\b'
     reason: Uninstalls Python package
-    ask: true
 
   - pattern: '\bgem{flags}uninstall\b'
     reason: Uninstalls Ruby gem
-    ask: true
 
   # ---------------------------------------------------------------------------
   # CARGO / GO
   # ---------------------------------------------------------------------------
   - pattern: '\bcargo{flags}install\b'
     reason: cargo install (compiles and installs Rust binary)
-    ask: true
 
   - pattern: '\bgo{flags}install\b'
     reason: go install (downloads and installs Go binary)
-    ask: true
 
   # ---------------------------------------------------------------------------
   # NIX ECOSYSTEM
@@ -129,44 +114,37 @@ bashToolPatterns:
 
   - pattern: '\b(nix-env\s+(\S+\s+)*-e|nix\s+profile\s+(remove|install))\b'
     reason: Nix profile modification (install/remove packages)
-    ask: true
 
   # ---------------------------------------------------------------------------
-  # PACKAGE REGISTRY PUBLISHING (ask: true)
+  # PACKAGE REGISTRY PUBLISHING
   # ---------------------------------------------------------------------------
   - pattern: '\bnpm{flags}publish\b'
     reason: Publishes package to npm registry
-    ask: true
 
   # ---------------------------------------------------------------------------
-  # NPM / YARN / PNPM / BUN - REMOTE EXECUTION (ask: true)
+  # NPM / YARN / PNPM / BUN - REMOTE EXECUTION
   # Trusted dev tools (defined in {trusted_npx} shorthand) are allowed through.
   # ---------------------------------------------------------------------------
   - pattern: '\b(npx|bunx|yarn\s+dlx|pnpm\s+dlx)\b(?!\s+(?:--?\S+\s+)*(?:{trusted_npx})\b)'
     reason: Downloads and executes arbitrary packages
-    ask: true
 
   # ---------------------------------------------------------------------------
-  # NPM / YARN / PNPM - GLOBAL INSTALLS (ask: true)
+  # NPM / YARN / PNPM - GLOBAL INSTALLS
   # ---------------------------------------------------------------------------
   - pattern: '\bnpm{flags}(install|i)\s+(-\S+\s+)*-g\b'
     reason: npm global install (modifies system-wide packages)
-    ask: true
 
   - pattern: '\byarn{flags}global\s+add\b'
     reason: yarn global install (modifies system-wide packages)
-    ask: true
 
   - pattern: '\bpnpm{flags}add\s+(-\S+\s+)*-g\b'
     reason: pnpm global install (modifies system-wide packages)
-    ask: true
 
   # ---------------------------------------------------------------------------
-  # NPM / YARN - LINKING (ask: true)
+  # NPM / YARN - LINKING
   # ---------------------------------------------------------------------------
   - pattern: '\b(npm|yarn){flags}link\b'
     reason: npm/yarn link (creates global symlink)
-    ask: true
 
   # ---------------------------------------------------------------------------
   # VERSION MANAGERS (asdf / mise / proto)
@@ -179,3 +157,36 @@ bashToolPatterns:
 
   - pattern: '\bproto{flags}(uninstall|clean)\b'
     reason: proto uninstall/clean (removes tool versions)
+
+  # ---------------------------------------------------------------------------
+  # HOMEBREW STATE MUTATIONS (install, upgrade, taps, links, services)
+  # ---------------------------------------------------------------------------
+  - pattern: '{sudo}brew{flags}install\b'
+    reason: Homebrew install (adds packages to the system)
+
+  - pattern: '{sudo}brew{flags}(upgrade|update)\b'
+    reason: Homebrew upgrade/update (mutates installed packages or formula metadata)
+
+  - pattern: '{sudo}brew{flags}(tap|untap)\b'
+    reason: brew tap changes which third-party repositories are trusted
+
+  - pattern: '{sudo}brew{flags}(link|unlink|pin|unpin)\b'
+    reason: brew link/pin changes which binaries resolve on PATH
+
+  - pattern: '{sudo}brew{flags}services\b'
+    reason: brew services manages launchd daemons
+
+  - pattern: '{sudo}brew{flags}bundle\b'
+    reason: brew bundle installs or removes everything in a Brewfile
+
+  - pattern: '\bmas\s+(install|uninstall|upgrade|purchase|lucky)\b'
+    reason: Mac App Store install/uninstall
+
+  # ---------------------------------------------------------------------------
+  # TOOLCHAIN SHIM MANAGERS (corepack, mise installs)
+  # ---------------------------------------------------------------------------
+  - pattern: '\bcorepack\s+(enable|disable|prepare|use|install|pack)\b'
+    reason: corepack changes the active package-manager shims
+
+  - pattern: '\bmise{flags}(install|use|upgrade|up|exec|run)\b'
+    reason: mise installs or switches runtime versions

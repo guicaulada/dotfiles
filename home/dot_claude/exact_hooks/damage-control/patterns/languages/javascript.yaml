@@ -8,18 +8,15 @@ bashToolPatterns:
 
   - pattern: '\bdeno{flags}install\b'
     reason: deno install (installs script as global command)
-    ask: true
 
   - pattern: '\bdeno{flags}eval\b'
     reason: deno eval (executes Deno code inline)
-    ask: true
 
   - pattern: '\bbun{flags}pm\s+cache\s+rm\b'
     reason: bun pm cache rm (removes bun package cache)
 
   - pattern: '\bbun{flags}(remove|rm)\b'
     reason: bun remove (removes packages from project)
-    ask: true
 
   # ---------------------------------------------------------------------------
   # NODE.JS - EXPANDED ONE-LINER PATTERNS
@@ -47,23 +44,18 @@ bashToolPatterns:
 
   - pattern: '\bnpm{flags}ci\b'
     reason: npm ci (deletes node_modules and reinstalls from lockfile)
-    ask: true
 
   # ---------------------------------------------------------------------------
   # MONOREPO TOOLS
   # ---------------------------------------------------------------------------
   - pattern: '\bnx{flags}reset\b'
     reason: nx reset (clears Nx daemon and cache)
-    ask: true
 
   - pattern: '\bturbo{flags}(clean|prune)\b'
     reason: turbo clean/prune (removes Turborepo cache or dependencies)
-    ask: true
 
   - pattern: '\blerna{flags}clean\b'
     reason: lerna clean (removes node_modules from all packages)
-    ask: true
 
   - pattern: '\brush{flags}purge\b'
     reason: rush purge (deletes all node_modules in Rush monorepo)
-    ask: true

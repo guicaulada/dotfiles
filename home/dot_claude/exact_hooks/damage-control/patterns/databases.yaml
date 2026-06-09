@@ -85,11 +85,10 @@ bashToolPatterns:
     reason: kafka --delete (destroys Kafka resource)
 
   # ---------------------------------------------------------------------------
-  # SQL OPERATIONS REQUIRING CONFIRMATION (ask: true)
+  # SQL OPERATIONS REQUIRING CONFIRMATION
   # ---------------------------------------------------------------------------
   - pattern: '\bDELETE\s+FROM\s+\w+\s+WHERE\b.*\bid\s*='
     reason: SQL DELETE with specific ID
-    ask: true
 
   # ---------------------------------------------------------------------------
   # PRISMA DATABASE MIGRATIONS
@@ -102,11 +101,9 @@ bashToolPatterns:
 
   - pattern: '\b(npx\s+)?prisma\s+db\s+execute\b'
     reason: prisma db execute (runs raw SQL against database)
-    ask: true
 
   - pattern: '\b(npx\s+)?prisma\s+migrate\s+deploy\b'
     reason: prisma migrate deploy (applies pending migrations to production)
-    ask: true
 
   # ---------------------------------------------------------------------------
   # FLYWAY / LIQUIBASE DATABASE MIGRATIONS
@@ -119,8 +116,6 @@ bashToolPatterns:
 
   - pattern: '\bflyway{flags}undo\b'
     reason: flyway undo (undoes most recent migration)
-    ask: true
 
   - pattern: '\bliquibase{flags}rollback\b'
     reason: liquibase rollback (rolls back database changes)
-    ask: true

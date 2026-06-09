@@ -2,7 +2,7 @@
 
 import json
 
-from tests.conftest import run_hook
+from tests.conftest import assert_asks, run_hook
 
 
 class TestAzureBlock:
@@ -11,273 +11,129 @@ class TestAzureBlock:
     # --- Credential exposure ---
 
     def test_block_az_account_get_access_token(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "az account get-access-token"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'az account get-access-token'})
 
     def test_block_az_account_get_access_token_with_resource(self):
-        code, _, _ = run_hook(
-            "Bash",
-            {"command": "az account get-access-token --resource https://management.azure.com"},
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'az account get-access-token --resource https://management.azure.com'})
 
     # --- Specific block pattern ---
 
     def test_block_az_backup_protection_disable(self):
-        """backup protection disable must block, not ask."""
-        code, _, _ = run_hook(
-            "Bash",
-            {
-                "command": "az backup protection disable --container-name myvm --item-name myvm"
-            },
-        )
-        assert code == 2
+        """backup protection disable is a command pattern: prompt to confirm."""
+        assert_asks('Bash', {'command': 'az backup protection disable --container-name myvm --item-name myvm'})
 
     # --- Block catch-all: "az ... delete" or "az ... purge" ---
 
     def test_block_az_group_delete(self):
-        code, _, _ = run_hook("Bash", {"command": "az group delete --name my-rg"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'az group delete --name my-rg'})
 
     def test_block_az_vm_delete(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "az vm delete --resource-group rg --name vm1"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'az vm delete --resource-group rg --name vm1'})
 
     def test_block_az_sql_server_delete(self):
-        code, _, _ = run_hook("Bash", {"command": "az sql server delete --name srv"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'az sql server delete --name srv'})
 
     def test_block_az_sql_db_delete(self):
-        code, _, _ = run_hook("Bash", {"command": "az sql db delete --name mydb"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'az sql db delete --name mydb'})
 
     def test_block_az_storage_account_delete(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "az storage account delete --name mystorage"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'az storage account delete --name mystorage'})
 
     def test_block_az_aks_delete(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "az aks delete --resource-group rg --name cluster"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'az aks delete --resource-group rg --name cluster'})
 
     def test_block_az_webapp_delete(self):
-        code, _, _ = run_hook("Bash", {"command": "az webapp delete --name myapp"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'az webapp delete --name myapp'})
 
     def test_block_az_functionapp_delete(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "az functionapp delete --name myfunc"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'az functionapp delete --name myfunc'})
 
     def test_block_az_keyvault_delete(self):
-        code, _, _ = run_hook("Bash", {"command": "az keyvault delete --name myvault"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'az keyvault delete --name myvault'})
 
     def test_block_az_keyvault_purge(self):
-        code, _, _ = run_hook("Bash", {"command": "az keyvault purge --name myvault"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'az keyvault purge --name myvault'})
 
     def test_block_az_cosmosdb_delete(self):
-        code, _, _ = run_hook("Bash", {"command": "az cosmosdb delete --name mydb"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'az cosmosdb delete --name mydb'})
 
     def test_block_az_network_vnet_delete(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "az network vnet delete --name myvnet"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'az network vnet delete --name myvnet'})
 
     def test_block_az_cognitiveservices_account_delete(self):
-        code, _, _ = run_hook(
-            "Bash",
-            {
-                "command": "az cognitiveservices account delete --name myai --resource-group rg"
-            },
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'az cognitiveservices account delete --name myai --resource-group rg'})
 
     def test_block_az_container_delete(self):
-        code, _, _ = run_hook(
-            "Bash",
-            {"command": "az container delete --name mycontainer --resource-group rg"},
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'az container delete --name mycontainer --resource-group rg'})
 
     def test_block_az_acr_delete(self):
-        code, _, _ = run_hook("Bash", {"command": "az acr delete --name myregistry"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'az acr delete --name myregistry'})
 
     def test_block_az_acr_repository_delete(self):
-        code, _, _ = run_hook(
-            "Bash",
-            {
-                "command": "az acr repository delete --name myregistry --repository myimage"
-            },
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'az acr repository delete --name myregistry --repository myimage'})
 
     def test_block_az_logic_workflow_delete(self):
-        code, _, _ = run_hook(
-            "Bash",
-            {
-                "command": "az logic workflow delete --name mylogicapp --resource-group rg"
-            },
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'az logic workflow delete --name mylogicapp --resource-group rg'})
 
     def test_block_az_apim_delete(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "az apim delete --name myapim --resource-group rg"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'az apim delete --name myapim --resource-group rg'})
 
     def test_block_az_eventgrid_topic_delete(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "az eventgrid topic delete --name mytopic"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'az eventgrid topic delete --name mytopic'})
 
     def test_block_az_servicebus_namespace_delete(self):
-        code, _, _ = run_hook(
-            "Bash",
-            {
-                "command": "az servicebus namespace delete --name myns --resource-group rg"
-            },
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'az servicebus namespace delete --name myns --resource-group rg'})
 
     def test_block_az_servicebus_queue_delete(self):
-        code, _, _ = run_hook(
-            "Bash",
-            {
-                "command": "az servicebus queue delete --name myqueue --namespace-name myns"
-            },
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'az servicebus queue delete --name myqueue --namespace-name myns'})
 
     def test_block_az_eventhubs_namespace_delete(self):
-        code, _, _ = run_hook(
-            "Bash",
-            {
-                "command": "az eventhubs namespace delete --name myns --resource-group rg"
-            },
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'az eventhubs namespace delete --name myns --resource-group rg'})
 
     def test_block_az_cdn_profile_delete(self):
-        code, _, _ = run_hook(
-            "Bash",
-            {"command": "az cdn profile delete --name myprofile --resource-group rg"},
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'az cdn profile delete --name myprofile --resource-group rg'})
 
     def test_block_az_disk_delete(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "az disk delete --name mydisk --resource-group rg"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'az disk delete --name mydisk --resource-group rg'})
 
     def test_block_az_snapshot_delete(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "az snapshot delete --name mysnap --resource-group rg"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'az snapshot delete --name mysnap --resource-group rg'})
 
     def test_block_az_backup_delete(self):
-        code, _, _ = run_hook(
-            "Bash",
-            {"command": "az backup vault delete --name myvault --resource-group rg"},
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'az backup vault delete --name myvault --resource-group rg'})
 
     def test_block_az_iot_hub_delete(self):
-        code, _, _ = run_hook("Bash", {"command": "az iot hub delete --name myhub"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'az iot hub delete --name myhub'})
 
     def test_block_az_ml_workspace_delete(self):
-        code, _, _ = run_hook(
-            "Bash",
-            {
-                "command": "az ml workspace delete --name myworkspace --resource-group rg"
-            },
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'az ml workspace delete --name myworkspace --resource-group rg'})
 
     def test_block_az_network_nsg_delete(self):
-        code, _, _ = run_hook(
-            "Bash",
-            {"command": "az network nsg delete --name mynsg --resource-group rg"},
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'az network nsg delete --name mynsg --resource-group rg'})
 
     def test_block_az_keyvault_secret_delete(self):
-        code, _, _ = run_hook(
-            "Bash",
-            {
-                "command": "az keyvault secret delete --vault-name myvault --name mysecret"
-            },
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'az keyvault secret delete --vault-name myvault --name mysecret'})
 
     def test_block_az_keyvault_secret_purge(self):
-        code, _, _ = run_hook(
-            "Bash",
-            {
-                "command": "az keyvault secret purge --vault-name myvault --name mysecret"
-            },
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'az keyvault secret purge --vault-name myvault --name mysecret'})
 
     def test_block_az_keyvault_key_delete(self):
-        code, _, _ = run_hook(
-            "Bash",
-            {"command": "az keyvault key delete --vault-name myvault --name mykey"},
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'az keyvault key delete --vault-name myvault --name mykey'})
 
     def test_block_az_monitor_action_group_delete(self):
-        code, _, _ = run_hook(
-            "Bash",
-            {
-                "command": "az monitor action-group delete --name mygroup --resource-group rg"
-            },
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'az monitor action-group delete --name mygroup --resource-group rg'})
 
     def test_block_az_monitor_alert_rule_delete(self):
-        code, _, _ = run_hook(
-            "Bash",
-            {
-                "command": "az monitor alert-rule delete --name myrule --resource-group rg"
-            },
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'az monitor alert-rule delete --name myrule --resource-group rg'})
 
     def test_block_az_devops_project_delete(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "az devops project delete --id abc123"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'az devops project delete --id abc123'})
 
     def test_block_az_redis_delete(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "az redis delete --name mycache --resource-group rg"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'az redis delete --name mycache --resource-group rg'})
 
     def test_block_az_appservice_plan_delete(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "az appservice plan delete --name myplan"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'az appservice plan delete --name myplan'})
 
 
 class TestAzureAsk:
@@ -503,3 +359,11 @@ class TestAzureAllow:
             "Bash", {"command": "az network vnet list --resource-group rg"}
         )
         assert code == 0
+
+
+class TestAzureSessionCredentialAsk:
+    def test_ask_vm_run_command(self):
+        assert_asks("Bash", {"command": "az vm run-command invoke -g g -n n --command-id RunShellScript"})
+
+    def test_ask_login(self):
+        assert_asks("Bash", {"command": "az login"})

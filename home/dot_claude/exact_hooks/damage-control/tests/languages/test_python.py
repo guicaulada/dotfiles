@@ -2,90 +2,60 @@
 
 import json
 
-from tests.conftest import run_hook
+from tests.conftest import assert_asks, run_hook
 
 
 class TestPythonBlock:
     def test_block_python_exec(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": 'python -c "exec(\'import os; os.system(\\"id\\")\'))"'}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'python -c "exec(\'import os; os.system(\\"id\\")\'))"'})
 
     def test_block_python3_eval(self):
-        code, _, _ = run_hook(
-            "Bash",
-            {"command": 'python3 -c "eval(\'__import__(\\"os\\").system(\\"id\\")\')"'},
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'python3 -c "eval(\'__import__(\\"os\\").system(\\"id\\")\')"'})
 
     def test_block_python_compile(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "python -c \"compile('print(1)', '<s>', 'exec')\""}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'python -c "compile(\'print(1)\', \'<s>\', \'exec\')"'})
 
     def test_block_python_import(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "python3 -c \"__import__('os').system('id')\""}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'python3 -c "__import__(\'os\').system(\'id\')"'})
 
     def test_block_pipx_uninstall_all(self):
-        code, _, _ = run_hook("Bash", {"command": "pipx uninstall-all"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'pipx uninstall-all'})
 
     def test_block_conda_env_remove(self):
-        code, _, _ = run_hook("Bash", {"command": "conda env remove -n myenv"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'conda env remove -n myenv'})
 
     def test_block_mamba_env_remove(self):
-        code, _, _ = run_hook("Bash", {"command": "mamba env remove -n myenv"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'mamba env remove -n myenv'})
 
     def test_block_conda_clean_all(self):
-        code, _, _ = run_hook("Bash", {"command": "conda clean -a"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'conda clean -a'})
 
     def test_block_conda_clean_all_long(self):
-        code, _, _ = run_hook("Bash", {"command": "conda clean --all"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'conda clean --all'})
 
     def test_block_poetry_env_remove(self):
-        code, _, _ = run_hook("Bash", {"command": "poetry env remove python3.11"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'poetry env remove python3.11'})
 
     def test_block_pyenv_uninstall(self):
-        code, _, _ = run_hook("Bash", {"command": "pyenv uninstall 3.11.0"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'pyenv uninstall 3.11.0'})
 
     def test_block_pyenv_virtualenv_delete(self):
-        code, _, _ = run_hook("Bash", {"command": "pyenv virtualenv-delete myenv"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'pyenv virtualenv-delete myenv'})
 
     def test_block_pipenv_rm(self):
-        code, _, _ = run_hook("Bash", {"command": "pipenv --rm"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'pipenv --rm'})
 
     def test_block_django_flush(self):
-        code, _, _ = run_hook("Bash", {"command": "python manage.py flush"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'python manage.py flush'})
 
     def test_block_django_flush_python3(self):
-        code, _, _ = run_hook("Bash", {"command": "python3 manage.py flush"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'python3 manage.py flush'})
 
     def test_block_django_migrate_zero(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "python manage.py migrate myapp zero"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'python manage.py migrate myapp zero'})
 
     def test_block_django_migrate_zero_python3(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "python3 manage.py migrate myapp zero"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'python3 manage.py migrate myapp zero'})
 
 
 class TestPythonAsk:

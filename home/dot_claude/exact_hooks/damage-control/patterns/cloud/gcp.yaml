@@ -35,14 +35,12 @@ bashToolPatterns:
   # these state-change verbs for compute instances
   - pattern: '\bgcloud{flags}compute\s+instances\s+(start|stop|reset)\b'
     reason: Changes GCE instance state
-    ask: true
 
   # remove-iam-policy-binding and set-iam-policy use hyphens after the verb,
   # but these are caught by the ask catch-all since it uses \b word boundary.
   # However, add-iam-policy-binding is NOT in the ask catch-all verb list.
   - pattern: '\bgcloud{flags}.*\badd-iam-policy-binding\b'
     reason: Adds IAM policy binding (grants permissions)
-    ask: true
 
   # ---------------------------------------------------------------------------
   # BLOCK CATCH-ALL: any "gcloud ... delete" or "gcloud ... destroy"
@@ -55,4 +53,9 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   - pattern: '\bgcloud{flags}.*\b(create|update|deploy|remove-iam-policy-binding|set-iam-policy)\b'
     reason: GCP CLI mutating operation (catch-all)
-    ask: true
+
+  - pattern: '\bgcloud{flags}compute\s+ssh\b'
+    reason: gcloud compute ssh opens a remote shell on an instance
+
+  - pattern: '\bgcloud{flags}auth\s+(login|activate-service-account|revoke|configure-docker)\b'
+    reason: gcloud auth changes active credentials

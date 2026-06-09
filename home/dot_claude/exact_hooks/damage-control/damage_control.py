@@ -12,6 +12,13 @@ Claude Code Security Firewall - Consolidated Damage Control
 Single PreToolUse hook handling Bash, Edit, Write, Read, and Grep tools.
 Loads patterns from patterns.yaml for easy customization.
 
+Decision model:
+  - Path protections (zeroAccessPaths, readOnlyPaths, noDeletePaths) hard-block
+    and are checked before command patterns, so a pattern "ask" can never
+    downgrade a path protection.
+  - bashToolPatterns default to "ask": the user approves or rejects in the
+    permission prompt. A pattern can opt into a hard block with `block: true`.
+
 Exit codes:
   0 = Allow (or JSON stdout for "ask" decisions)
   2 = Block (stderr message fed back to Claude)
@@ -27,7 +34,8 @@ import sys
 from pathlib import Path
 from typing import Any
 
-import yaml
+# NOTE: yaml is imported lazily inside the config loaders — on a warm cache
+# the hook never pays the PyYAML import or parse cost.
 
 # ============================================================================
 # PATTERN UTILITIES
@@ -220,12 +228,8 @@ def _expand_shorthands(pattern: str, shorthands: dict[str, str]) -> str:
     return _SHORTHAND_RE.sub(_replace, pattern)
 
 
-def load_patterns_dir(patterns_dir: Path) -> dict[str, Any]:
-    """Load and merge all YAML files from a patterns directory."""
-    merged: dict[str, list] = {k: [] for k in _CONFIG_KEYS}
-    shorthands: dict[str, str] = {}
-
-    # Sorted paths for deterministic load order; .yaml before .yml
+def _pattern_files(patterns_dir: Path) -> list[Path]:
+    """Sorted YAML files for deterministic load order; .yaml before .yml."""
     seen: set[Path] = set()
     files: list[Path] = []
     for ext in ("*.yaml", "*.yml"):
@@ -233,19 +237,67 @@ def load_patterns_dir(patterns_dir: Path) -> dict[str, Any]:
             if p not in seen:
                 seen.add(p)
                 files.append(p)
+    return files
+
+
+def _cache_paths(patterns_dir: Path, files: list[Path]) -> tuple[Path, str]:
+    """Cache file location (per-user temp dir) and invalidation key."""
+    import hashlib
+    import tempfile
+
+    state = json.dumps(
+        [[str(p), p.stat().st_mtime_ns, p.stat().st_size] for p in files]
+    )
+    key = hashlib.sha256(state.encode()).hexdigest()
+    name = hashlib.sha256(str(patterns_dir).encode()).hexdigest()[:16]
+    cache_file = Path(tempfile.gettempdir()) / f"damage-control-{name}.json"
+    return cache_file, key
+
+
+def load_patterns_dir(patterns_dir: Path) -> dict[str, Any]:
+    """Load and merge all YAML files from a patterns directory.
+
+    Parsing ~25 YAML files dominates hook latency, and the hook runs on every
+    tool call. The merged config is cached as JSON in the per-user temp dir,
+    keyed by file paths, sizes, and mtimes — editing any pattern file
+    invalidates the cache.
+    """
+    files = _pattern_files(patterns_dir)
+    cache_file, key = _cache_paths(patterns_dir, files)
+    try:
+        with cache_file.open() as f:
+            cached = json.load(f)
+        if cached.get("key") == key:
+            return cached["config"]
+    except (OSError, ValueError, KeyError):
+        pass
+
+    import yaml
+
+    merged: dict[str, list] = {k: [] for k in _CONFIG_KEYS}
+    shorthands: dict[str, str] = {}
 
     for filepath in files:
         with filepath.open() as f:
             data = yaml.safe_load(f) or {}
-        for key in _CONFIG_KEYS:
-            items = data.get(key)
+        for key_name in _CONFIG_KEYS:
+            items = data.get(key_name)
             if isinstance(items, list):
-                merged[key].extend(items)
+                merged[key_name].extend(items)
         file_shorthands = data.get("shorthands")
         if isinstance(file_shorthands, dict):
             shorthands.update(file_shorthands)
 
     merged["shorthands"] = shorthands
+
+    tmp = cache_file.with_suffix(".tmp")
+    try:
+        with tmp.open("w") as f:
+            json.dump({"key": key, "config": merged}, f)
+        tmp.replace(cache_file)
+    except OSError:
+        pass
+
     return merged
 
 
@@ -260,6 +312,8 @@ def load_config() -> dict[str, Any]:
     if not config_path.exists():
         print(f"Warning: Config not found at {config_path}", file=sys.stderr)
         return {k: [] for k in _CONFIG_KEYS}
+
+    import yaml
 
     with config_path.open() as f:
         data = yaml.safe_load(f) or {}
@@ -347,36 +401,12 @@ def handle_bash(tool_input: dict[str, Any], config: dict[str, Any]) -> None:
     no_delete_paths = config.get("noDeletePaths", [])
     shorthands = config.get("shorthands", {})
 
-    # 1. Check against regex patterns from YAML (may block or ask)
-    for item in patterns:
-        pattern = item.get("pattern", "")
-        reason = item.get("reason", "Blocked by pattern")
-        should_ask = item.get("ask", False)
+    # Path protections run BEFORE command patterns: a pattern decision is
+    # "ask" by default and exits 0, which would otherwise let an approved
+    # command touch a protected path (e.g. `rm -rf ~/.ssh` asking instead
+    # of hard-blocking).
 
-        # Expand {name} shorthand placeholders
-        pattern = _expand_shorthands(pattern, shorthands)
-
-        if not item.get("match_anywhere", False):
-            pattern = _CMD_POSITION_PREFIX + pattern
-
-        try:
-            if re.search(pattern, command, re.IGNORECASE):
-                if should_ask:
-                    output = {
-                        "hookSpecificOutput": {
-                            "hookEventName": "PreToolUse",
-                            "permissionDecision": "ask",
-                            "permissionDecisionReason": reason,
-                        }
-                    }
-                    print(json.dumps(output))
-                    sys.exit(0)
-                else:
-                    _block(f"Blocked: {reason}", command)
-        except re.error:
-            continue
-
-    # 2. Zero-access paths: block ANY mention
+    # 1. Zero-access paths: block ANY mention
     for zero_path in zero_access_paths:
         if is_glob_pattern(zero_path):
             glob_regex = glob_to_regex(zero_path) + _GLOB_BOUNDARY
@@ -417,7 +447,7 @@ def handle_bash(tool_input: dict[str, Any], config: dict[str, Any]) -> None:
                     command,
                 )
 
-    # 3. Read-only paths: block modifications
+    # 2. Read-only paths: block modifications
     for readonly in read_only_paths:
         blocked, reason = check_path_patterns(
             command, readonly, READ_ONLY_BLOCKED, "read-only path"
@@ -425,13 +455,34 @@ def handle_bash(tool_input: dict[str, Any], config: dict[str, Any]) -> None:
         if blocked:
             _block(reason, command)
 
-    # 4. No-delete paths: block deletions only
+    # 3. No-delete paths: block deletions only
     for no_delete in no_delete_paths:
         blocked, reason = check_path_patterns(
             command, no_delete, NO_DELETE_BLOCKED, "no-delete path"
         )
         if blocked:
             _block(reason, command)
+
+    # 4. Command patterns from YAML: ask by default so the user stays in the
+    # loop on side-effecting commands; `block: true` opts into a hard block.
+    for item in patterns:
+        pattern = item.get("pattern", "")
+        reason = item.get("reason", "Matched damage-control pattern")
+        should_block = item.get("block", False)
+
+        # Expand {name} shorthand placeholders
+        pattern = _expand_shorthands(pattern, shorthands)
+
+        if not item.get("match_anywhere", False):
+            pattern = _CMD_POSITION_PREFIX + pattern
+
+        try:
+            if re.search(pattern, command, re.IGNORECASE):
+                if should_block:
+                    _block(f"Blocked: {reason}", command)
+                _ask(reason)
+        except re.error:
+            continue
 
     sys.exit(0)
 
@@ -517,6 +568,19 @@ def _block(reason: str, context: str) -> None:
     print(f"SECURITY: {reason}", file=sys.stderr)
     print(f"Target: {truncated}", file=sys.stderr)
     sys.exit(2)
+
+
+def _ask(reason: str) -> None:
+    """Emit an "ask" permission decision and exit 0."""
+    output = {
+        "hookSpecificOutput": {
+            "hookEventName": "PreToolUse",
+            "permissionDecision": "ask",
+            "permissionDecisionReason": reason,
+        }
+    }
+    print(json.dumps(output))
+    sys.exit(0)
 
 
 # ============================================================================

@@ -2,7 +2,7 @@
 
 import json
 
-from tests.conftest import run_hook
+from tests.conftest import assert_asks, run_hook
 
 
 class TestCredentialManagerBlock:
@@ -10,79 +10,61 @@ class TestCredentialManagerBlock:
 
     # -- pass (password-store) catch-all --
     def test_block_pass_show(self):
-        code, _, _ = run_hook("Bash", {"command": "pass show email/gmail"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'pass show email/gmail'})
 
     def test_block_pass_ls(self):
-        code, _, _ = run_hook("Bash", {"command": "pass ls"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'pass ls'})
 
     def test_block_pass_insert(self):
-        code, _, _ = run_hook("Bash", {"command": "pass insert email/new"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'pass insert email/new'})
 
     def test_block_pass_rm(self):
-        code, _, _ = run_hook("Bash", {"command": "pass rm email/old"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'pass rm email/old'})
 
     def test_block_pass_generate(self):
-        code, _, _ = run_hook("Bash", {"command": "pass generate email/new 20"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'pass generate email/new 20'})
 
     def test_block_pass_edit(self):
-        code, _, _ = run_hook("Bash", {"command": "pass edit email/gmail"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'pass edit email/gmail'})
 
     def test_block_pass_init(self):
-        code, _, _ = run_hook("Bash", {"command": "pass init GPGID"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'pass init GPGID'})
 
     def test_block_pass_otp(self):
-        code, _, _ = run_hook("Bash", {"command": "pass otp email/gmail"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'pass otp email/gmail'})
 
     def test_block_pass_git(self):
         """pass git push is blocked by the pass credential manager pattern."""
-        code, _, _ = run_hook("Bash", {"command": "pass git push"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'pass git push'})
 
     # -- gopass (password-store alternative) catch-all --
     def test_block_gopass_show(self):
-        code, _, _ = run_hook("Bash", {"command": "gopass show email/gmail"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'gopass show email/gmail'})
 
     def test_block_gopass_ls(self):
-        code, _, _ = run_hook("Bash", {"command": "gopass ls"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'gopass ls'})
 
     def test_block_gopass_insert(self):
-        code, _, _ = run_hook("Bash", {"command": "gopass insert email/new"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'gopass insert email/new'})
 
     # -- 1Password CLI (op) catch-all --
     def test_block_op_item(self):
-        code, _, _ = run_hook("Bash", {"command": "op item get MyLogin"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'op item get MyLogin'})
 
     def test_block_op_vault(self):
-        code, _, _ = run_hook("Bash", {"command": "op vault list"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'op vault list'})
 
     def test_block_op_document(self):
-        code, _, _ = run_hook("Bash", {"command": "op document get mydoc"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'op document get mydoc'})
 
     def test_block_op_whoami(self):
-        code, _, _ = run_hook("Bash", {"command": "op whoami"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'op whoami'})
 
     def test_block_op_signin(self):
-        code, _, _ = run_hook("Bash", {"command": "op signin"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'op signin'})
 
     def test_block_op_read(self):
-        code, _, _ = run_hook("Bash", {"command": "op read op://vault/item/field"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'op read op://vault/item/field'})
 
     def test_block_op_inject(self):
         code, _, _ = run_hook("Bash", {"command": "op inject -i template.env"})
@@ -90,153 +72,107 @@ class TestCredentialManagerBlock:
 
     # -- HashiCorp Vault catch-all --
     def test_block_vault_read(self):
-        code, _, _ = run_hook("Bash", {"command": "vault read secret/data/myapp"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'vault read secret/data/myapp'})
 
     def test_block_vault_write(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "vault write secret/data/myapp key=value"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'vault write secret/data/myapp key=value'})
 
     def test_block_vault_delete(self):
-        code, _, _ = run_hook("Bash", {"command": "vault delete secret/data/myapp"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'vault delete secret/data/myapp'})
 
     def test_block_vault_kv(self):
-        code, _, _ = run_hook("Bash", {"command": "vault kv get secret/myapp"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'vault kv get secret/myapp'})
 
     def test_block_vault_token(self):
-        code, _, _ = run_hook("Bash", {"command": "vault token lookup"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'vault token lookup'})
 
     def test_block_vault_status(self):
-        code, _, _ = run_hook("Bash", {"command": "vault status"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'vault status'})
 
     def test_block_vault_seal(self):
-        code, _, _ = run_hook("Bash", {"command": "vault seal"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'vault seal'})
 
     def test_block_vault_unseal(self):
-        code, _, _ = run_hook("Bash", {"command": "vault unseal"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'vault unseal'})
 
     def test_block_vault_login(self):
-        code, _, _ = run_hook("Bash", {"command": "vault login -method=ldap"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'vault login -method=ldap'})
 
     def test_block_vault_secrets(self):
-        code, _, _ = run_hook("Bash", {"command": "vault secrets list"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'vault secrets list'})
 
     # -- Bitwarden CLI (bw) catch-all --
     def test_block_bw_get(self):
-        code, _, _ = run_hook("Bash", {"command": "bw get password gmail"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'bw get password gmail'})
 
     def test_block_bw_list(self):
-        code, _, _ = run_hook("Bash", {"command": "bw list items"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'bw list items'})
 
     def test_block_bw_unlock(self):
-        code, _, _ = run_hook("Bash", {"command": "bw unlock"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'bw unlock'})
 
     def test_block_bw_export(self):
-        code, _, _ = run_hook("Bash", {"command": "bw export --format json"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'bw export --format json'})
 
     # -- LastPass CLI (lpass) catch-all --
     def test_block_lpass_show(self):
-        code, _, _ = run_hook("Bash", {"command": "lpass show gmail"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'lpass show gmail'})
 
     def test_block_lpass_ls(self):
-        code, _, _ = run_hook("Bash", {"command": "lpass ls"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'lpass ls'})
 
     def test_block_lpass_login(self):
-        code, _, _ = run_hook("Bash", {"command": "lpass login user@example.com"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'lpass login user@example.com'})
 
     # -- Bitwarden CLI unofficial (rbw) catch-all --
     def test_block_rbw_get(self):
-        code, _, _ = run_hook("Bash", {"command": "rbw get gmail"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'rbw get gmail'})
 
     def test_block_rbw_list(self):
-        code, _, _ = run_hook("Bash", {"command": "rbw list"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'rbw list'})
 
     def test_block_rbw_unlock(self):
-        code, _, _ = run_hook("Bash", {"command": "rbw unlock"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'rbw unlock'})
 
     # -- Doppler secret manager catch-all --
     def test_block_doppler_secrets(self):
-        code, _, _ = run_hook("Bash", {"command": "doppler secrets"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'doppler secrets'})
 
     def test_block_doppler_run(self):
-        code, _, _ = run_hook("Bash", {"command": "doppler run -- node app.js"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'doppler run -- node app.js'})
 
     def test_block_doppler_configure(self):
-        code, _, _ = run_hook("Bash", {"command": "doppler configure"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'doppler configure'})
 
     # -- macOS Keychain (security) --
     def test_block_security_find_generic_password(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "security find-generic-password -s myservice"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'security find-generic-password -s myservice'})
 
     def test_block_security_find_internet_password(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "security find-internet-password -s example.com"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'security find-internet-password -s example.com'})
 
     def test_block_security_dump_keychain(self):
-        code, _, _ = run_hook("Bash", {"command": "security dump-keychain"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'security dump-keychain'})
 
     def test_block_security_show_keychain_info(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "security show-keychain-info login.keychain"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'security show-keychain-info login.keychain'})
 
     def test_block_security_find_certificate(self):
-        code, _, _ = run_hook("Bash", {"command": "security find-certificate -a"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'security find-certificate -a'})
 
     def test_block_security_find_identity(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "security find-identity -v -p codesigning"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'security find-identity -v -p codesigning'})
 
     # -- GNOME Keyring (secret-tool) --
     def test_block_secret_tool_lookup(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "secret-tool lookup service myservice"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'secret-tool lookup service myservice'})
 
     def test_block_secret_tool_store(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "secret-tool store --label=myservice service myservice"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'secret-tool store --label=myservice service myservice'})
 
     # -- KDE Wallet (kwallet-query) --
     def test_block_kwallet_query(self):
-        code, _, _ = run_hook("Bash", {"command": "kwallet-query kdewallet"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'kwallet-query kdewallet'})
 
 
 class TestCredentialTokenExposure:
@@ -244,16 +180,10 @@ class TestCredentialTokenExposure:
 
     # -- GPG secret key export (block) --
     def test_block_gpg_export_secret_keys(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "gpg --export-secret-keys user@example.com"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'gpg --export-secret-keys user@example.com'})
 
     def test_block_gpg_export_secret_subkeys(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "gpg --export-secret-subkeys KEYID"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'gpg --export-secret-subkeys KEYID'})
 
     # -- printenv dump (ask) --
     def test_ask_printenv_bare(self):
@@ -310,12 +240,10 @@ class TestScheduledExecution:
 
     def test_block_crontab_remove(self):
         """crontab -r block lives in shell.yaml but is tested here thematically."""
-        code, _, _ = run_hook("Bash", {"command": "crontab -r"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'crontab -r'})
 
     def test_block_crontab_remove_with_user(self):
-        code, _, _ = run_hook("Bash", {"command": "crontab -r -u root"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'crontab -r -u root'})
 
 
 class TestMiscSecurity:
@@ -347,8 +275,7 @@ class TestMiscSecurity:
 
     def test_block_chmod_setuid_oa(self):
         """chmod oa+s (other and all)."""
-        code, _, _ = run_hook("Bash", {"command": "chmod oa+s /tmp/exploit"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'chmod oa+s /tmp/exploit'})
 
     # -- chattr (ask) --
     def test_ask_chattr(self):

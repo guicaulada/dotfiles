@@ -2,25 +2,21 @@
 
 import json
 
-from tests.conftest import run_hook
+from tests.conftest import assert_asks, run_hook
 
 
 class TestRubyBlock:
     def test_block_rbenv_uninstall(self):
-        code, _, _ = run_hook("Bash", {"command": "rbenv uninstall 3.2.0"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'rbenv uninstall 3.2.0'})
 
     def test_block_rbenv_remove(self):
-        code, _, _ = run_hook("Bash", {"command": "rbenv remove 3.2.0"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'rbenv remove 3.2.0'})
 
     def test_block_rvm_remove(self):
-        code, _, _ = run_hook("Bash", {"command": "rvm remove 3.2.0"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'rvm remove 3.2.0'})
 
     def test_block_rvm_uninstall(self):
-        code, _, _ = run_hook("Bash", {"command": "rvm uninstall 3.2.0"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'rvm uninstall 3.2.0'})
 
 
 class TestRubyAsk:
@@ -33,32 +29,25 @@ class TestRubyAsk:
 
 class TestRailsBlock:
     def test_block_rails_db_drop(self):
-        code, _, _ = run_hook("Bash", {"command": "rails db:drop"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'rails db:drop'})
 
     def test_block_rails_db_reset(self):
-        code, _, _ = run_hook("Bash", {"command": "rails db:reset"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'rails db:reset'})
 
     def test_block_bin_rails_db_drop(self):
-        code, _, _ = run_hook("Bash", {"command": "bin/rails db:drop"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'bin/rails db:drop'})
 
     def test_block_rake_db_drop(self):
-        code, _, _ = run_hook("Bash", {"command": "rake db:drop"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'rake db:drop'})
 
     def test_block_bin_rake_db_reset(self):
-        code, _, _ = run_hook("Bash", {"command": "bin/rake db:reset"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'bin/rake db:reset'})
 
     def test_block_rails_db_schema_load(self):
-        code, _, _ = run_hook("Bash", {"command": "rails db:schema:load"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'rails db:schema:load'})
 
     def test_block_bin_rails_db_schema_load(self):
-        code, _, _ = run_hook("Bash", {"command": "bin/rails db:schema:load"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'bin/rails db:schema:load'})
 
 
 class TestRailsAsk:
@@ -85,3 +74,11 @@ class TestRailsAsk:
         assert code == 0
         data = json.loads(stdout)
         assert data["hookSpecificOutput"]["permissionDecision"] == "ask"
+
+
+class TestGemMutationAsk:
+    def test_ask_gem_install(self):
+        assert_asks("Bash", {"command": "gem install bundler"})
+
+    def test_ask_gem_push(self):
+        assert_asks("Bash", {"command": "gem push mygem-1.0.0.gem"})

@@ -61,31 +61,25 @@ bashToolPatterns:
     reason: printf piped to shell (code injection vector)
 
   # ---------------------------------------------------------------------------
-  # SHELL EVALUATION REQUIRING CONFIRMATION (ask: true)
+  # SHELL EVALUATION REQUIRING CONFIRMATION
   # ---------------------------------------------------------------------------
   - pattern: '\bsource\s+'
     reason: Sourcing a script (executes in current shell context)
-    ask: true
 
   - pattern: '\bexec\s+[^>]'
     reason: exec replaces current shell process
-    ask: true
 
   - pattern: '\b(bash|sh|zsh)\s+-c\s+'
     reason: Indirect shell command execution
-    ask: true
 
   - pattern: '\b(node|ruby|perl)\s+-e\s+'
     reason: Inline code execution
-    ask: true
 
   # ---------------------------------------------------------------------------
-  # PROCESS MANAGEMENT (ask: true)
+  # PROCESS MANAGEMENT
   # ---------------------------------------------------------------------------
   - pattern: '\bkillall\s+\S+'
     reason: Sends signal to all matching processes
-    ask: true
 
   - pattern: '\bpkill\s+'
     reason: Sends signal to processes matching pattern
-    ask: true

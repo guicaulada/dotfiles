@@ -49,54 +49,64 @@ bashToolPatterns:
     reason: kextunload (unloads kernel extension - can crash system)
 
   # ---------------------------------------------------------------------------
-  # macOS REQUIRING CONFIRMATION (ask: true)
+  # macOS REQUIRING CONFIRMATION
   # ---------------------------------------------------------------------------
   - pattern: '\bdefaults{flags}write\b'
     reason: Modifies macOS preferences
-    ask: true
 
   - pattern: '\bnetworksetup\b'
     reason: Modifies macOS network configuration
-    ask: true
 
   - pattern: '\bscutil\s+--set\b'
     reason: Modifies macOS system configuration
-    ask: true
 
   - pattern: '\bpmset\b'
     reason: Modifies macOS power management settings
-    ask: true
 
   - pattern: '\blaunchctl{flags}(load|bootstrap|submit)\b'
     reason: Loads macOS service
-    ask: true
 
   - pattern: '\bdiskutil{flags}(unmount|unmountDisk|mount|mountDisk)\b'
     reason: Mounts/unmounts macOS disk
-    ask: true
 
   - pattern: '\bsystemsetup\b'
     reason: Modifies macOS system settings (timezone, sleep, remote login)
-    ask: true
 
   - pattern: '\bsoftwareupdate\s+(-i|--install)\b'
     reason: Installs macOS system updates
-    ask: true
 
   - pattern: '\binstaller\s+-pkg\b'
     reason: Installs macOS .pkg package
-    ask: true
 
   - pattern: '\bkextload\b'
     reason: Loads kernel extension (arbitrary code in kernel space)
-    ask: true
 
   - pattern: '\bmdutil\s+(-i\s+off|-E|-d)\b'
     reason: Disables or erases Spotlight index
-    ask: true
 
   # ---------------------------------------------------------------------------
   # macOS PACKAGE MANAGERS
   # ---------------------------------------------------------------------------
   - pattern: '\bport\s+(uninstall|deactivate)\b'
     reason: port uninstall/deactivate (removes MacPorts package)
+
+  - pattern: '\bport\s+(install|upgrade)\b'
+    reason: port install/upgrade (MacPorts package mutation)
+
+  # ---------------------------------------------------------------------------
+  # ADDITIONAL SYSTEM STATE MUTATIONS
+  # ---------------------------------------------------------------------------
+  - pattern: '{sudo}launchctl{flags}(enable|disable|kickstart)\b'
+    reason: launchctl enable/disable/kickstart changes service state
+
+  - pattern: '\bcodesign{args}\s+(-s|--sign)\b'
+    reason: codesign signs binaries (changes code signature trust)
+
+  - pattern: '{sudo}tmutil\s+(addexclusion|removeexclusion|setdestination|enable)\b'
+    reason: tmutil changes Time Machine backup configuration
+
+  - pattern: '{sudo}profiles\s+(install|remove|renew)\b'
+    reason: profiles installs or removes configuration profiles
+
+  - pattern: '\bxattr\s+-w\b'
+    reason: xattr -w writes extended attributes

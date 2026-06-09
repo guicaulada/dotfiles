@@ -2,17 +2,15 @@
 
 import json
 
-from tests.conftest import run_hook
+from tests.conftest import assert_asks, run_hook
 
 
 class TestDenoBlock:
     def test_block_deno_run_allow_all_short(self):
-        code, _, _ = run_hook("Bash", {"command": "deno run -A script.ts"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'deno run -A script.ts'})
 
     def test_block_deno_run_allow_all_long(self):
-        code, _, _ = run_hook("Bash", {"command": "deno run --allow-all script.ts"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'deno run --allow-all script.ts'})
 
 
 class TestDenoAsk:
@@ -35,8 +33,7 @@ class TestDenoAsk:
 
 class TestBunBlock:
     def test_block_bun_pm_cache_rm(self):
-        code, _, _ = run_hook("Bash", {"command": "bun pm cache rm"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'bun pm cache rm'})
 
 
 class TestBunAsk:
@@ -55,85 +52,47 @@ class TestBunAsk:
 
 class TestNodeBlock:
     def test_block_node_fs_rm_require(self):
-        code, _, _ = run_hook(
-            "Bash",
-            {
-                "command": "node -e \"const f=require('fs'); f.rm('/tmp/d', {recursive:true}, ()=>{})\""
-            },
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'node -e "const f=require(\'fs\'); f.rm(\'/tmp/d\', {recursive:true}, ()=>{})"'})
 
     def test_block_node_fs_rmdir_sync(self):
-        code, _, _ = run_hook(
-            "Bash",
-            {"command": "node -e \"const f=require('fs'); f.rmdirSync('/tmp/d')\""},
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'node -e "const f=require(\'fs\'); f.rmdirSync(\'/tmp/d\')"'})
 
     def test_block_node_fs_unlink_sync(self):
-        code, _, _ = run_hook(
-            "Bash",
-            {"command": "node -e \"const f=require('fs'); f.unlinkSync('/tmp/f')\""},
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'node -e "const f=require(\'fs\'); f.unlinkSync(\'/tmp/f\')"'})
 
     def test_block_node_fs_rm_sync(self):
-        code, _, _ = run_hook(
-            "Bash",
-            {"command": "node -e \"fs.rmSync('/tmp/d', {recursive:true})\""},
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'node -e "fs.rmSync(\'/tmp/d\', {recursive:true})"'})
 
     def test_block_node_child_process(self):
-        code, _, _ = run_hook(
-            "Bash",
-            {"command": "node -e \"require('child_process').execSync('rm -rf /')\""},
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'node -e "require(\'child_process\').execSync(\'rm -rf /\')"'})
 
     def test_block_node_exec_sync(self):
-        code, _, _ = run_hook(
-            "Bash",
-            {
-                "command": "node -e \"const {execSync} = require('child_process'); execSync('ls')\""
-            },
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'node -e "const {execSync} = require(\'child_process\'); execSync(\'ls\')"'})
 
     def test_block_node_spawn(self):
-        code, _, _ = run_hook(
-            "Bash",
-            {"command": "node -e \"require('child_process').spawn('ls')\""},
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'node -e "require(\'child_process\').spawn(\'ls\')"'})
 
 
 class TestVersionManagerBlock:
     def test_block_nvm_uninstall(self):
-        code, _, _ = run_hook("Bash", {"command": "nvm uninstall 18"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'nvm uninstall 18'})
 
     def test_block_fnm_uninstall(self):
-        code, _, _ = run_hook("Bash", {"command": "fnm uninstall 18"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'fnm uninstall 18'})
 
     def test_block_volta_uninstall(self):
-        code, _, _ = run_hook("Bash", {"command": "volta uninstall node"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'volta uninstall node'})
 
 
 class TestCacheBlock:
     def test_block_npm_cache_clean(self):
-        code, _, _ = run_hook("Bash", {"command": "npm cache clean --force"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'npm cache clean --force'})
 
     def test_block_yarn_cache_clean(self):
-        code, _, _ = run_hook("Bash", {"command": "yarn cache clean"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'yarn cache clean'})
 
     def test_block_pnpm_store_prune(self):
-        code, _, _ = run_hook("Bash", {"command": "pnpm store prune"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'pnpm store prune'})
 
 
 class TestCacheAsk:

@@ -358,6 +358,7 @@ class TestDispatcher:
 
     def test_context_truncation(self):
         """Long commands/paths should be truncated in stderr output."""
-        long_cmd = "rm -rf " + "a" * 200
+        long_cmd = "cat ~/.ssh/id_rsa " + "a" * 200
         code, _, stderr = run_hook("Bash", {"command": long_cmd})
         assert code == 2
+        assert "..." in stderr

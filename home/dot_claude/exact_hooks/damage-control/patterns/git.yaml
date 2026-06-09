@@ -44,82 +44,64 @@ bashToolPatterns:
     reason: git update-ref -d (deletes refs, can break repository)
 
   # ---------------------------------------------------------------------------
-  # GIT OPERATIONS REQUIRING CONFIRMATION (ask: true)
+  # GIT OPERATIONS REQUIRING CONFIRMATION
   # ---------------------------------------------------------------------------
   - pattern: '\bgit{flags}checkout\s+--\s*\.'
     reason: Discards all uncommitted changes
-    ask: true
 
   - pattern: '\bgit{flags}restore\s+\.'
     reason: Discards all uncommitted changes
-    ask: true
 
   - pattern: '\bgit{flags}stash\s+drop\b'
     reason: Permanently deletes a stash
-    ask: true
 
   - pattern: '\bgit{flags}branch\s+(-\S+\s+)*-D'
     reason: Force deletes branch (even if unmerged)
-    ask: true
 
   - pattern: '\bgit{flags}push\s+\S+\s+--delete\b'
     reason: Deletes remote branch
-    ask: true
 
   - pattern: '\bgit{flags}push\s+\S+\s+:\S+'
     reason: Deletes remote branch (old syntax)
-    ask: true
 
   - pattern: '\bgit{flags}revert\b'
     reason: Creates revert commit (undoes changes)
-    ask: true
 
   - pattern: '\bgit{flags}tag\s+-d\b'
     reason: Deletes a local tag
-    ask: true
 
   - pattern: '\bgit{flags}tag\s+(-\S+\s+)*-f\b'
     reason: Force moves an existing tag
-    ask: true
 
   - pattern: '\bgit{flags}notes\s+(remove|prune)\b'
     reason: Removes git notes (metadata loss)
-    ask: true
 
   - pattern: '\bgit{flags}config\s+--global\b'
     reason: Modifies global git configuration
-    ask: true
 
   - pattern: '\bgit{flags}remote\s+(remove|rm)\b'
     reason: Removes a remote from repository
-    ask: true
 
   - pattern: '\bgit{flags}remote\s+set-url\b'
     reason: Changes remote URL
-    ask: true
 
   # ---------------------------------------------------------------------------
-  # GIT OPERATIONS WITH REMOTE SIDE EFFECTS (ask: true)
+  # GIT OPERATIONS WITH REMOTE SIDE EFFECTS
   # ---------------------------------------------------------------------------
   - pattern: '\bgit{flags}push\b'
     reason: Pushes commits to remote repository
-    ask: true
 
   - pattern: '\bgit{flags}fetch{args}\s+--prune\b'
     reason: Prunes remote-tracking branches
-    ask: true
 
   # ---------------------------------------------------------------------------
-  # GIT HISTORY / WORKFLOW OPERATIONS (ask: true)
+  # GIT HISTORY / WORKFLOW OPERATIONS
   # ---------------------------------------------------------------------------
   - pattern: '\bgit{flags}rebase\b'
     reason: Rewrites commit history
-    ask: true
 
   - pattern: '\bgit{flags}(cherry-pick|merge|rebase)\s+--abort\b'
     reason: Aborts in-progress operation (discards conflict resolution work)
-    ask: true
 
   - pattern: '\bgit{flags}worktree\s+remove\b'
     reason: Removes git worktree
-    ask: true

@@ -89,130 +89,102 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   - pattern: '\bkubectl{flags}get\s+secrets?\b'
     reason: kubectl get secret (may expose decoded secret values)
-    ask: true
 
   # ---------------------------------------------------------------------------
-  # KUBERNETES (kubectl/helm) OPERATIONS REQUIRING CONFIRMATION (ask: true)
+  # KUBERNETES (kubectl/helm) OPERATIONS REQUIRING CONFIRMATION
   # ---------------------------------------------------------------------------
   - pattern: '\bkubectl{flags}delete\b'
     reason: Deletes Kubernetes resources
-    ask: true
 
   - pattern: '\bkubectl{flags}apply\b'
     reason: Creates or updates Kubernetes resources
-    ask: true
 
   - pattern: '\bkubectl{flags}create\b'
     reason: Creates Kubernetes resources
-    ask: true
 
   - pattern: '\bkubectl{flags}patch\b'
     reason: Modifies Kubernetes resources in-place
-    ask: true
 
   - pattern: '\bkubectl{flags}replace\b'
     reason: Replaces Kubernetes resources
-    ask: true
 
   - pattern: '\bkubectl{flags}scale\b'
     reason: Changes replica count
-    ask: true
 
   - pattern: '\bkubectl{flags}rollout\s+(restart|undo)\b'
     reason: Restarts or rolls back deployment
-    ask: true
 
   - pattern: '\bkubectl{flags}drain\b'
     reason: Evicts pods from node
-    ask: true
 
   - pattern: '\bkubectl{flags}cordon\b'
     reason: Marks node as unschedulable
-    ask: true
 
   - pattern: '\bkubectl{flags}uncordon\b'
     reason: Marks node as schedulable
-    ask: true
 
   - pattern: '\bkubectl{flags}taint\b'
     reason: Modifies node taints
-    ask: true
 
   - pattern: '\bkubectl{flags}exec\b'
     reason: Executes command in pod
-    ask: true
 
   - pattern: '\bkubectl{flags}set\s+(image|env|resources)\b'
     reason: Modifies deployment configuration
-    ask: true
 
   - pattern: '\bkubectl{flags}edit\b'
     reason: Edits Kubernetes resource in-place
-    ask: true
 
   - pattern: '\bkubectl{flags}run\b'
     reason: Creates ad-hoc pod
-    ask: true
 
   - pattern: '\bkubectl{flags}expose\b'
     reason: Creates Kubernetes service
-    ask: true
 
   - pattern: '\bkubectl{flags}cp\b'
     reason: Copies files to/from pod
-    ask: true
 
   - pattern: '\bkubectl{flags}label\b'
     reason: Modifies Kubernetes resource labels
-    ask: true
 
   - pattern: '\bkubectl{flags}annotate\b'
     reason: Modifies Kubernetes resource annotations
-    ask: true
 
   - pattern: '\bkubectl{flags}port-forward\b'
     reason: Forwards local port to pod
-    ask: true
 
   - pattern: '\bkubectl{flags}config\s+(set-context|use-context)\b'
     reason: Changes active Kubernetes context
-    ask: true
 
   - pattern: '\bkubectl{flags}config\s+set-credentials\b'
     reason: Modifies Kubernetes credentials
-    ask: true
 
   - pattern: '\bkubectl{flags}debug\b'
     reason: Creates debug container in pod
-    ask: true
 
   - pattern: '\bkubectl{flags}auth\s+reconcile\b'
     reason: Modifies Kubernetes RBAC rules
-    ask: true
 
   - pattern: '\blinkerd{flags}inject\b'
     reason: Injects Linkerd sidecar proxy into resources
-    ask: true
 
   - pattern: '\bhelm{flags}(install|upgrade)\b'
     reason: Deploys or updates Helm release
-    ask: true
 
   - pattern: '\bhelm{flags}rollback\b'
     reason: Rolls back Helm release
-    ask: true
 
   - pattern: '\bnomad{flags}job\s+run\b'
     reason: Submits Nomad job
-    ask: true
 
   # ---------------------------------------------------------------------------
-  # TANKA OPERATIONS REQUIRING CONFIRMATION (ask: true)
+  # TANKA OPERATIONS REQUIRING CONFIRMATION
   # ---------------------------------------------------------------------------
   - pattern: '\btk{flags}apply\b'
     reason: Applies Tanka manifests to Kubernetes cluster
-    ask: true
 
   - pattern: '\btk{flags}diff\b'
     reason: Compares Tanka manifests against live cluster
-    ask: true
+
+  - pattern: '\bhelm{flags}repo\s+(add|remove|update)\b'
+    reason: helm repo changes which chart repositories are trusted

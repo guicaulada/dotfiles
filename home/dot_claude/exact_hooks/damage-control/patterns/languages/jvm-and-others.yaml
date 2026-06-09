@@ -8,7 +8,6 @@ bashToolPatterns:
 
   - pattern: '\bgo{flags}clean{args}\s+-(cache|testcache|fuzzcache)\b'
     reason: go clean cache-clearing flags (destroys Go build cache)
-    ask: true
 
   # ---------------------------------------------------------------------------
   # RUST - CARGO AND RUSTUP
@@ -18,11 +17,9 @@ bashToolPatterns:
 
   - pattern: '\bcargo{flags}clean\b'
     reason: cargo clean (removes target directory / all build artifacts)
-    ask: true
 
   - pattern: '\brustup{flags}toolchain\s+(uninstall|remove)\b'
     reason: rustup toolchain uninstall (removes Rust toolchain version)
-    ask: true
 
   # ---------------------------------------------------------------------------
   # JAVA / JVM
@@ -32,15 +29,12 @@ bashToolPatterns:
 
   - pattern: '\bmvn{flags}.*clean\b'
     reason: mvn clean (removes target build directory)
-    ask: true
 
   - pattern: '\b(gradle|gradlew)\s+clean\b'
     reason: gradle clean (removes build directory)
-    ask: true
 
   - pattern: '\bsbt{flags}clean\b'
     reason: sbt clean (removes target directory)
-    ask: true
 
   # ---------------------------------------------------------------------------
   # PHP - COMPOSER AND LARAVEL
@@ -56,11 +50,9 @@ bashToolPatterns:
 
   - pattern: '\bcomposer{flags}remove\b'
     reason: composer remove (removes PHP package from project)
-    ask: true
 
   - pattern: '\bphp{flags}artisan\s+migrate:rollback\b'
     reason: artisan migrate:rollback (rolls back last batch)
-    ask: true
 
   # ---------------------------------------------------------------------------
   # ELIXIR - MIX / ECTO
@@ -76,7 +68,6 @@ bashToolPatterns:
 
   - pattern: '\bmix{flags}ecto\.rollback\b'
     reason: mix ecto.rollback (rolls back database migrations)
-    ask: true
 
   # ---------------------------------------------------------------------------
   # SWIFT / XCODE
@@ -86,7 +77,6 @@ bashToolPatterns:
 
   - pattern: '\bxcodebuild{flags}clean\b'
     reason: xcodebuild clean (removes Xcode build products)
-    ask: true
 
   # ---------------------------------------------------------------------------
   # .NET / C#
@@ -96,7 +86,6 @@ bashToolPatterns:
 
   - pattern: '\bdotnet{flags}clean\b'
     reason: dotnet clean (removes build outputs)
-    ask: true
 
   # ---------------------------------------------------------------------------
   # HASKELL
@@ -106,18 +95,15 @@ bashToolPatterns:
 
   - pattern: '\bstack{flags}clean\b'
     reason: stack clean (removes Haskell Stack build artifacts)
-    ask: true
 
   # ---------------------------------------------------------------------------
   # DART / FLUTTER
   # ---------------------------------------------------------------------------
   - pattern: '\bflutter{flags}clean\b'
     reason: flutter clean (removes Flutter build artifacts)
-    ask: true
 
   - pattern: '\bdart{flags}pub\s+cache\s+clean\b'
     reason: dart pub cache clean (clears Dart package cache)
-    ask: true
 
   # ---------------------------------------------------------------------------
   # LUA / PERL
@@ -127,18 +113,15 @@ bashToolPatterns:
 
   - pattern: '\bluarocks{flags}remove\b'
     reason: luarocks remove (uninstalls Lua rock/package)
-    ask: true
 
   - pattern: '\bcpanm\s+--uninstall\b'
     reason: cpanm --uninstall (removes Perl module)
-    ask: true
 
   # ---------------------------------------------------------------------------
-  # ADDITIONAL INLINE CODE EXECUTION (ask: true)
+  # ADDITIONAL INLINE CODE EXECUTION
   # ---------------------------------------------------------------------------
   - pattern: '\b(julia|Rscript)\s+-e\b'
     reason: Julia/R inline code execution
-    ask: true
 
   # ---------------------------------------------------------------------------
   # JAVA / JVM ECOSYSTEM - SDKMAN
@@ -151,4 +134,6 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   - pattern: '\bcargo{flags}uninstall\b'
     reason: cargo uninstall (removes installed Rust binary)
-    ask: true
+
+  - pattern: '\bcargo{flags}publish\b'
+    reason: cargo publish uploads a crate to the registry

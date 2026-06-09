@@ -16,40 +16,31 @@ bashToolPatterns:
     reason: Mercurial destructive operation
 
   # ---------------------------------------------------------------------------
-  # OPERATIONS REQUIRING CONFIRMATION (ask: true)
+  # OPERATIONS REQUIRING CONFIRMATION
   # ---------------------------------------------------------------------------
   - pattern: '\bansible-playbook\b'
     reason: Runs Ansible playbook against hosts
-    ask: true
 
   - pattern: '\bansible\s+.*(-m|--module-name)\b'
     reason: Runs Ansible ad-hoc command on remote hosts
-    ask: true
 
   - pattern: '\bact\b\s+'
     reason: Runs GitHub Actions workflows locally
-    ask: true
 
   - pattern: '\bglab{flags}mr\s+(merge|close|create)\b'
     reason: GitLab merge request action
-    ask: true
 
   - pattern: '\bglab{flags}issue\s+(create|close)\b'
     reason: GitLab issue action
-    ask: true
 
   - pattern: '\bglab{flags}pipeline\s+(cancel|delete|retry)\b'
     reason: GitLab pipeline action
-    ask: true
 
   - pattern: '\b(serverless|sls){flags}deploy\b'
     reason: Deploys Serverless Framework application
-    ask: true
 
   - pattern: '\bsst{flags}deploy\b'
     reason: Deploys SST application
-    ask: true
 
   - pattern: '\bsvn\s+(delete|revert)\b'
     reason: SVN destructive operation
-    ask: true

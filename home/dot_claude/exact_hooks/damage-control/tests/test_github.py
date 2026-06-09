@@ -2,7 +2,7 @@
 
 import json
 
-from tests.conftest import run_hook
+from tests.conftest import assert_asks, run_hook
 
 
 class TestGitHubBlock:
@@ -11,40 +11,32 @@ class TestGitHubBlock:
     # -- gh auth token / --show-token (credential exposure) ----------------
 
     def test_block_gh_auth_token(self):
-        code, _, _ = run_hook("Bash", {"command": "gh auth token"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'gh auth token'})
 
     def test_block_gh_auth_token_with_hostname(self):
-        code, _, _ = run_hook("Bash", {"command": "gh auth token --hostname github.com"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'gh auth token --hostname github.com'})
 
     def test_block_gh_auth_status_show_token_long(self):
-        code, _, _ = run_hook("Bash", {"command": "gh auth status --show-token"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'gh auth status --show-token'})
 
     def test_block_gh_auth_status_show_token_short(self):
-        code, _, _ = run_hook("Bash", {"command": "gh auth status -t"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'gh auth status -t'})
 
     # -- gh repo delete/archive/rename ------------------------------------
 
     def test_block_gh_repo_delete(self):
-        code, _, _ = run_hook("Bash", {"command": "gh repo delete my-repo"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'gh repo delete my-repo'})
 
     def test_block_gh_repo_archive(self):
-        code, _, _ = run_hook("Bash", {"command": "gh repo archive my-repo"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'gh repo archive my-repo'})
 
     def test_block_gh_repo_rename(self):
-        code, _, _ = run_hook("Bash", {"command": "gh repo rename new-name"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'gh repo rename new-name'})
 
     # -- gh release delete ------------------------------------------------
 
     def test_block_gh_release_delete(self):
-        code, _, _ = run_hook("Bash", {"command": "gh release delete v1.0.0"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'gh release delete v1.0.0'})
 
 
 class TestGitHubAsk:

@@ -5,24 +5,18 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   - pattern: '\bsudo\s+'
     reason: Elevated privilege execution
-    ask: true
 
   - pattern: '\b(su|doas)\s+'
     reason: Privilege escalation
-    ask: true
 
   - pattern: '\bpkexec\s+'
     reason: PolicyKit privilege escalation
-    ask: true
 
   - pattern: '\brunuser\s+'
     reason: Run command as another user
-    ask: true
 
   - pattern: '\bdzdo\s+'
     reason: Centrify privilege escalation
-    ask: true
 
   - pattern: '\bpfexec\s+'
     reason: Profile-based privilege execution
-    ask: true

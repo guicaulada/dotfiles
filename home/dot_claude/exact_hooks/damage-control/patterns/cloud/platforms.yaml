@@ -107,47 +107,37 @@ bashToolPatterns:
     reason: supabase delete (destroys Supabase resources)
 
   # ---------------------------------------------------------------------------
-  # DEPLOYMENT OPERATIONS REQUIRING CONFIRMATION (ask: true)
+  # DEPLOYMENT OPERATIONS REQUIRING CONFIRMATION
   # ---------------------------------------------------------------------------
   - pattern: '\bvercel{flags}(deploy|--prod)\b'
     reason: Deploys to Vercel
-    ask: true
 
   - pattern: '\bnetlify{flags}deploy\b'
     reason: Deploys to Netlify
-    ask: true
 
   - pattern: '\bfirebase{flags}deploy\b'
     reason: Deploys to Firebase
-    ask: true
 
   - pattern: '\b(fly|flyctl){flags}deploy\b'
     reason: Deploys to Fly.io
-    ask: true
 
   - pattern: '\bwrangler{flags}(deploy|publish)\b'
     reason: Deploys Cloudflare Worker
-    ask: true
 
   - pattern: '\bgcloud{flags}app\s+deploy\b'
     reason: Deploys to Google App Engine
-    ask: true
 
   - pattern: '\bheroku{flags}container:release\b'
     reason: Releases container to Heroku
-    ask: true
 
   - pattern: '\brailway{flags}deploy\b'
     reason: Deploys to Railway
-    ask: true
 
   # ---------------------------------------------------------------------------
-  # HEROKU REQUIRING CONFIRMATION (ask: true)
+  # HEROKU REQUIRING CONFIRMATION
   # ---------------------------------------------------------------------------
   - pattern: '\bheroku{flags}(config:unset|domains:remove)\b'
     reason: Heroku configuration change
-    ask: true
 
   - pattern: '\bheroku{flags}releases:rollback\b'
     reason: Heroku release rollback
-    ask: true

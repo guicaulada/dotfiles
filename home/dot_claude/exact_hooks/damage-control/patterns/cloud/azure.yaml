@@ -23,23 +23,18 @@ bashToolPatterns:
   # the ask catch-all, but these are important enough to have specific reasons
   - pattern: '\baz{flags}vm\s+(start|stop|restart|deallocate)\b'
     reason: Changes Azure VM state
-    ask: true
 
   - pattern: '\baz{flags}(webapp|functionapp)\s+(start|stop|restart)\b'
     reason: Changes Azure Web App/Function App state
-    ask: true
 
   - pattern: '\baz{flags}aks\s+upgrade\b' # codespell:ignore aks
     reason: Upgrades AKS cluster (potential downtime) # codespell:ignore aks
-    ask: true
 
   - pattern: '\baz{flags}keyvault\s+secret\s+set\b'
     reason: Creates or updates Key Vault secret
-    ask: true
 
   - pattern: '\baz{flags}deployment\s+(group|sub|mg|tenant)\s+create\b'
     reason: Deploys Azure ARM template
-    ask: true
 
   # ---------------------------------------------------------------------------
   # BLOCK CATCH-ALL: any "az ... delete" or "az ... purge"
@@ -52,4 +47,9 @@ bashToolPatterns:
   # ---------------------------------------------------------------------------
   - pattern: '\baz{flags}.*\b(create|update|set|start|stop|restart|deploy)\b'
     reason: Azure CLI mutating operation (catch-all)
-    ask: true
+
+  - pattern: '\baz\s+vm\s+run-command\s+invoke\b'
+    reason: az vm run-command executes commands on a remote VM
+
+  - pattern: '\baz\s+(login|logout|account\s+set)\b'
+    reason: az login/account set changes active credentials

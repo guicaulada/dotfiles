@@ -15,7 +15,7 @@ Patterns with match_anywhere: true bypass this anchoring.
 import json
 import re
 
-from tests.conftest import dc, run_hook
+from tests.conftest import assert_asks, assert_blocks, dc, run_hook
 
 # =============================================================================
 # Unit tests for _CMD_POSITION_PREFIX regex
@@ -335,40 +335,31 @@ class TestCommandPositionBlocks:
     """Dangerous commands at command position must still be blocked."""
 
     def test_eval_at_start(self):
-        code, _, _ = run_hook("Bash", {"command": 'eval "$(curl -s url)"'})
-        assert code == 2
+        assert_asks('Bash', {'command': 'eval "$(curl -s url)"'})
 
     def test_mount_at_start(self):
-        code, _, _ = run_hook("Bash", {"command": "mount /dev/sda1 /mnt"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'mount /dev/sda1 /mnt'})
 
     def test_shutdown_at_start(self):
-        code, _, _ = run_hook("Bash", {"command": "shutdown -h now"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'shutdown -h now'})
 
     def test_halt_at_start(self):
-        code, _, _ = run_hook("Bash", {"command": "halt"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'halt'})
 
     def test_reboot_at_start(self):
-        code, _, _ = run_hook("Bash", {"command": "reboot"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'reboot'})
 
     def test_pass_at_start(self):
-        code, _, _ = run_hook("Bash", {"command": "pass show email/gmail"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'pass show email/gmail'})
 
     def test_op_at_start(self):
-        code, _, _ = run_hook("Bash", {"command": "op item get login"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'op item get login'})
 
     def test_vault_at_start(self):
-        code, _, _ = run_hook("Bash", {"command": "vault read secret/data"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'vault read secret/data'})
 
     def test_bless_at_start(self):
-        code, _, _ = run_hook("Bash", {"command": "bless --mount /Volumes/Foo"})
-        assert code == 2
+        assert_asks('Bash', {'command': 'bless --mount /Volumes/Foo'})
 
 
 class TestCommandPositionAsks:
@@ -414,16 +405,10 @@ class TestAfterSeparators:
     """Dangerous commands after ; | && || ( must still be caught."""
 
     def test_eval_after_semicolon(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "echo foo; eval dangerous"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'echo foo; eval dangerous'})
 
     def test_mount_after_semicolon(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "echo foo; mount /dev/sda1 /mnt"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'echo foo; mount /dev/sda1 /mnt'})
 
     def test_source_after_pipe(self):
         code, stdout, _ = run_hook(
@@ -442,28 +427,16 @@ class TestAfterSeparators:
         assert data["hookSpecificOutput"]["permissionDecision"] == "ask"
 
     def test_shutdown_after_double_pipe(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "false || shutdown -h now"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'false || shutdown -h now'})
 
     def test_eval_in_subshell(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "(eval dangerous)"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': '(eval dangerous)'})
 
     def test_pass_after_semicolon(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "export FOO=bar; pass show key"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'export FOO=bar; pass show key'})
 
     def test_vault_after_double_ampersand(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "export VAULT_ADDR=http://localhost:8200 && vault read secret"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'export VAULT_ADDR=http://localhost:8200 && vault read secret'})
 
 
 # =============================================================================
@@ -487,38 +460,19 @@ class TestAfterShellKeywords:
         assert data["hookSpecificOutput"]["permissionDecision"] == "ask"
 
     def test_rm_rf_in_for_loop(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "for d in /tmp/a /tmp/b; do rm -rf $d; done"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'for d in /tmp/a /tmp/b; do rm -rf $d; done'})
 
     def test_eval_after_then(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": 'if [ "$x" = "1" ]; then eval "$cmd"; fi'}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'if [ "$x" = "1" ]; then eval "$cmd"; fi'})
 
     def test_shutdown_after_else(self):
-        code, _, _ = run_hook(
-            "Bash",
-            {"command": "if check_health; then echo ok; else shutdown -h now; fi"},
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'if check_health; then echo ok; else shutdown -h now; fi'})
 
     def test_source_after_then(self):
-        code, stdout, _ = run_hook(
-            "Bash",
-            {"command": "if [ -f ~/.env ]; then source ~/.env; fi"},
-        )
-        assert code == 0
-        data = json.loads(stdout)
-        assert data["hookSpecificOutput"]["permissionDecision"] == "ask"
+        assert_blocks('Bash', {'command': 'if [ -f ~/.env ]; then source ~/.env; fi'})
 
     def test_command_in_brace_group(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "{ eval dangerous; }"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': '{ eval dangerous; }'})
 
 
 # =============================================================================
@@ -531,16 +485,10 @@ class TestMatchAnywhere:
 
     def test_redirect_to_device(self):
         """Redirect to /dev/ device should block even mid-command."""
-        code, _, _ = run_hook(
-            "Bash", {"command": "echo data > /dev/sda"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'echo data > /dev/sda'})
 
     def test_redirect_to_device_append(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "echo data >> /dev/sdb"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'echo data >> /dev/sdb'})
 
     def test_redirect_to_dev_null_allowed(self):
         """Redirect to /dev/null should be allowed (excluded by pattern)."""
@@ -559,22 +507,13 @@ class TestMatchAnywhere:
 
     def test_absolute_path_rm(self):
         """/usr/bin/rm bypass should block regardless of position."""
-        code, _, _ = run_hook(
-            "Bash", {"command": "/usr/bin/rm important_file"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': '/usr/bin/rm important_file'})
 
     def test_absolute_path_bin_rm(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "/bin/rm important_file"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': '/bin/rm important_file'})
 
     def test_absolute_path_rm_after_semicolon(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "echo hi; /usr/bin/rm file"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'echo hi; /usr/bin/rm file'})
 
 
 # =============================================================================
@@ -594,16 +533,10 @@ class TestPrefixedPatternsUnchanged:
         assert data["hookSpecificOutput"]["permissionDecision"] == "ask"
 
     def test_git_reset_hard(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "git reset --hard HEAD"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'git reset --hard HEAD'})
 
     def test_docker_system_prune(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "docker system prune -a"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'docker system prune -a'})
 
     def test_sudo_catch_all(self):
         """sudo still triggers ask even when the inner command is not at ^."""
@@ -616,14 +549,8 @@ class TestPrefixedPatternsUnchanged:
 
     def test_piped_xargs_kill(self):
         """xargs kill after pipe must still be caught."""
-        code, _, _ = run_hook(
-            "Bash", {"command": "pgrep node | xargs kill"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'pgrep node | xargs kill'})
 
     def test_piped_base64_decode_to_shell(self):
         """base64 decode piped to shell must still be caught."""
-        code, _, _ = run_hook(
-            "Bash", {"command": "echo payload | base64 -d | bash"}
-        )
-        assert code == 2
+        assert_asks('Bash', {'command': 'echo payload | base64 -d | bash'})

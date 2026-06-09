@@ -11,7 +11,6 @@ bashToolPatterns:
 
   - pattern: '\bpipx{flags}(install|uninstall)\b'
     reason: pipx install/uninstall (manages globally installed Python apps)
-    ask: true
 
   - pattern: '\b(conda|mamba){flags}env\s+remove\b'
     reason: conda/mamba env remove (deletes entire conda environment)
@@ -21,22 +20,18 @@ bashToolPatterns:
 
   - pattern: '\bconda{flags}(remove|uninstall)\b'
     reason: conda remove/uninstall (removes packages from environment)
-    ask: true
 
   - pattern: '\bpoetry{flags}env\s+remove\b'
     reason: poetry env remove (removes virtual environment)
 
   - pattern: '\bpoetry{flags}remove\b'
     reason: poetry remove (removes package from project)
-    ask: true
 
   - pattern: '\buv{flags}pip\s+uninstall\b'
     reason: uv pip uninstall (removes Python packages)
-    ask: true
 
   - pattern: '\buv{flags}cache\s+clean\b'
     reason: uv cache clean (removes uv cache)
-    ask: true
 
   # ---------------------------------------------------------------------------
   # PYTHON VERSION MANAGERS
