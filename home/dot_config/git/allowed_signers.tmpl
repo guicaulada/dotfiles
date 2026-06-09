@@ -1,0 +1,6 @@
+# SSH keys trusted by `git verify-commit` / `git log --show-signature`.
+# Format: <principal> <key-type> <base64-key> (see ssh-keygen(1), ALLOWED SIGNERS).
+{{ .email }} {{ template "onepasswordRead" .onepassword.ssh_key }}
+{{- if .is_work }}
+{{ .work_email }} {{ template "onepasswordRead" .onepassword.ssh_key }}
+{{- end }}
