@@ -1,0 +1,11 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+set -euo pipefail
+
+# Enable Touch ID for sudo via /etc/pam.d/sudo_local (macOS Sonoma+).
+# /etc/pam.d/sudo itself is reset by every OS update; sudo_local survives.
+if ! grep -q '^auth.*pam_tid\.so' /etc/pam.d/sudo_local 2>/dev/null; then
+  echo "==> Enabling Touch ID for sudo (requires sudo)..."
+  printf 'auth       sufficient     pam_tid.so\n' | sudo tee -a /etc/pam.d/sudo_local >/dev/null
+fi
+{{ end -}}
