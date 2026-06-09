@@ -36,9 +36,6 @@ Thumbs.db
 .Spotlight-V100
 .Trashes
 
-# Linter reports
-megalinter-reports/
-
 # Caches
 .cache/
 .pytest_cache/

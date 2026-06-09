@@ -1,0 +1,14 @@
+# Linters installed in the CI lint job (macos-latest ships Homebrew).
+# Keep in sync with the lint tools in home/.mac/Brewfile.
+brew "pre-commit"
+brew "uv"
+brew "shellcheck"
+brew "shfmt"
+brew "stylua"
+brew "selene"
+brew "actionlint"
+brew "gitleaks"
+brew "prettier"
+brew "markdownlint-cli2"
+brew "editorconfig-checker"
+brew "lychee"

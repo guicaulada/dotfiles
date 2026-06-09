@@ -59,6 +59,10 @@ brew "selene"
 brew "shellcheck"
 brew "shfmt"
 brew "stylua"
+brew "prettier"
+brew "markdownlint-cli2"
+brew "editorconfig-checker"
+brew "lychee"
 brew "go-jsonnet"
 
 # Cloud and infrastructure

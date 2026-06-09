@@ -1,0 +1,11 @@
+# Mirrors the relaxed defaults MegaLinter shipped for YAML_YAMLLINT.
+extends: default
+
+rules:
+  line-length: disable
+  document-start: disable
+  truthy:
+    # `on:` in workflow files is a key, not a truthy value.
+    check-keys: false
+  comments:
+    min-spaces-from-content: 1

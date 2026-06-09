@@ -20,6 +20,10 @@ select = [
 ]
 
 [lint.per-file-ignores]
+"conftest.py" = [
+  "S603",  # subprocess call with controlled input (test helper)
+  "S607",  # partial executable path for uv (test helper)
+]
 "test_*.py" = [
   "E501",  # line too long (test descriptions)
   "S101",  # assert used (standard in tests)

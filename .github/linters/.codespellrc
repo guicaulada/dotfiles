@@ -1,5 +1,7 @@
 [codespell]
-skip = .git,megalinter-reports,*.tmpl,home/dot_config/nvim/lazy-lock.json,node_modules
+skip = .git,*.tmpl,home/dot_config/nvim/lazy-lock.json,node_modules
+# noice = nvim plugin name; aks = Azure Kubernetes Service
+ignore-words-list = noice,aks
 check-filenames =
 check-hidden =
 exclude-file = .github/linters/.codespellexcludes

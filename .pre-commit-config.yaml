@@ -1,11 +1,36 @@
+# Native linters replacing MegaLinter: same coverage, no Docker dependency.
+# Binaries come from Homebrew (.mac/Brewfile locally, .github/Brewfile.ci in CI);
+# upstream hook repos are pinned to commit SHAs (`# frozen:`, Renovate-managed).
+# Formatters fix in place — a failing run means files were modified; re-stage them.
+
+# Chezmoi templates contain Go template syntax that breaks most linters;
+# the nvim lockfile is machine-generated.
+exclude: '(^home/dot_config/nvim/lazy-lock\.json$|\.tmpl$)'
+
 repos:
-  - repo: https://github.com/oxsecurity/megalinter
-    rev: 8fbdead70d1409964ab3d5afa885e18ee85388bb # frozen: v9.4.0
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c # frozen: v6.0.0
     hooks:
-      - id: megalinter-incremental
-        stages: [pre-commit]
-      - id: megalinter-full
-        stages: [pre-push]
+      - id: check-merge-conflict
+      - id: check-added-large-files
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: 22f0422809455ec89ffdcf5a00170ba816e42ddb # frozen: v0.15.16
+    hooks:
+      - id: ruff-check
+        args: [--fix, --config, .github/linters/ruff.toml]
+
+  - repo: https://github.com/codespell-project/codespell
+    rev: 2ccb47ff45ad361a21071a7eedda4c37e6ae8c5a # frozen: v2.4.2
+    hooks:
+      - id: codespell
+        args: [--config, .github/linters/.codespellrc]
+
+  - repo: https://github.com/adrienverge/yamllint
+    rev: cba56bcde1fdd01c1deb3f945e69764c291a6530 # frozen: v1.38.0
+    hooks:
+      - id: yamllint
+        args: [-c, .github/linters/.yamllint.yml]
 
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
     rev: b546b77c44c466a54a42af5499dcc0dcc1a3193f # frozen: v1.22.0
@@ -14,6 +39,63 @@ repos:
 
   - repo: local
     hooks:
+      - id: shellcheck
+        name: shellcheck
+        entry: shellcheck
+        language: system
+        types: [shell]
+      - id: shfmt
+        name: shfmt
+        entry: shfmt -w -l
+        language: system
+        types: [shell]
+      - id: stylua
+        name: stylua
+        entry: stylua --config-path .github/linters/.stylua.toml
+        language: system
+        types: [lua]
+      - id: selene
+        name: selene
+        entry: selene --config .github/linters/selene.toml
+        language: system
+        types: [lua]
+      - id: actionlint
+        name: actionlint
+        entry: actionlint
+        language: system
+        files: ^\.github/workflows/.*\.ya?ml$
+        pass_filenames: false
+      - id: prettier
+        name: prettier (json/yaml)
+        entry: prettier --write
+        language: system
+        types_or: [json, yaml]
+      - id: markdownlint
+        name: markdownlint
+        entry: markdownlint-cli2 --config .github/linters/.markdownlint.json
+        language: system
+        types: [markdown]
+      - id: editorconfig-checker
+        name: editorconfig-checker
+        entry: editorconfig-checker
+        language: system
+        exclude: '(^\.chezmoiroot$|^\.chezmoiversion$|^home/\.chezmoitemplates/|^home/dot_claude/)'
+      - id: gitleaks
+        name: gitleaks
+        entry: gitleaks dir . --config .github/linters/.gitleaks.toml --redact --no-banner
+        language: system
+        pass_filenames: false
+      - id: claude-settings-schema
+        name: validate claude settings schema
+        entry: uvx check-jsonschema --schemafile https://json.schemastore.org/claude-code-settings.json
+        language: system
+        files: ^home/dot_claude/settings\.json$
+      - id: lychee
+        name: lychee (link check)
+        entry: lychee --config .github/linters/.lychee.toml .
+        language: system
+        pass_filenames: false
+        stages: [manual]
       - id: pytest-damage-control
         name: pytest (damage-control)
         entry: >-
