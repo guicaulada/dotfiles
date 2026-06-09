@@ -11,9 +11,22 @@
   },
   "permissions": {
     "allow": [],
-    "deny": [],
+    "deny": [
+      "Read(~/.ssh/**)",
+      "Read(~/.aws/**)",
+      "Read(~/.gnupg/**)",
+      "Read(~/.kube/**)",
+      "Read(~/.config/gh/**)",
+      "Read(~/.config/op/**)",
+      "Read(.env)",
+      "Read(.env.*)",
+      "Read(**/.env)",
+      "Read(**/.env.*)",
+      "Bash(op:*)",
+      "Bash(security:*)"
+    ],
     "ask": [],
-    "defaultMode": "bypassPermissions"
+    "defaultMode": "auto"
   },
   "model": "opus[1m]",
   "hooks": {
@@ -24,7 +37,7 @@
           {
             "type": "command",
             "command": "uv run ~/.claude/hooks/damage-control/damage_control.py",
-            "timeout": 5
+            "timeout": 30
           }
         ]
       }
@@ -58,7 +71,6 @@
     }
   },
   "effortLevel": "high",
-  "skipDangerousModePermissionPrompt": true,
   "autoCompactEnabled": false,
   "autoCompact": false
 }
