@@ -1,0 +1,21 @@
+# Hardened SSH client defaults, managed by chezmoi.
+# Add per-host entries ABOVE the Host * block — ssh uses the first match.
+
+Host *
+{{- if eq .chezmoi.os "darwin" }}
+  # 1Password SSH agent — private keys never touch disk.
+  IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+{{- end }}
+  # Only offer the configured identity instead of every key the agent holds.
+  # Stops servers from enumerating your keys (public keys are trackable IDs).
+  # Requires IdentityFile below — without it no identity would be offered.
+  IdentitiesOnly yes
+  IdentityFile ~/.ssh/1password.pub
+  # Hash hostnames in known_hosts so a compromised account doesn't get a
+  # ready-made list of every machine you connect to.
+  HashKnownHosts yes
+  # Prompt on unknown host keys; hard-fail on changed ones.
+  StrictHostKeyChecking ask
+  # Drop dead connections instead of hanging forever.
+  ServerAliveInterval 60
+  ServerAliveCountMax 3
