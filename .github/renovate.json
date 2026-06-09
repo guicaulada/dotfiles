@@ -3,6 +3,12 @@
   "extends": ["config:recommended", "helpers:pinGitHubActionDigests"],
   "schedule": ["before 9am every day"],
   "minimumReleaseAge": "7 days",
+  "osvVulnerabilityAlerts": true,
+  "vulnerabilityAlerts": {
+    "labels": ["security"],
+    "minimumReleaseAge": null,
+    "schedule": ["at any time"]
+  },
   "pre-commit": {
     "enabled": true
   },
