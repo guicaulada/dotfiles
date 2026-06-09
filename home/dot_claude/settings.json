@@ -62,13 +62,6 @@
         "source": "git",
         "url": "https://github.com/wakatime/claude-code-wakatime.git"
       }
-    },
-    "guicaulada-plugins": {
-      "source": {
-        "source": "git",
-        "url": "https://github.com/guicaulada/claude-plugins.git"
-      },
-      "autoUpdate": false
     }
   },
   "effortLevel": "high",
