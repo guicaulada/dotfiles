@@ -3,24 +3,44 @@
 # Read JSON input from stdin
 input=$(cat)
 
-# Extract all data from JSON in a single jq call
-eval "$(echo "$input" | jq -r '
-  @sh "model=\(.model.display_name // "Unknown")",
-  @sh "context_total=\(.context_window.context_window_size // 0)",
-  @sh "context_percentage=\(.context_window.used_percentage // 0)",
-  @sh "input_tokens=\(.context_window.total_input_tokens // 0)",
-  @sh "output_tokens=\(.context_window.total_output_tokens // 0)",
-  @sh "cache_write=\(.context_window.current_usage.cache_creation_input_tokens // 0)",
-  @sh "cache_read=\(.context_window.current_usage.cache_read_input_tokens // 0)",
-  @sh "cost=\(.cost.total_cost_usd // 0)",
-  @sh "duration_ms=\(.cost.total_duration_ms // 0)",
-  @sh "api_duration_ms=\(.cost.total_api_duration_ms // 0)",
-  @sh "lines_added=\(.cost.total_lines_added // 0)",
-  @sh "lines_removed=\(.cost.total_lines_removed // 0)",
-  @sh "vim_mode=\(.vim.mode // "")",
-  @sh "agent_name=\(.agent.name // "")",
-  @sh "cwd=\(.workspace.current_dir // "")"
-' 2>/dev/null)" || {
+# Extract all data from JSON in a single jq call, one value per line.
+# Values are consumed with read -r — no eval, so jq output is never
+# interpreted as shell code.
+if values=$(echo "$input" | jq -r '
+  .model.display_name // "Unknown",
+  .context_window.context_window_size // 0,
+  .context_window.used_percentage // 0,
+  .context_window.total_input_tokens // 0,
+  .context_window.total_output_tokens // 0,
+  .context_window.current_usage.cache_creation_input_tokens // 0,
+  .context_window.current_usage.cache_read_input_tokens // 0,
+  .cost.total_cost_usd // 0,
+  .cost.total_duration_ms // 0,
+  .cost.total_api_duration_ms // 0,
+  .cost.total_lines_added // 0,
+  .cost.total_lines_removed // 0,
+  .vim.mode // "",
+  .agent.name // "",
+  .workspace.current_dir // ""
+' 2>/dev/null); then
+  {
+    IFS= read -r model
+    IFS= read -r context_total
+    IFS= read -r context_percentage
+    IFS= read -r input_tokens
+    IFS= read -r output_tokens
+    IFS= read -r cache_write
+    IFS= read -r cache_read
+    IFS= read -r cost
+    IFS= read -r duration_ms
+    IFS= read -r api_duration_ms
+    IFS= read -r lines_added
+    IFS= read -r lines_removed
+    IFS= read -r vim_mode
+    IFS= read -r agent_name
+    IFS= read -r cwd
+  } <<<"$values"
+else
   model="Unknown"
   context_total=0
   context_percentage=0
@@ -36,7 +56,7 @@ eval "$(echo "$input" | jq -r '
   vim_mode=""
   agent_name=""
   cwd=""
-}
+fi
 total_tokens=$((input_tokens + output_tokens))
 
 # Format cost display
