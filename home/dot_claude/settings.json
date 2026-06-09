@@ -67,7 +67,7 @@
         "source": "git",
         "url": "https://github.com/guicaulada/claude-plugins.git"
       },
-      "autoUpdate": true
+      "autoUpdate": false
     }
   },
   "effortLevel": "high",
