@@ -1,7 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended", "helpers:pinGitHubActionDigests"],
-  "schedule": ["before 9am every day"],
+  "schedule": ["before 9am"],
   "minimumReleaseAge": "7 days",
   "osvVulnerabilityAlerts": true,
   "vulnerabilityAlerts": {
