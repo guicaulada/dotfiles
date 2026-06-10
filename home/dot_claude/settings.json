@@ -29,7 +29,6 @@
     "defaultMode": "auto"
   },
   "model": "claude-fable-5[1m]",
-  "theme": "dark",
   "hooks": {
     "PreToolUse": [
       {
@@ -65,6 +64,7 @@
     }
   },
   "effortLevel": "high",
+  "theme": "dark",
   "autoCompactEnabled": false,
   "autoCompact": false
 }
