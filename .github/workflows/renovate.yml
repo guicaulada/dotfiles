@@ -29,6 +29,14 @@ jobs:
         with:
           app-id: ${{ secrets.RENOVATE_APP_ID }}
           private-key: ${{ secrets.RENOVATE_APP_PRIVATE_KEY }}
+          # Least-privilege token scope for Renovate (not blanket App perms).
+          permission-contents: write
+          permission-pull-requests: write
+          permission-workflows: write
+          permission-issues: write
+          permission-statuses: write
+          permission-checks: read
+          permission-vulnerability-alerts: read
 
       - uses: renovatebot/github-action@693b9ef15eec82123529a37c782242f091365961 # v46.1.14
         with:
