@@ -33,7 +33,7 @@ repos:
         args: [-c, .github/linters/.yamllint.yml]
 
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
-    rev: b546b77c44c466a54a42af5499dcc0dcc1a3193f # frozen: v1.22.0
+    rev: 9257c6050c0261b8c57e712f632dc4a8010109a9 # frozen: v1.25.2
     hooks:
       - id: zizmor
 
