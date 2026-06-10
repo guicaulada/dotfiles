@@ -1,0 +1,40 @@
+name: verify-commits
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify-signatures:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - name: Require every PR commit to be signed and verified
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          # GitHub reports verification using the author's uploaded SSH/GPG
+          # signing key, so CI needs no key material of its own.
+          commits=$(gh api --paginate "repos/$REPO/pulls/$PR_NUMBER/commits" \
+            --jq '.[] | [.sha, .commit.verification.verified, .commit.verification.reason] | @tsv')
+          status=0
+          while IFS=$'\t' read -r sha verified reason; do
+            [ -z "$sha" ] && continue
+            if [ "$verified" = "true" ]; then
+              echo "verified  $sha"
+            else
+              echo "::error::Unverified commit $sha ($reason)"
+              status=1
+            fi
+          done <<< "$commits"
+          exit $status
