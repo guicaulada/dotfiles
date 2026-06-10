@@ -15,7 +15,9 @@ concurrency:
 jobs:
   validate:
     runs-on: macos-latest
-    timeout-minutes: 15
+    # Historical runs take 7-9 minutes (brew bundle dominates); leave headroom
+    # for the linters added to the Brewfile and runner variance.
+    timeout-minutes: 20
     permissions:
       contents: read
     steps:
