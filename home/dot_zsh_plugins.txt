@@ -50,7 +50,7 @@ mroth/evalcache pin:d6973f8c3ecde3eabd75c17b47e2222e24ab3e87 # release:v1.0.3
 # Deferred plugins (load after prompt for faster startup)
 hlissner/zsh-autopair kind:defer pin:34a8bca0c18fcf3ab1561caef9790abffc1d3d49 # tag:v1.0
 wfxr/forgit kind:defer pin:7a37fadf921e89edac941dcc615342009149b07e # release:26.05.0
-junegunn/fzf-git.sh kind:defer pin:34cd6c9d315d9b59b94721bd602c5769e919d686 # main
+junegunn/fzf-git.sh kind:defer pin:0f0488331a060cf45aaecb6705a2cf394fb20293 # main
 MichaelAquilina/zsh-you-should-use kind:defer pin:ff371d6a11b653e1fa8dda4e61c896c78de26bfa # tag:1.11.1
 zsh-users/zsh-autosuggestions kind:defer pin:e52ee8ca55bcc56a17c828767a3f98f22a68d4eb # tag:v0.7.1
 zdharma-continuum/fast-syntax-highlighting kind:defer pin:5ecd353c81214f82bdeca5483fab6ccc5a2d5494 # tag:v1.56
