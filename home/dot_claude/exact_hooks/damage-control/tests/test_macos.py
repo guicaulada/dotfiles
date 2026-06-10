@@ -2,7 +2,7 @@
 
 import json
 
-from tests.conftest import assert_asks, run_hook
+from tests.conftest import assert_allows, assert_asks, run_hook
 
 
 class TestMacosBlock:
@@ -83,6 +83,16 @@ class TestMacosBlock:
 
     def test_block_dscl_change(self):
         assert_asks('Bash', {'command': 'dscl . change /Users/test key old new'})
+
+    def test_block_dscl_read_only_not_matched(self):
+        assert_allows("Bash", {"command": "dscl . -read /Users/test"})
+
+    def test_dscl_word_far_from_verb_not_matched(self):
+        # Regression: `.*` used to match "dscl" and a verb anywhere on the line,
+        # e.g. a grep searching for both words.
+        assert_allows(
+            "Bash", {"command": "rg 'dscl|delete' patterns/macos.yaml"}
+        )
 
     # --- xattr quarantine ---
 

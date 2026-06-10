@@ -2,7 +2,7 @@
 
 import json
 
-from tests.conftest import assert_asks, run_hook
+from tests.conftest import assert_allows, assert_asks, run_hook
 
 # =============================================================================
 # BLOCK PATTERNS
@@ -202,6 +202,13 @@ class TestBlockTar:
 
     def test_block_tar_extract_long_flag_to_root(self):
         assert_asks('Bash', {'command': 'tar --extract -f archive.tar -C /'})
+
+    def test_block_tar_extract_to_root_no_space(self):
+        assert_asks("Bash", {"command": "tar xf archive.tar -C/"})
+
+    def test_allow_tar_extract_to_subdir_of_root(self):
+        # `-C /etc` must NOT be read as extraction to root.
+        assert_allows("Bash", {"command": "tar xf archive.tar -C /etc/app"})
 
 
 # =============================================================================

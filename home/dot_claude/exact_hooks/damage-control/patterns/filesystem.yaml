@@ -61,7 +61,9 @@ bashToolPatterns:
   - pattern: '\btar\s+.*--overwrite\b'
     reason: tar --overwrite (silently overwrites existing files during extraction)
 
-  - pattern: '\btar\s+.*(x|--extract).*-C\s+/(\s|$)'
+  # Also catch `-C/` (no space) and a quoted root; the trailing boundary keeps
+  # `-C /tmp/...` from matching while `-C /` (root) still does.
+  - pattern: '\btar\s+.*(x|--extract).*-C\s*/(?:\s|$|[''"])'
     reason: tar extracting to filesystem root (can overwrite system files)
 
   # ---------------------------------------------------------------------------

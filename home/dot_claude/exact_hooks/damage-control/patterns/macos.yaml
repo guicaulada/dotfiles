@@ -30,7 +30,10 @@ bashToolPatterns:
   - pattern: '\bspctl\s+--master-disable\b'
     reason: spctl --master-disable (disables Gatekeeper)
 
-  - pattern: '\bdscl\b.*\b(create|delete|merge|change)\b'
+  # The verb must be an actual dscl argument (after the datasource token,
+  # optionally dash-prefixed), not just the words "create"/"delete" appearing
+  # anywhere later on the line — `.*` here matched `grep ... dscl ... delete`.
+  - pattern: '\bdscl{args}\s+-?(?:create|delete|merge|change|append)\b'
     reason: dscl directory services modification
 
   - pattern: '\bxattr\s+-d\b.*com\.apple\.quarantine'
