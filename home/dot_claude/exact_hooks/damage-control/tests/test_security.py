@@ -67,8 +67,7 @@ class TestCredentialManagerBlock:
         assert_asks('Bash', {'command': 'op read op://vault/item/field'})
 
     def test_block_op_inject(self):
-        code, _, _ = run_hook("Bash", {"command": "op inject -i template.env"})
-        assert code == 2
+        assert_asks("Bash", {"command": "op inject -i template.env"})
 
     # -- HashiCorp Vault catch-all --
     def test_block_vault_read(self):
@@ -251,27 +250,22 @@ class TestMiscSecurity:
 
     # -- chmod setuid/setgid (block) --
     def test_block_chmod_setuid_u(self):
-        code, _, _ = run_hook("Bash", {"command": "chmod u+s /usr/local/bin/myapp"})
-        assert code == 2
+        assert_asks("Bash", {"command": "chmod u+s /usr/local/bin/myapp"})
 
     def test_block_chmod_setgid_g(self):
-        code, _, _ = run_hook("Bash", {"command": "chmod g+s /usr/local/bin/myapp"})
-        assert code == 2
+        assert_asks("Bash", {"command": "chmod g+s /usr/local/bin/myapp"})
 
     def test_block_chmod_setuid_bare(self):
         """chmod +s without specifying u/g/o/a."""
-        code, _, _ = run_hook("Bash", {"command": "chmod +s /usr/local/bin/myapp"})
-        assert code == 2
+        assert_asks("Bash", {"command": "chmod +s /usr/local/bin/myapp"})
 
     def test_block_chmod_setuid_numeric_4755(self):
         """Numeric setuid: 4755."""
-        code, _, _ = run_hook("Bash", {"command": "chmod 4755 /usr/local/bin/myapp"})
-        assert code == 2
+        assert_asks("Bash", {"command": "chmod 4755 /usr/local/bin/myapp"})
 
     def test_block_chmod_setgid_numeric_2755(self):
         """Numeric setgid: 2755."""
-        code, _, _ = run_hook("Bash", {"command": "chmod 2755 /usr/local/bin/myapp"})
-        assert code == 2
+        assert_asks("Bash", {"command": "chmod 2755 /usr/local/bin/myapp"})
 
     def test_block_chmod_setuid_oa(self):
         """chmod oa+s (other and all)."""

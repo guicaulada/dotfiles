@@ -145,12 +145,10 @@ class TestBlockTruncate:
     """Tests for truncate -s 0."""
 
     def test_block_truncate_s_0(self):
-        code, _, _ = run_hook("Bash", {"command": "truncate -s 0 /var/log/syslog"})
-        assert code == 2
+        assert_asks("Bash", {"command": "truncate -s 0 /var/log/syslog"})
 
     def test_block_truncate_s0_no_space(self):
-        code, _, _ = run_hook("Bash", {"command": "truncate -s0 /var/log/syslog"})
-        assert code == 2
+        assert_asks("Bash", {"command": "truncate -s0 /var/log/syslog"})
 
 
 class TestBlockChmod:

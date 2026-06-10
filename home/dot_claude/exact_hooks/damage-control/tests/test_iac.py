@@ -119,17 +119,13 @@ class TestBlockStatePushReplaceProvider:
     """Tests for terraform/tofu state push/replace-provider."""
 
     def test_block_terraform_state_push(self):
-        code, _, _ = run_hook(
-            "Bash", {"command": "terraform state push errored.tfstate"}
-        )
-        assert code == 2
+        assert_asks("Bash", {"command": "terraform state push errored.tfstate"})
 
     def test_block_terraform_state_replace_provider(self):
         assert_asks('Bash', {'command': 'terraform state replace-provider hashicorp/aws registry.acme.corp/acme/aws'})
 
     def test_block_tofu_state_push(self):
-        code, _, _ = run_hook("Bash", {"command": "tofu state push errored.tfstate"})
-        assert code == 2
+        assert_asks("Bash", {"command": "tofu state push errored.tfstate"})
 
     def test_block_tofu_state_replace_provider(self):
         assert_asks('Bash', {'command': 'tofu state replace-provider hashicorp/aws registry.acme.corp/acme/aws'})

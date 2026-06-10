@@ -303,12 +303,10 @@ class TestLogBlock:
         assert_asks('Bash', {'command': 'logrotate --force /etc/logrotate.conf'})
 
     def test_block_redirect_truncate_log(self):
-        code, _, _ = run_hook("Bash", {"command": "> /var/log/syslog"})
-        assert code == 2
+        assert_asks("Bash", {"command": "> /var/log/syslog"})
 
     def test_block_redirect_truncate_auth_log(self):
-        code, _, _ = run_hook("Bash", {"command": "echo '' > /var/log/auth.log"})
-        assert code == 2
+        assert_asks("Bash", {"command": "echo '' > /var/log/auth.log"})
 
 
 # =============================================================================

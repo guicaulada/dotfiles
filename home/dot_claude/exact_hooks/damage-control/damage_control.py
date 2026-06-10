@@ -13,11 +13,17 @@ Single PreToolUse hook handling Bash, Edit, Write, Read, and Grep tools.
 Loads patterns from patterns.yaml for easy customization.
 
 Decision model:
-  - Path protections (zeroAccessPaths, readOnlyPaths, noDeletePaths) hard-block
-    and are checked before command patterns, so a pattern "ask" can never
-    downgrade a path protection.
-  - bashToolPatterns default to "ask": the user approves or rejects in the
-    permission prompt. A pattern can opt into a hard block with `block: true`.
+  - Everything asks by default: command patterns AND path protections
+    (zeroAccessPaths, readOnlyPaths, noDeletePaths) emit an "ask" permission
+    decision so the user approves or rejects in the prompt rather than being
+    hard-walled.
+  - Any entry opts into a hard block with `block: true`. For a path, write it
+    as a mapping instead of a bare string:
+        zeroAccessPaths:
+          - ~/.ssh/                      # ask
+          - {path: ~/.aws/, block: true} # hard block
+  - The crown-jewel paths (~/.ssh, ~/.aws, .env, ...) are additionally covered
+    by deny rules in settings.json, which hard-block regardless of this hook.
 
 Exit codes:
   0 = Allow (or JSON stdout for "ask" decisions)
@@ -344,7 +350,7 @@ def check_path_patterns(
                 if cmd_prefix and re.search(
                     cmd_prefix + glob_regex, command, re.IGNORECASE
                 ):
-                    return True, f"Blocked: {operation} operation on {path_type} {path}"
+                    return True, f"{operation} operation on {path_type} {path}"
             except re.error:
                 continue
     else:
@@ -362,7 +368,7 @@ def check_path_patterns(
                 if re.search(pattern_expanded, command) or re.search(
                     pattern_original, command
                 ):
-                    return True, f"Blocked: {operation} operation on {path_type} {path}"
+                    return True, f"{operation} operation on {path_type} {path}"
             except re.error:
                 continue
 
@@ -401,22 +407,18 @@ def handle_bash(tool_input: dict[str, Any], config: dict[str, Any]) -> None:
     no_delete_paths = config.get("noDeletePaths", [])
     shorthands = config.get("shorthands", {})
 
-    # Path protections run BEFORE command patterns: a pattern decision is
-    # "ask" by default and exits 0, which would otherwise let an approved
-    # command touch a protected path (e.g. `rm -rf ~/.ssh` asking instead
-    # of hard-blocking).
+    # Path protections run BEFORE command patterns so the prompt names the
+    # specific protected path. Both ask by default; an entry can opt into a
+    # hard block with `block: true`.
 
-    # 1. Zero-access paths: block ANY mention
-    for zero_path in zero_access_paths:
+    # 1. Zero-access paths: match ANY mention
+    for entry in zero_access_paths:
+        zero_path, blk = _path_and_block(entry)
         if is_glob_pattern(zero_path):
             glob_regex = glob_to_regex(zero_path) + _GLOB_BOUNDARY
             try:
                 if re.search(glob_regex, command, re.IGNORECASE):
-                    msg = f"Blocked: zero-access pattern {zero_path}"
-                    _block(
-                        f"{msg} (no operations allowed)",
-                        command,
-                    )
+                    _decide_path(blk, f"zero-access pattern {zero_path}", command)
             except re.error:
                 continue
         else:
@@ -439,29 +441,26 @@ def handle_bash(tool_input: dict[str, Any], config: dict[str, Any]) -> None:
                 boundary = r"(?:^|(?<=\s)|(?<=/))"
                 exp_pat = boundary + escaped_expanded
                 orig_pat = boundary + escaped_original
-            if re.search(exp_pat, command) or re.search(
-                orig_pat, command
-            ):
-                _block(
-                    f"Blocked: zero-access path {zero_path} (no operations allowed)",
-                    command,
-                )
+            if re.search(exp_pat, command) or re.search(orig_pat, command):
+                _decide_path(blk, f"zero-access path {zero_path}", command)
 
-    # 2. Read-only paths: block modifications
-    for readonly in read_only_paths:
-        blocked, reason = check_path_patterns(
+    # 2. Read-only paths: modifications
+    for entry in read_only_paths:
+        readonly, blk = _path_and_block(entry)
+        matched, reason = check_path_patterns(
             command, readonly, READ_ONLY_BLOCKED, "read-only path"
         )
-        if blocked:
-            _block(reason, command)
+        if matched:
+            _decide_path(blk, reason, command)
 
-    # 3. No-delete paths: block deletions only
-    for no_delete in no_delete_paths:
-        blocked, reason = check_path_patterns(
+    # 3. No-delete paths: deletions only
+    for entry in no_delete_paths:
+        no_delete, blk = _path_and_block(entry)
+        matched, reason = check_path_patterns(
             command, no_delete, NO_DELETE_BLOCKED, "no-delete path"
         )
-        if blocked:
-            _block(reason, command)
+        if matched:
+            _decide_path(blk, reason, command)
 
     # 4. Command patterns from YAML: ask by default so the user stays in the
     # loop on side-effecting commands; `block: true` opts into a hard block.
@@ -488,71 +487,67 @@ def handle_bash(tool_input: dict[str, Any], config: dict[str, Any]) -> None:
 
 
 def handle_edit(tool_input: dict[str, Any], config: dict[str, Any]) -> None:
-    """Handle Edit tool: block zero-access and read-only paths."""
+    """Handle Edit tool: gate zero-access and read-only paths."""
     file_path = tool_input.get("file_path", "")
     if not file_path:
         sys.exit(0)
 
-    for zero_path in config.get("zeroAccessPaths", []):
+    for entry in config.get("zeroAccessPaths", []):
+        zero_path, blk = _path_and_block(entry)
         if match_path(file_path, zero_path):
-            _block(
-                f"Blocked edit to zero-access path {zero_path} (no operations allowed)",
-                file_path,
-            )
+            _decide_path(blk, f"edit to zero-access path {zero_path}", file_path)
 
-    for readonly in config.get("readOnlyPaths", []):
+    for entry in config.get("readOnlyPaths", []):
+        readonly, blk = _path_and_block(entry)
         if match_path(file_path, readonly):
-            _block(f"Blocked edit to read-only path {readonly}", file_path)
+            _decide_path(blk, f"edit to read-only path {readonly}", file_path)
 
     sys.exit(0)
 
 
 def handle_write(tool_input: dict[str, Any], config: dict[str, Any]) -> None:
-    """Handle Write tool: block zero-access and read-only paths."""
+    """Handle Write tool: gate zero-access and read-only paths."""
     file_path = tool_input.get("file_path", "")
     if not file_path:
         sys.exit(0)
 
-    for zero_path in config.get("zeroAccessPaths", []):
+    for entry in config.get("zeroAccessPaths", []):
+        zero_path, blk = _path_and_block(entry)
         if match_path(file_path, zero_path):
-            msg = f"Blocked write to zero-access path {zero_path}"
-            _block(f"{msg} (no operations allowed)", file_path)
+            _decide_path(blk, f"write to zero-access path {zero_path}", file_path)
 
-    for readonly in config.get("readOnlyPaths", []):
+    for entry in config.get("readOnlyPaths", []):
+        readonly, blk = _path_and_block(entry)
         if match_path(file_path, readonly):
-            _block(f"Blocked write to read-only path {readonly}", file_path)
+            _decide_path(blk, f"write to read-only path {readonly}", file_path)
 
     sys.exit(0)
 
 
 def handle_read(tool_input: dict[str, Any], config: dict[str, Any]) -> None:
-    """Handle Read tool: block zero-access paths only (reads of read-only are fine)."""
+    """Handle Read tool: gate zero-access paths only (reads of read-only are fine)."""
     file_path = tool_input.get("file_path", "")
     if not file_path:
         sys.exit(0)
 
-    for zero_path in config.get("zeroAccessPaths", []):
+    for entry in config.get("zeroAccessPaths", []):
+        zero_path, blk = _path_and_block(entry)
         if match_path(file_path, zero_path):
-            _block(
-                f"Blocked read of zero-access path {zero_path} (no operations allowed)",
-                file_path,
-            )
+            _decide_path(blk, f"read of zero-access path {zero_path}", file_path)
 
     sys.exit(0)
 
 
 def handle_grep(tool_input: dict[str, Any], config: dict[str, Any]) -> None:
-    """Handle Grep tool: block searching in zero-access paths."""
+    """Handle Grep tool: gate searching in zero-access paths."""
     search_path = tool_input.get("path", "")
     if not search_path:
         sys.exit(0)
 
-    for zero_path in config.get("zeroAccessPaths", []):
+    for entry in config.get("zeroAccessPaths", []):
+        zero_path, blk = _path_and_block(entry)
         if match_path(search_path, zero_path):
-            _block(
-                f"Blocked grep in zero-access path {zero_path} (no operations allowed)",
-                search_path,
-            )
+            _decide_path(blk, f"grep in zero-access path {zero_path}", search_path)
 
     sys.exit(0)
 
@@ -581,6 +576,20 @@ def _ask(reason: str) -> None:
     }
     print(json.dumps(output))
     sys.exit(0)
+
+
+def _path_and_block(entry: Any) -> tuple[str, bool]:
+    """Normalize a path entry: a bare string asks; {path, block} can hard-block."""
+    if isinstance(entry, dict):
+        return entry.get("path", ""), bool(entry.get("block", False))
+    return entry, False
+
+
+def _decide_path(block: bool, reason: str, context: str) -> None:
+    """Hard-block when the entry opts in, otherwise ask. Exits the process."""
+    if block:
+        _block(f"Blocked: {reason}", context)
+    _ask(reason)
 
 
 # ============================================================================

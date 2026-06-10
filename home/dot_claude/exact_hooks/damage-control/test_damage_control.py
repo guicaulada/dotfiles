@@ -551,7 +551,7 @@ class TestCheckPathPatterns:
             "> /etc/config", "/etc/config", READ_ONLY_BLOCKED, "read-only path"
         )
         assert blocked is True
-        assert "Blocked:" in reason
+        assert "read-only path" in reason
 
     def test_literal_path_no_match(self):
         blocked, reason = check_path_patterns(
@@ -708,7 +708,7 @@ class TestHandleBash:
         assert "SECURITY" in capsys.readouterr().err
 
     def test_path_protection_precedes_pattern(self, capsys):
-        """A zero-access path hard-blocks even when a command pattern would ask."""
+        """The zero-access path reason wins over a command pattern that would ask."""
         config = {
             "bashToolPatterns": [
                 {"pattern": r"\bcat\b", "reason": "reading", "block": False}
@@ -717,8 +717,11 @@ class TestHandleBash:
         }
         with pytest.raises(SystemExit) as exc_info:
             handle_bash({"command": "cat .env"}, config)
-        assert exc_info.value.code == 2
-        assert "zero-access" in capsys.readouterr().err.lower()
+        assert exc_info.value.code == 0
+        output = json.loads(capsys.readouterr().out)
+        decision = output["hookSpecificOutput"]
+        assert decision["permissionDecision"] == "ask"
+        assert "zero-access" in decision["permissionDecisionReason"].lower()
 
     def test_match_anywhere_skips_position_prefix(self, capsys):
         config = {
@@ -771,17 +774,21 @@ class TestHandleBash:
         assert exc_info.value.code == 0
 
     # Phase 2 — zero-access paths
-    def test_zero_access_glob_blocks(self):
+    def test_zero_access_glob_blocks(self, capsys):
         config = {"zeroAccessPaths": ["*.pem"]}
         with pytest.raises(SystemExit) as exc_info:
             handle_bash({"command": "cat server.pem"}, config)
-        assert exc_info.value.code == 2
+        assert exc_info.value.code == 0
+        output = json.loads(capsys.readouterr().out)
+        assert output["hookSpecificOutput"]["permissionDecision"] == "ask"
 
-    def test_zero_access_absolute_blocks(self):
+    def test_zero_access_absolute_blocks(self, capsys):
         config = {"zeroAccessPaths": ["/secrets/"]}
         with pytest.raises(SystemExit) as exc_info:
             handle_bash({"command": "cat /secrets/key"}, config)
-        assert exc_info.value.code == 2
+        assert exc_info.value.code == 0
+        output = json.loads(capsys.readouterr().out)
+        assert output["hookSpecificOutput"]["permissionDecision"] == "ask"
 
     def test_zero_access_relative_boundary(self):
         """Relative zero-access path does not match inside longer names."""
@@ -797,19 +804,23 @@ class TestHandleBash:
             handle_bash({"command": 'cat ".obsidian/workspace.json"'}, config)
         assert exc_info.value.code == 0
 
-    def test_zero_access_glob_exact_match(self):
-        """*.o in zeroAccessPaths still blocks actual .o files."""
+    def test_zero_access_glob_exact_match(self, capsys):
+        """*.o in zeroAccessPaths still asks on actual .o files."""
         config = {"zeroAccessPaths": ["*.o"]}
         with pytest.raises(SystemExit) as exc_info:
             handle_bash({"command": "cat main.o"}, config)
-        assert exc_info.value.code == 2
+        assert exc_info.value.code == 0
+        output = json.loads(capsys.readouterr().out)
+        assert output["hookSpecificOutput"]["permissionDecision"] == "ask"
 
     # Phase 3 — read-only paths
-    def test_read_only_write_blocked(self):
+    def test_read_only_write_blocked(self, capsys):
         config = {"readOnlyPaths": ["/readonly/"]}
         with pytest.raises(SystemExit) as exc_info:
             handle_bash({"command": "> /readonly/file"}, config)
-        assert exc_info.value.code == 2
+        assert exc_info.value.code == 0
+        output = json.loads(capsys.readouterr().out)
+        assert output["hookSpecificOutput"]["permissionDecision"] == "ask"
 
     def test_read_only_read_allowed(self):
         config = {"readOnlyPaths": ["/readonly/"]}
@@ -818,11 +829,13 @@ class TestHandleBash:
         assert exc_info.value.code == 0
 
     # Phase 4 — no-delete paths
-    def test_no_delete_rm_blocked(self):
+    def test_no_delete_rm_blocked(self, capsys):
         config = {"noDeletePaths": ["/protected/"]}
         with pytest.raises(SystemExit) as exc_info:
             handle_bash({"command": "rm /protected/file"}, config)
-        assert exc_info.value.code == 2
+        assert exc_info.value.code == 0
+        output = json.loads(capsys.readouterr().out)
+        assert output["hookSpecificOutput"]["permissionDecision"] == "ask"
 
     def test_no_delete_write_allowed(self):
         config = {"noDeletePaths": ["/protected/"]}
@@ -856,17 +869,21 @@ class TestHandleEdit:
             handle_edit({"file_path": ""}, {})
         assert exc_info.value.code == 0
 
-    def test_zero_access_blocked(self):
+    def test_zero_access_blocked(self, capsys):
         config = {"zeroAccessPaths": ["/secrets/"]}
         with pytest.raises(SystemExit) as exc_info:
             handle_edit({"file_path": "/secrets/key"}, config)
-        assert exc_info.value.code == 2
+        assert exc_info.value.code == 0
+        output = json.loads(capsys.readouterr().out)
+        assert output["hookSpecificOutput"]["permissionDecision"] == "ask"
 
-    def test_read_only_blocked(self):
+    def test_read_only_blocked(self, capsys):
         config = {"readOnlyPaths": ["/readonly/"]}
         with pytest.raises(SystemExit) as exc_info:
             handle_edit({"file_path": "/readonly/config"}, config)
-        assert exc_info.value.code == 2
+        assert exc_info.value.code == 0
+        output = json.loads(capsys.readouterr().out)
+        assert output["hookSpecificOutput"]["permissionDecision"] == "ask"
 
     def test_allowed(self):
         config = {"zeroAccessPaths": ["/secrets/"], "readOnlyPaths": ["/readonly/"]}
@@ -888,17 +905,21 @@ class TestHandleWrite:
             handle_write({"file_path": ""}, {})
         assert exc_info.value.code == 0
 
-    def test_zero_access_blocked(self):
+    def test_zero_access_blocked(self, capsys):
         config = {"zeroAccessPaths": ["/secrets/"]}
         with pytest.raises(SystemExit) as exc_info:
             handle_write({"file_path": "/secrets/key"}, config)
-        assert exc_info.value.code == 2
+        assert exc_info.value.code == 0
+        output = json.loads(capsys.readouterr().out)
+        assert output["hookSpecificOutput"]["permissionDecision"] == "ask"
 
-    def test_read_only_blocked(self):
+    def test_read_only_blocked(self, capsys):
         config = {"readOnlyPaths": ["/readonly/"]}
         with pytest.raises(SystemExit) as exc_info:
             handle_write({"file_path": "/readonly/config"}, config)
-        assert exc_info.value.code == 2
+        assert exc_info.value.code == 0
+        output = json.loads(capsys.readouterr().out)
+        assert output["hookSpecificOutput"]["permissionDecision"] == "ask"
 
     def test_allowed(self):
         config = {"zeroAccessPaths": ["/secrets/"], "readOnlyPaths": ["/readonly/"]}
@@ -920,11 +941,13 @@ class TestHandleRead:
             handle_read({"file_path": ""}, {})
         assert exc_info.value.code == 0
 
-    def test_zero_access_blocked(self):
+    def test_zero_access_blocked(self, capsys):
         config = {"zeroAccessPaths": ["/secrets/"]}
         with pytest.raises(SystemExit) as exc_info:
             handle_read({"file_path": "/secrets/key"}, config)
-        assert exc_info.value.code == 2
+        assert exc_info.value.code == 0
+        output = json.loads(capsys.readouterr().out)
+        assert output["hookSpecificOutput"]["permissionDecision"] == "ask"
 
     def test_read_only_allowed(self):
         config = {"readOnlyPaths": ["/readonly/"]}
@@ -952,11 +975,13 @@ class TestHandleGrep:
             handle_grep({"path": ""}, {})
         assert exc_info.value.code == 0
 
-    def test_zero_access_blocked(self):
+    def test_zero_access_blocked(self, capsys):
         config = {"zeroAccessPaths": ["/secrets/"]}
         with pytest.raises(SystemExit) as exc_info:
             handle_grep({"path": "/secrets/key"}, config)
-        assert exc_info.value.code == 2
+        assert exc_info.value.code == 0
+        output = json.loads(capsys.readouterr().out)
+        assert output["hookSpecificOutput"]["permissionDecision"] == "ask"
 
     def test_allowed(self):
         config = {"zeroAccessPaths": ["/secrets/"]}
@@ -1031,6 +1056,38 @@ class TestLoadPatternsDir:
         assert "/a" in result["zeroAccessPaths"]
         assert "/b" in result["zeroAccessPaths"]
         assert len(result["zeroAccessPaths"]) == 2
+
+
+class TestPathBlockOptIn:
+    """Path entries ask by default; a {path, block: true} mapping hard-blocks."""
+
+    def test_zero_access_string_asks(self, capsys):
+        config = {"zeroAccessPaths": [".env"]}
+        with pytest.raises(SystemExit) as exc:
+            handle_bash({"command": "cat .env"}, config)
+        assert exc.value.code == 0
+        assert json.loads(capsys.readouterr().out)["hookSpecificOutput"][
+            "permissionDecision"
+        ] == "ask"
+
+    def test_zero_access_mapping_blocks(self, capsys):
+        config = {"zeroAccessPaths": [{"path": ".env", "block": True}]}
+        with pytest.raises(SystemExit) as exc:
+            handle_bash({"command": "cat .env"}, config)
+        assert exc.value.code == 2
+        assert "SECURITY" in capsys.readouterr().err
+
+    def test_no_delete_mapping_blocks(self, capsys):
+        config = {"noDeletePaths": [{"path": ".github/", "block": True}]}
+        with pytest.raises(SystemExit) as exc:
+            handle_bash({"command": "rm .github/workflows/ci.yml"}, config)
+        assert exc.value.code == 2
+
+    def test_edit_handler_mapping_blocks(self, capsys):
+        config = {"zeroAccessPaths": [{"path": "*.pem", "block": True}]}
+        with pytest.raises(SystemExit) as exc:
+            handle_edit({"file_path": "/tmp/server.pem"}, config)
+        assert exc.value.code == 2
 
 
 class TestPatternCache:

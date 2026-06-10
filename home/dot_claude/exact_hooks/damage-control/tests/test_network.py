@@ -2,7 +2,7 @@
 
 import json
 
-from tests.conftest import assert_asks, assert_blocks, run_hook
+from tests.conftest import assert_asks, run_hook
 
 
 class TestNetworkBlock:
@@ -252,7 +252,7 @@ class TestNetworkAsk:
         assert data["hookSpecificOutput"]["permissionDecision"] == "ask"
 
     def test_ask_ssh_add(self):
-        assert_blocks('Bash', {'command': 'ssh-add ~/.ssh/id_ed25519'})
+        assert_asks('Bash', {'command': 'ssh-add ~/.ssh/id_ed25519'})
 
     # ---- Encryption / signing -----------------------------------------------
 
@@ -285,19 +285,19 @@ class TestNetworkAsk:
         assert data["hookSpecificOutput"]["permissionDecision"] == "ask"
 
     def test_ask_openssl_genrsa(self):
-        assert_blocks('Bash', {'command': 'openssl genrsa -out key.pem 2048'})
+        assert_asks('Bash', {'command': 'openssl genrsa -out key.pem 2048'})
 
     def test_ask_openssl_genpkey(self):
-        assert_blocks('Bash', {'command': 'openssl genpkey -algorithm RSA -out key.pem'})
+        assert_asks('Bash', {'command': 'openssl genpkey -algorithm RSA -out key.pem'})
 
     def test_ask_openssl_req(self):
-        assert_blocks('Bash', {'command': 'openssl req -new -key key.pem -out cert.csr'})
+        assert_asks('Bash', {'command': 'openssl req -new -key key.pem -out cert.csr'})
 
     def test_ask_openssl_x509(self):
-        assert_blocks('Bash', {'command': 'openssl x509 -req -in cert.csr -signkey key.pem -out cert.pem'})
+        assert_asks('Bash', {'command': 'openssl x509 -req -in cert.csr -signkey key.pem -out cert.pem'})
 
     def test_ask_openssl_pkcs12(self):
-        assert_blocks('Bash', {'command': 'openssl pkcs12 -export -out bundle.p12 -inkey key.pem -in cert.pem'})
+        assert_asks('Bash', {'command': 'openssl pkcs12 -export -out bundle.p12 -inkey key.pem -in cert.pem'})
 
     # ---- Data transfer (remote) ---------------------------------------------
 

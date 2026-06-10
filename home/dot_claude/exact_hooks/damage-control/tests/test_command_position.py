@@ -15,7 +15,7 @@ Patterns with match_anywhere: true bypass this anchoring.
 import json
 import re
 
-from tests.conftest import assert_asks, assert_blocks, dc, run_hook
+from tests.conftest import assert_asks, dc, run_hook
 
 # =============================================================================
 # Unit tests for _CMD_POSITION_PREFIX regex
@@ -469,7 +469,7 @@ class TestAfterShellKeywords:
         assert_asks('Bash', {'command': 'if check_health; then echo ok; else shutdown -h now; fi'})
 
     def test_source_after_then(self):
-        assert_blocks('Bash', {'command': 'if [ -f ~/.env ]; then source ~/.env; fi'})
+        assert_asks('Bash', {'command': 'if [ -f ~/.env ]; then source ~/.env; fi'})
 
     def test_command_in_brace_group(self):
         assert_asks('Bash', {'command': '{ eval dangerous; }'})
@@ -499,11 +499,8 @@ class TestMatchAnywhere:
         assert stdout == "" or "permissionDecision" not in stdout
 
     def test_redirect_truncate_log(self):
-        """Redirect truncating log file should block mid-command."""
-        code, _, _ = run_hook(
-            "Bash", {"command": "echo > /var/log/auth.log"}
-        )
-        assert code == 2
+        """Redirect truncating log file should ask mid-command."""
+        assert_asks("Bash", {"command": "echo > /var/log/auth.log"})
 
     def test_absolute_path_rm(self):
         """/usr/bin/rm bypass should block regardless of position."""
