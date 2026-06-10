@@ -9,6 +9,14 @@ secret or a misconfigured template that could leak sensitive data), please
 Instead, report it privately through
 [GitHub Security Advisories](https://github.com/guicaulada/dotfiles/security/advisories/new).
 
+## Response and Disclosure
+
+- Reports are acknowledged within **7 days** and triaged within **14 days**.
+- Confirmed vulnerabilities (such as an exposed credential) are remediated as
+  soon as possible; affected credentials are rotated immediately.
+- Please allow up to **90 days** for remediation before any public disclosure,
+  and coordinate disclosure timing through the advisory thread.
+
 ## Scope
 
 This is a personal dotfiles repository. Relevant security concerns include:
