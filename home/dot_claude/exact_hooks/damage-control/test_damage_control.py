@@ -350,6 +350,38 @@ class TestPositionPrefix:
             "$(kubectl --context prod delete pod foo)",
         )
 
+    def test_matches_on_continuation_line(self):
+        """A command on its own line in a multi-line invocation still anchors."""
+        assert _matches(
+            r"\bgit{flags}push\b",
+            "cd /some/repo\n  git push --force-with-lease origin main",
+        )
+
+    def test_matches_after_carriage_return_newline(self):
+        """CRLF line endings anchor the continuation command too."""
+        assert _matches(
+            r"\bkubectl{flags}delete\b",
+            "echo hello\r\nkubectl delete pod foo",
+        )
+
+    def test_force_push_on_continuation_line_caught(self, capsys):
+        """Regression: multi-line `cd && git push` reaches the firewall."""
+        config = {
+            "bashToolPatterns": [
+                {"pattern": r"\bgit{flags}push\b", "reason": "Pushes to remote"}
+            ],
+            "shorthands": {},
+        }
+        command = (
+            "cd /Users/me/work/repo\n"
+            "  git push --force-with-lease origin gc/feat/cleanup 2>&1 | tail -5"
+        )
+        with pytest.raises(SystemExit) as exc_info:
+            handle_bash({"command": command}, config)
+        assert exc_info.value.code == 0
+        output = json.loads(capsys.readouterr().out)
+        assert output["hookSpecificOutput"]["permissionDecision"] == "ask"
+
 
 # ---------------------------------------------------------------------------
 # Other CLI tools with global flags

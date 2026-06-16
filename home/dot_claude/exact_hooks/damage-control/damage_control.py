@@ -380,14 +380,19 @@ def check_path_patterns(
 # ============================================================================
 
 # Requires the matched command to appear at the start of the command string or
-# after a shell separator (; | & && || subshell/group open paren/brace) with an
-# optional shell keyword (do, then, else, elif).  This prevents false positives
-# when command-like words appear inside quoted arguments such as git commit
-# messages (e.g. `git commit -m "fix mount point"`).
+# after a shell separator (; | & && || newline subshell/group open paren/brace)
+# with an optional shell keyword (do, then, else, elif).  This prevents false
+# positives when command-like words appear inside quoted arguments such as git
+# commit messages (e.g. `git commit -m "fix mount point"`).
+#
+# Newlines count as separators: multi-line Bash invocations put each statement
+# on its own line (e.g. `cd repo\ngit push --force`), so a command on a
+# continuation line must anchor just like one after a `;`.  Without this the
+# entire continuation line bypasses every position-anchored pattern.
 #
 # Patterns that need to match mid-command (redirects, absolute-path overrides)
 # can opt out with `match_anywhere: true` in the YAML definition.
-_CMD_POSITION_PREFIX = r"(?:^|[;|&({]\s*(?:(?:do|then|else|elif)\s+)?)"
+_CMD_POSITION_PREFIX = r"(?:^|[;|&({\n\r]\s*(?:(?:do|then|else|elif)\s+)?)"
 
 
 # ============================================================================
