@@ -14,7 +14,7 @@ set -euo pipefail
 # activated default — that's the design — but COREPACK_ENABLE_STRICT=1 in .zshenv
 # refuses such pins unless the project also declares an integrity hash.
 
-YARN_BERRY_VERSION="4.16.0"
+YARN_BERRY_VERSION="4.17.0"
 
 if ! command -v corepack &>/dev/null; then
   echo "==> corepack not found; skipping yarn berry activation"
