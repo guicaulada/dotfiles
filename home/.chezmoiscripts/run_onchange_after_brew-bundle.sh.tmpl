@@ -19,7 +19,7 @@ if ! command -v brew &>/dev/null; then
   # the expected SHA-256 from GitHub's release-asset metadata and compares it to the
   # downloaded .pkg, then independently verifies Apple's Developer ID signature and
   # Gatekeeper notarization. No hash needs to live in the repo.
-  HOMEBREW_VERSION="5.1.14"
+  HOMEBREW_VERSION="6.0.3"
   HOMEBREW_PKG_URL="https://github.com/Homebrew/brew/releases/download/${HOMEBREW_VERSION}/Homebrew.pkg"
   HOMEBREW_API_URL="https://api.github.com/repos/Homebrew/brew/releases/tags/${HOMEBREW_VERSION}"
 
