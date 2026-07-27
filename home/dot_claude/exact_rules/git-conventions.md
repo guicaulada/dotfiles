@@ -1,7 +1,5 @@
 # Git Commit Conventions
 
-Consistent commit messages make history readable, enable automated changelogs, and help teammates understand changes at a glance.
-
 ## Format
 
 ```
@@ -23,34 +21,10 @@ Consistent commit messages make history readable, enable automated changelogs, a
 - `chore` — Build, tooling, dependency updates
 - `perf` — Performance improvement
 
-## Subject Line
+## Rules
 
-- Use imperative mood: "add feature" not "added feature"
-- Keep under 50 characters
-- Start lowercase after the colon
-- Omit trailing period
-
-## Body
-
-- Wrap at 72 characters per line
-- Explain **what** changed and **why**, not how
-- Separate from subject with a blank line
-- Use for complex changes; simple changes need only a subject line
-
-## Footer
-
-- Reference issues: `Closes #123`, `Fixes #456`
-- Note breaking changes: `BREAKING CHANGE: description`
-
-## Skills
-
-- Always use the `/commit` skill when creating commits
-- Always use the `/create-pr` skill when creating pull requests
-
-## Principles
-
-- Keep commits atomic — one logical change per commit
-- Make each commit self-explanatory from the message alone
-- Split unrelated changes into separate commits
-- Commit working code; avoid committing broken states
-- Base commit messages solely on the actual code diff — never reference or leak terminology, project names, or context from external sources like design docs or planning artifacts
+- Subject: imperative mood, under 50 characters, lowercase after the colon, no trailing period
+- Body (when needed): wrap at 72 characters, explain what and why
+- Footer: `Closes #123`, `BREAKING CHANGE: description`
+- Base commit messages solely on the code diff — never leak terminology or context from external sources like design docs or planning artifacts
+- Create pull requests with `gh pr create --web` for final review in the browser
