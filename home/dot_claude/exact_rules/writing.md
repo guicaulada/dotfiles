@@ -15,6 +15,9 @@ Applies to all prose: docs, READMEs, PR descriptions, issues, commit bodies, and
 
 - Lead with the point. State the conclusion first, then the supporting detail.
 - One idea per sentence, one topic per paragraph.
+- Keep sentences under about 20 words; split rather than subordinate.
+- Write instructions as imperatives, one action per step: "Run `chezmoi apply`", not "You should then apply the changes".
+- Limit noun stacks to three words: "the config file parser", not "the chezmoi source config file parser logic".
 - No hype: skip "powerful", "seamless", "robust", "comprehensive". Say what it does.
 
 ## Avoid AI tells
