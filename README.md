@@ -19,3 +19,7 @@ python3 scripts/validate-dotfiles.py
 
 Requires `chezmoi`, `zsh`, `bash`, and `shellcheck`. Validation covers personal and
 work configurations on both Apple Silicon and Intel Macs.
+
+Pull requests run isolated validation. To test package installation and system
+configuration on a disposable GitHub runner, manually run `chezmoi-validate`
+with the `bootstrap` input enabled.

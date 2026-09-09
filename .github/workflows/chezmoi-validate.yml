@@ -5,6 +5,11 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+    inputs:
+      bootstrap:
+        description: Run full workstation bootstrap on the disposable runner
+        type: boolean
+        default: false
 
 permissions: {}
 
@@ -15,9 +20,7 @@ concurrency:
 jobs:
   validate:
     runs-on: macos-latest
-    # Historical runs take 7-9 minutes (brew bundle dominates); leave headroom
-    # for the linters added to the Brewfile and runner variance.
-    timeout-minutes: 20
+    timeout-minutes: 5
     permissions:
       contents: read
     steps:
@@ -30,6 +33,21 @@ jobs:
 
       - name: Validate rendered templates
         run: python3 scripts/validate-dotfiles.py
+
+  bootstrap:
+    if: github.event_name == 'workflow_dispatch' && inputs.bootstrap
+    needs: validate
+    runs-on: macos-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - name: Install chezmoi
+        run: brew install chezmoi
 
       - name: Seed chezmoi config
         run: |
