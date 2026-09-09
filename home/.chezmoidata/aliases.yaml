@@ -7,9 +7,5 @@ aliases:
     lt: "eza --tree --icons=auto --level=2"
     top: btop
     vim: nvim
-  claude:
-    cl: claude-ls
-    ca: claude-attach
-    ck: claude-kill
   power:
     nosleep: "sudo pmset -a disablesleep"

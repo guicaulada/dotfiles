@@ -78,7 +78,6 @@ brew "blueutil"
 
 # Utilities
 brew "chezmoi"
-brew "dtach"
 brew "tmux"
 brew "uv"
 
@@ -94,5 +93,4 @@ brew "wireshark"
 # Casks
 cask "ghostty"
 cask "1password-cli"
-cask "claude-code"
 cask "gcloud-cli"

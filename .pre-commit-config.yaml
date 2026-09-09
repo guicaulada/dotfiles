@@ -14,12 +14,6 @@ repos:
       - id: check-merge-conflict
       - id: check-added-large-files
 
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: 22f0422809455ec89ffdcf5a00170ba816e42ddb # frozen: v0.15.16
-    hooks:
-      - id: ruff-check
-        args: [--fix, --config, .github/linters/ruff.toml]
-
   - repo: https://github.com/codespell-project/codespell
     rev: 2ccb47ff45ad361a21071a7eedda4c37e6ae8c5a # frozen: v2.4.2
     hooks:
@@ -79,29 +73,15 @@ repos:
         name: editorconfig-checker
         entry: editorconfig-checker
         language: system
-        exclude: '(^\.chezmoiroot$|^\.chezmoiversion$|^home/\.chezmoitemplates/|^home/dot_claude/)'
+        exclude: '(^\.chezmoiroot$|^\.chezmoiversion$|^home/\.chezmoitemplates/)'
       - id: gitleaks
         name: gitleaks
         entry: gitleaks dir . --config .github/linters/.gitleaks.toml --redact --no-banner
         language: system
         pass_filenames: false
-      - id: claude-settings-schema
-        name: validate claude settings schema
-        entry: uvx check-jsonschema --schemafile https://json.schemastore.org/claude-code-settings.json
-        language: system
-        files: ^home/dot_claude/settings\.json$
       - id: lychee
         name: lychee (link check)
         entry: lychee --config .github/linters/.lychee.toml .
         language: system
         pass_filenames: false
         stages: [manual]
-      - id: pytest-damage-control
-        name: pytest (damage-control)
-        entry: >-
-          bash -c
-          'cd home/dot_claude/exact_hooks/damage-control &&
-          uv run --with pytest --with pytest-xdist --with pyyaml pytest tests/ -v -n auto'
-        language: system
-        pass_filenames: false
-        files: ^home/dot_claude/exact_hooks/damage-control/
