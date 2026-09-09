@@ -1,0 +1,13 @@
+# Optional interactive and specialist tools; not installed by chezmoi apply.
+# Install only when needed with brew install <name>, or use this whole bundle.
+brew "yazi"
+brew "lazydocker"
+brew "lazygit"
+brew "tmux"
+brew "gping"
+brew "trippy"
+brew "bandwhich"
+brew "grex"
+brew "choose-rust"
+brew "procs"
+brew "tree"
