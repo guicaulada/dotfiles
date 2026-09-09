@@ -13,6 +13,15 @@ repos:
       - id: check-merge-conflict
       - id: check-added-large-files
 
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: 1f1e8bf348ff38fc88619a38d3ca4d9c56abea49 # frozen: v0.16.5
+    hooks:
+      - id: ruff-check
+        args: [--fix, --config, .github/linters/ruff.toml]
+      - id: ruff-format
+        args: [--config, .github/linters/ruff.toml]
+        types_or: [python, pyi]
+
   - repo: https://github.com/codespell-project/codespell
     rev: 2ccb47ff45ad361a21071a7eedda4c37e6ae8c5a # frozen: v2.4.2
     hooks:

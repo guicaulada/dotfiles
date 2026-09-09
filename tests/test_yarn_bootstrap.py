@@ -1,14 +1,17 @@
 """Exercise bootstrap without host Corepack, network access, or real installations."""
 
 import os
-from pathlib import Path
 import subprocess
 import tempfile
 import unittest
+from pathlib import Path
 
-SCRIPT = Path(__file__).resolve().parents[1] / "home/.chezmoiscripts/run_onchange_after_yarn-berry-activate.sh.tmpl"
+SCRIPT = (
+    Path(__file__).resolve().parents[1]
+    / "home/.chezmoiscripts/run_onchange_after_yarn-berry-activate.sh.tmpl"
+)
 
-MISE = '''#!/bin/bash
+MISE = """#!/bin/bash
 printf '%s\\n' "$*" >> "$HOME/calls"
 [[ "$1 $2" == 'exec --' ]] || exit 90
 shift 2
@@ -27,7 +30,7 @@ case "$*" in
     fi ;;
     *) exit 95 ;;
 esac
-'''
+"""
 
 
 class YarnBootstrapTest(unittest.TestCase):
@@ -43,8 +46,13 @@ class YarnBootstrapTest(unittest.TestCase):
         self.env = {**os.environ, "HOME": str(self.home), "PATH": str(self.bin)}
 
     def run_script(self, **overrides):
-        return subprocess.run(["/bin/bash", str(SCRIPT)], env={**self.env, **overrides},
-            capture_output=True, text=True, check=False)
+        return subprocess.run(
+            ["/bin/bash", str(SCRIPT)],
+            env={**self.env, **overrides},
+            capture_output=True,
+            text=True,
+            check=False,
+        )
 
     def test_bootstraps_without_host_corepack_and_is_idempotent(self):
         first = self.run_script()
