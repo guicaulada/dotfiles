@@ -46,8 +46,10 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Install chezmoi
-        run: brew install chezmoi
+      - name: Refresh Homebrew and install chezmoi
+        run: |
+          brew update
+          brew install chezmoi
 
       - name: Seed chezmoi config
         run: |
