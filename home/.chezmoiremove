@@ -99,4 +99,9 @@
 .config/nvim/lua/plugins/treesitter.lua
 .config/nvim/lua/plugins/ui.lua
 .config/nvim/lua/plugins/wakatime.lua
+.zsh_plugins.txt
+.zsh_plugins.zsh
+.zsh_plugins.zsh.zwc
+.config/starship.toml
+.config/navi/config.yaml
 .wakatime.cfg

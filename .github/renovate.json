@@ -30,33 +30,6 @@
     },
     {
       "customType": "regex",
-      "managerFilePatterns": ["/home/dot_zsh_plugins\\.txt$/"],
-      "matchStrings": [
-        "(?<depName>[A-Za-z0-9._-]+/[A-Za-z0-9._-]+)\\s+[^\\n#]*?\\bpin:(?<currentDigest>[a-f0-9]{40})\\b[^\\n#]*?#\\s*release:(?<currentValue>v?\\d[\\w.-]*)"
-      ],
-      "datasourceTemplate": "github-releases",
-      "versioningTemplate": "loose"
-    },
-    {
-      "customType": "regex",
-      "managerFilePatterns": ["/home/dot_zsh_plugins\\.txt$/"],
-      "matchStrings": [
-        "(?<depName>[A-Za-z0-9._-]+/[A-Za-z0-9._-]+)\\s+[^\\n#]*?\\bpin:(?<currentDigest>[a-f0-9]{40})\\b[^\\n#]*?#\\s*tag:(?<currentValue>v?\\d[\\w.-]*)"
-      ],
-      "datasourceTemplate": "github-tags",
-      "versioningTemplate": "loose"
-    },
-    {
-      "customType": "regex",
-      "managerFilePatterns": ["/home/dot_zsh_plugins\\.txt$/"],
-      "matchStrings": [
-        "(?<depName>[A-Za-z0-9._-]+/[A-Za-z0-9._-]+)\\s+[^\\n#]*?\\bpin:(?<currentDigest>[a-f0-9]{40})\\b[^\\n#]*?#\\s*(?<currentValue>main|master|develop|trunk)\\b"
-      ],
-      "datasourceTemplate": "git-refs",
-      "packageNameTemplate": "https://github.com/{{{depName}}}"
-    },
-    {
-      "customType": "regex",
       "managerFilePatterns": [
         "/home/\\.chezmoiscripts/run_onchange_after_brew-bundle\\.sh\\.tmpl$/"
       ],
@@ -78,12 +51,6 @@
     }
   ],
   "packageRules": [
-    {
-      "matchManagers": ["custom.regex"],
-      "matchFileNames": ["home/dot_zsh_plugins.txt"],
-      "addLabels": ["zsh-plugin"],
-      "commitMessageTopic": "antidote plugin {{depName}}"
-    },
     {
       "matchManagers": ["custom.regex"],
       "matchDepNames": ["Homebrew/brew"],

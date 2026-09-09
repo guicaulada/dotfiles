@@ -1,8 +1,4 @@
-# Shell essentials
-brew "antidote"
-brew "starship"
-brew "zoxide"
-brew "thefuck"
+# Command-line selection
 brew "fzf"
 
 # Git
@@ -27,7 +23,6 @@ brew "tree"
 brew "direnv"
 brew "jq"
 brew "trash-cli"
-brew "atuin"
 
 # Modern CLI tools
 brew "dust"
@@ -45,7 +40,6 @@ brew "yazi"
 brew "lazydocker"
 brew "trippy"
 brew "grex"
-brew "navi"
 brew "tealdeer"
 brew "wget"
 brew "bandwhich"
