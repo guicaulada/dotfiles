@@ -26,7 +26,10 @@ jobs:
           persist-credentials: false
 
       - name: Install chezmoi
-        run: brew install chezmoi
+        run: brew install chezmoi shellcheck
+
+      - name: Validate rendered templates
+        run: python3 scripts/validate-dotfiles.py
 
       - name: Seed chezmoi config
         run: |
