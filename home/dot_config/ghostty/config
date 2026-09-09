@@ -54,7 +54,7 @@ clipboard-paste-protection = true
 clipboard-trim-trailing-spaces = true
 
 # Clipboard (OSC 52 support)
-clipboard-read = allow
+clipboard-read = ask
 clipboard-write = allow
 
 # Contrast
