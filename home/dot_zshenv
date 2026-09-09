@@ -33,17 +33,13 @@ export HOMEBREW_CASK_OPTS="--require-sha"
 export HOMEBREW_NO_ENV_HINTS=1
 
 # --- Corepack hardening ---------------------------------------------------------------
-# Corepack will silently download pnpm/yarn binaries when a project's package.json
-# specifies a `packageManager` field — that's a supply-chain bypass since the downloaded
-# binary is fresh from the npm registry and isn't pinned by your tooling.
-#
-# Make corepack prompt before downloading. You can also `corepack disable` to fully
-# opt out, but the prompt strikes a usable balance.
+# Show download URLs and request confirmation in interactive terminals.
+# Noninteractive commands do not prompt. To disallow Corepack network access for
+# a session, set COREPACK_ENABLE_NETWORK=0 (required versions must be cached).
 export COREPACK_ENABLE_DOWNLOAD_PROMPT=1
 
-# Refuse to fetch a packageManager version whose integrity hash isn't pinned in
-# package.json. Forces the upstream project to ship a hash like
-# `pnpm@10.28.2+sha512.xxx`, not just `pnpm@10.28.2`.
+# Require the invoked package manager to match the project's packageManager field.
+# This does not require an integrity hash in that field.
 export COREPACK_ENABLE_STRICT=1
 
 # --- node-gyp hardening ---------------------------------------------------------------

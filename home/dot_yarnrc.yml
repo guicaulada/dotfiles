@@ -1,6 +1,7 @@
 # Yarn Berry supply-chain hardening (~/.yarnrc.yml). Verified against yarn 4.x docs.
 
-# Block lifecycle scripts (preinstall/install/postinstall) from running during yarn install.
+# Disable third-party postinstall scripts. Workspace scripts still run, and
+# project dependenciesMeta can explicitly enable scripts for individual packages.
 enableScripts: false
 
 # Refuse to install package versions younger than 7 days. Mirrors npm/bun/uv cooldown.

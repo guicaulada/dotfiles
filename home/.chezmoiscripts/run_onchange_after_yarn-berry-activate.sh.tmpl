@@ -2,17 +2,10 @@
 # yarn berry pin hash: {{ "YARN_BERRY_VERSION=4.14.1" | sha256sum }}
 set -euo pipefail
 
-# Activate Yarn Berry as the default `yarn` shim via corepack. Without this, a fresh
-# machine falls back to the EOL yarn 1.22.x classic launcher that ships with Node,
-# which has no useful hardening surface and ignores ~/.yarnrc.yml entirely.
-#
-# Renovate (.github/renovate.json) bumps YARN_BERRY_VERSION when a new @yarnpkg/cli
-# release ships. Corepack verifies the downloaded artifact against its bundled
-# known-good integrity values; we don't need to ship our own hash.
-#
-# Per-project pins via `packageManager: "yarn@x.y.z"` still take precedence over the
-# activated default — that's the design — but COREPACK_ENABLE_STRICT=1 in .zshenv
-# refuses such pins unless the project also declares an integrity hash.
+# Activate the pinned Yarn version as Corepack's default. Project packageManager
+# pins still take precedence. COREPACK_ENABLE_STRICT checks manager selection,
+# not whether a project pin contains an integrity hash.
+# Renovate updates YARN_BERRY_VERSION below.
 
 YARN_BERRY_VERSION="4.16.0"
 
