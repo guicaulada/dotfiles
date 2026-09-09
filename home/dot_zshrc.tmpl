@@ -21,9 +21,6 @@ zstyle ':completion:*' cache-path "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/completio
 PROMPT='%F{cyan}%~%f %(?.%F{green}.%F{red})%#%f '
 
 # Project environments and runtime selection.
-if (( $+commands[direnv] )); then
-  eval "$(direnv hook zsh)"
-fi
 if (( $+commands[mise] )); then
   eval "$(mise activate zsh)"
 fi

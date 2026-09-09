@@ -18,7 +18,6 @@ brew "fd"
 # Shell utilities
 brew "bat"
 brew "eza"
-brew "direnv"
 brew "jq"
 brew "trash-cli"
 
@@ -46,9 +45,6 @@ brew "go-jsonnet"
 
 # Cloud and infrastructure
 brew "awscli"
-brew "terraform"
-brew "kubernetes-cli"
-brew "helm"
 brew "k9s"
 brew "kubectx"
 

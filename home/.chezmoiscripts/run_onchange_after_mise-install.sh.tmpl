@@ -2,7 +2,12 @@
 # mise config hash: {{ include "dot_config/mise/config.toml" | sha256sum }}
 set -euo pipefail
 
-if command -v mise &>/dev/null; then
-  echo "==> Mise config changed, installing runtimes..."
-  mise install --yes
+if ! command -v mise &>/dev/null; then
+  echo "ERROR: mise is required to install the configured tools." >&2
+  exit 1
 fi
+
+# Install user-wide pins independently of the directory where chezmoi was invoked.
+cd "$HOME"
+echo "==> Mise config changed, installing tools..."
+mise install --yes

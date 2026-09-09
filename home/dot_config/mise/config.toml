@@ -25,3 +25,8 @@ go = "1.26.4"
 node = "24.16.0"
 ruby = "4.0.5"
 rust = "1.96.0"
+
+# Defaults for infrastructure commands; projects can override these exact pins.
+terraform = "1.15.6"
+helm = "4.2.2"
+kubectl = "1.36.2"

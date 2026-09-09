@@ -36,3 +36,25 @@ brew bundle --file=home/.mac/Brewfile.optional
 
 Removing a Brewfile entry does not uninstall an existing package. Check installed
 dependents before uninstalling; avoid broad bundle cleanup on a shared workstation.
+
+Mise owns runtime versions, infrastructure tool versions, and project environments.
+Homebrew runtime copies may remain as dependencies of other formulae. Keep
+project-specific pins in `mise.toml`; the global pins are defaults. Review a
+project's configuration before running `mise trust` and `mise install`.
+
+Use mise's `[env]` table instead of direnv. For example, in a project's `mise.toml`:
+
+```toml
+[env]
+APP_ENV = "development"
+_.file = ".env"
+```
+
+The dotenv file is loaded only for projects that explicitly configure it. Keep
+secrets out of version control. Existing `.envrc` files are not automatically
+executed; migrate any shell logic deliberately. For noninteractive commands, use
+`mise exec -- <command>` so both tools and project environment are selected.
+
+Use uv for Python projects, virtual environments, and Python version selection
+(`uv python pin`, `uv sync`, `uv run`). Project-local Python requirements take
+precedence; no competing global mise Python version is configured.
