@@ -51,7 +51,12 @@
 **/.pnpm-store
 **/.gradle
 **/.m2
-**/.cargo
+# Keep Cargo configuration managed; exclude downloaded and installed artifacts.
+**/.cargo/registry
+**/.cargo/git
+**/.cargo/bin
+**/.cargo/.global-cache
+**/.cargo/.package-cache*
 
 # Logs
 **.log
