@@ -20,11 +20,11 @@ not_found_auto_install = false
 idiomatic_version_file = false
 
 [tools]
-bun = "1.3.14"
-go = "1.26.4"
-node = "24.16.0"
-ruby = "4.0.5"
-rust = "1.96.0"
+bun = "1.4.0"
+go = "1.27.1"
+node = "24.20.0"
+ruby = "4.0.6"
+rust = "1.98.0"
 
 # Defaults for infrastructure commands; projects can override these exact pins.
 terraform = "1.15.6"

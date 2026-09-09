@@ -14,7 +14,7 @@ cd "$HOME"
 export COREPACK_ENABLE_PROJECT_SPEC=0
 
 # Renovate updates this pin. The script content itself triggers chezmoi reruns.
-YARN_BERRY_VERSION="4.16.0"
+YARN_BERRY_VERSION="4.18.0"
 
 if ! mise exec -- corepack --version >/dev/null; then
   echo "ERROR: Corepack is unavailable in the mise Node runtime." >&2
