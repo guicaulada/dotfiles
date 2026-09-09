@@ -1,24 +1,38 @@
 #!/bin/bash
-# yarn berry pin hash: {{ "YARN_BERRY_VERSION=4.14.1" | sha256sum }}
 set -euo pipefail
 
-# Activate the pinned Yarn version as Corepack's default. Project packageManager
-# pins still take precedence. COREPACK_ENABLE_STRICT checks manager selection,
-# not whether a project pin contains an integrity hash.
-# Renovate updates YARN_BERRY_VERSION below.
+# Use the installed mise runtime even in a noninteractive bootstrap shell.
+# No interactive shell activation is required, and a missing runtime is an error.
+if ! command -v mise &>/dev/null; then
+  echo "ERROR: mise is required to activate Yarn; install the configured runtimes first." >&2
+  exit 1
+fi
 
+# Select the user-wide runtime and Corepack default, not a caller's project pin.
+cd "$HOME"
+export COREPACK_ENABLE_PROJECT_SPEC=0
+
+# Renovate updates this pin. The script content itself triggers chezmoi reruns.
 YARN_BERRY_VERSION="4.16.0"
 
-if ! command -v corepack &>/dev/null; then
-  echo "==> corepack not found; skipping yarn berry activation"
-  exit 0
+if ! mise exec -- corepack --version >/dev/null; then
+  echo "ERROR: Corepack is unavailable in the mise Node runtime." >&2
+  exit 1
 fi
 
-current=$(yarn --version 2>/dev/null || echo "none")
-if [[ "$current" == "$YARN_BERRY_VERSION" ]]; then
-  echo "==> yarn berry already at $YARN_BERRY_VERSION"
-  exit 0
+# Node ships Corepack with its package-manager shims disabled on a fresh install.
+mise exec -- corepack enable yarn
+
+# Inspect the cached default without downloading a fallback version.
+current=$(COREPACK_ENABLE_NETWORK=0 mise exec -- yarn --version 2>/dev/null || echo "none")
+if [[ "$current" != "$YARN_BERRY_VERSION" ]]; then
+  echo "==> Activating Yarn $YARN_BERRY_VERSION via mise/Corepack (was: $current)..."
+  mise exec -- corepack prepare "yarn@$YARN_BERRY_VERSION" --activate
 fi
 
-echo "==> Activating yarn berry $YARN_BERRY_VERSION via corepack (was: $current)..."
-corepack prepare "yarn@$YARN_BERRY_VERSION" --activate
+actual=$(COREPACK_ENABLE_NETWORK=0 mise exec -- yarn --version)
+if [[ "$actual" != "$YARN_BERRY_VERSION" ]]; then
+  echo "ERROR: Expected Yarn $YARN_BERRY_VERSION, got $actual." >&2
+  exit 1
+fi
+echo "==> Verified Yarn $actual through the mise Node runtime"
