@@ -30,14 +30,14 @@ fi
 
 # SSH access (Tailscale SSH + sleep control)
 sshon() {
-  tailscale set --ssh
-  sudo pmset -a disablesleep 1
+  tailscale set --ssh || return $?
+  sudo pmset -a disablesleep 1 || return $?
   echo "SSH enabled, sleep disabled"
 }
 
 sshoff() {
-  tailscale set --ssh=false
-  sudo pmset -a disablesleep 0
+  tailscale set --ssh=false || return $?
+  sudo pmset -a disablesleep 0 || return $?
   echo "SSH disabled, sleep enabled"
 }
 

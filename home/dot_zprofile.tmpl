@@ -1,10 +1,7 @@
 # Homebrew paths without launching brew on every login shell.
 {{- if eq .chezmoi.os "darwin" }}
-export HOMEBREW_PREFIX="{{ index .paths.homebrew .chezmoi.arch }}"
 export HOMEBREW_CELLAR="$HOMEBREW_PREFIX/Cellar"
 export HOMEBREW_REPOSITORY="{{ if eq .chezmoi.arch "arm64" }}{{ index .paths.homebrew .chezmoi.arch }}{{ else }}/usr/local/Homebrew{{ end }}"
-typeset -U path
-path=("$HOMEBREW_PREFIX/bin" "$HOMEBREW_PREFIX/sbin" $path)
 export INFOPATH="$HOMEBREW_PREFIX/share/info:${INFOPATH:-}"
 {{- end }}
 

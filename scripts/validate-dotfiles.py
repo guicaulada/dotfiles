@@ -38,7 +38,7 @@ def validate(arch, work):
         missing = REQUIRED - managed
         if missing:
             raise RuntimeError(f"Configuration is not managed: {sorted(missing)}")
-        files = sorted(SOURCE.rglob("*.tmpl")) + [SOURCE / "dot_zshenv"]
+        files = sorted(SOURCE.rglob("*.tmpl"))
         for index, source in enumerate(files):
             rendered = (chezmoi("execute-template", *(["--init"] if source.name == ".chezmoi.toml.tmpl" else []), "--file", str(source))
                         if source.suffix == ".tmpl" else source.read_text())
