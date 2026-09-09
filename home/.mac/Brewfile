@@ -5,9 +5,6 @@ brew "zoxide"
 brew "thefuck"
 brew "fzf"
 
-# Editor
-brew "neovim"
-
 # Git
 brew "git-lfs"
 brew "gh"
@@ -55,10 +52,8 @@ brew "bandwhich"
 
 # Linting and formatting
 brew "actionlint"
-brew "selene"
 brew "shellcheck"
 brew "shfmt"
-brew "stylua"
 brew "prettier"
 brew "markdownlint-cli2"
 brew "editorconfig-checker"

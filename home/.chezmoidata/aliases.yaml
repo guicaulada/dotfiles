@@ -6,6 +6,5 @@ aliases:
     ls: "eza --icons=auto"
     lt: "eza --tree --icons=auto --level=2"
     top: btop
-    vim: nvim
   power:
     nosleep: "sudo pmset -a disablesleep"

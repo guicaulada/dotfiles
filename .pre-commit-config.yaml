@@ -3,9 +3,8 @@
 # upstream hook repos are pinned to commit SHAs (`# frozen:`, Renovate-managed).
 # Formatters fix in place — a failing run means files were modified; re-stage them.
 
-# Chezmoi templates contain Go template syntax that breaks most linters;
-# the nvim lockfile is machine-generated.
-exclude: '(^home/dot_config/nvim/lazy-lock\.json$|\.tmpl$)'
+# Chezmoi templates contain Go template syntax that breaks most linters.
+exclude: '\.tmpl$'
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -43,16 +42,6 @@ repos:
         entry: shfmt -w -l
         language: system
         types: [shell]
-      - id: stylua
-        name: stylua
-        entry: stylua --config-path .github/linters/.stylua.toml
-        language: system
-        types: [lua]
-      - id: selene
-        name: selene
-        entry: selene --config .github/linters/selene.toml
-        language: system
-        types: [lua]
       - id: actionlint
         name: actionlint
         entry: actionlint

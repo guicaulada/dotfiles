@@ -65,10 +65,6 @@ quick-terminal-position = top
 quick-terminal-screen = main
 keybind = global:ctrl+grave_accent=toggle_quick_terminal
 
-# Pass C-j/C-k through to tmux/Neovim
-keybind = ctrl+j=unbind
-keybind = ctrl+k=unbind
-
 # Shell integration
 shell-integration = detect
 shell-integration-features = sudo,ssh-env,ssh-terminfo
