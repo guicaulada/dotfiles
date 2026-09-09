@@ -59,6 +59,7 @@ def validate(arch, work):
         if missing:
             raise RuntimeError(f"Configuration is not managed: {sorted(missing)}")
         files = sorted(SOURCE.rglob("*.tmpl"))
+        shell_files = {}
         for index, source in enumerate(files):
             rendered = (
                 chezmoi(
@@ -73,10 +74,38 @@ def validate(arch, work):
             target = home / f"rendered-{index}"
             target.write_text(rendered)
             if source.name.startswith("dot_z"):
+                shell_files[source.name] = target
                 subprocess.run(["zsh", "-n", str(target)], env=env, check=True)
             elif source.parent.name == ".chezmoiscripts" and rendered.strip():
                 subprocess.run(["bash", "-n", str(target)], env=env, check=True)
                 subprocess.run(["shellcheck", "--shell=bash", str(target)], env=env, check=True)
+        # Both plain and login shells must prefer mise, even after PATH reordering.
+        shims = home / ".local/share/mise/shims"
+        shims.mkdir(parents=True)
+        path_check = "\n".join(
+            [
+                'source "$1"',
+                '[[ "$path[1]" == "$HOME/.local/share/mise/shims" ]] || exit 1',
+                "path=(/usr/bin /bin $path)",
+                'source "$2"',
+                'source "$2"',
+                '[[ "$path[1]" == "$HOME/.local/share/mise/shims" ]] || exit 2',
+                'unique_path=("${(@u)path}")',
+                "(( ${#path} == ${#unique_path} )) || exit 3",
+            ]
+        )
+        subprocess.run(
+            [
+                "zsh",
+                "-dfc",
+                path_check,
+                "path-check",
+                str(shell_files["dot_zshenv.tmpl"]),
+                str(shell_files["dot_zprofile.tmpl"]),
+            ],
+            env=env,
+            check=True,
+        )
         print(f"Validated darwin/{arch}, work={work}")
 
 

@@ -9,6 +9,11 @@ export HOMEBREW_PREFIX="{{ index .paths.homebrew .chezmoi.arch }}"
 path=("$HOMEBREW_PREFIX/bin" "$HOMEBREW_PREFIX/sbin" $path)
 {{- end }}
 
+# Shims select mise tools for noninteractive commands without a startup subprocess.
+if [[ -d "${XDG_DATA_HOME:-$HOME/.local/share}/mise/shims" ]]; then
+  path=("${XDG_DATA_HOME:-$HOME/.local/share}/mise/shims" $path)
+fi
+
 # --- Homebrew supply-chain hardening ---------------------------------------------------
 # Brew respects these env vars, so they apply to interactive use and to any script that
 # inherits this shell environment (including chezmoi's run_onchange brew script).

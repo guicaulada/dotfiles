@@ -26,3 +26,8 @@ GCS_PATH="{{ index .paths.homebrew .chezmoi.arch }}/{{ .paths.gcloud }}"
 [ -d "$GCS_PATH" ] && export PATH="$GCS_PATH:$PATH"
 export PATH="$PATH:/Applications/Obsidian.app/Contents/MacOS"
 {{- end }}
+
+# macOS path_helper may reorder PATH after .zshenv; restore mise precedence.
+if [[ -d "$XDG_DATA_HOME/mise/shims" ]]; then
+  path=("$XDG_DATA_HOME/mise/shims" $path)
+fi
