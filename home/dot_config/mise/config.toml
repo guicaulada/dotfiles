@@ -23,7 +23,7 @@ idiomatic_version_file = false
 bun = "1.4.0"
 go = "1.27.1"
 node = "24.20.0"
-ruby = "4.0.6"
+ruby = "4.0.7"
 rust = "1.98.0"
 
 # Defaults for infrastructure commands; projects can override these exact pins.
