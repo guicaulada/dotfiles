@@ -14,7 +14,7 @@ repos:
       - id: check-added-large-files
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: 1f1e8bf348ff38fc88619a38d3ca4d9c56abea49 # frozen: v0.16.5
+    rev: f368fb366ff7f2f808dd324b83a6d32267799e19 # frozen: v0.17.2
     hooks:
       - id: ruff-check
         args: [--fix, --config, .github/linters/ruff.toml]
